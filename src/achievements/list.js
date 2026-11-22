@@ -1078,6 +1078,25 @@ export const ACHIEVEMENTS = [
         icon: 'kapok_firewood',
         on: 'fireDoused'
     },
+    // Kozły (1.38.0).
+    {
+        id: 'sawhorses_ready',
+        tier: 'common',
+        title: 'Na kozłach',
+        task: 'Postaw kozły na obu końcach leżącego pnia (kozioł to 3 konary).',
+        comment: 'Siekiera nareszcie bije w drewno, a nie w ziemię.',
+        icon: 'sawhorse',
+        on: 'sawhorsesReady'
+    },
+    {
+        id: 'split_on_sawhorses',
+        tier: 'common',
+        title: 'Od razu na opał',
+        task: 'Kucając, połup siekierą pień leżący na kozłach.',
+        comment: 'Cztery polana z metra. Zima może przychodzić.',
+        icon: 'oak_firewood',
+        on: 'trunkSplit'
+    },
     // Powalone drzewa (1.37.0).
     {
         id: 'first_rotten',

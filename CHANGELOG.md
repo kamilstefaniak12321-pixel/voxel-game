@@ -11,6 +11,23 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.38.0 - Kozły
+
+PR #191. Trzecia wersja części B projektu drewna - część B jest w grze
+cała (`docs/drewno.md`, opis: `docs/kozly.md`). Pomysł Kamila.
+
+- **Kozioł** (3 konary w siatce wytwarzania): postaw po jednym **na obu
+  końcach leżącego pnia** - belka ustawia się sama w poprzek pnia.
+- Pień **na kozłach** tnie się siekierą w zwykłym tempie. **Bez kozłów
+  3 razy wolniej** niż dotąd (siekiera bije w ziemię) - gra to podpowie.
+- **Kucając, łupiesz pień na kozłach od razu na opał**: metr pnia to
+  4 polana.
+- Kozłów nie trzeba przestawiać, gdy pień się skraca; rozbity kozioł
+  wraca do ekwipunku. Gruby pień potrzebuje jednego kozła na koniec.
+- Komenda `/kozly`, osiągnięcia „Na kozłach" i „Od razu na opał",
+  dwie nowe linie w poradniku.
+- Luki (zużycie siekiery, piła) - `docs/kozly.md`.
+
 ## 1.37.0 - Powalone drzewa
 
 PR #190. Druga wersja części B projektu drewna (`docs/drewno.md`,

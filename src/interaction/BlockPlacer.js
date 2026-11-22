@@ -18,6 +18,8 @@ import {
 import { getTorchInfo, torchType } from '../blocks/torches.js';
 import { chestFacingForYaw } from '../blocks/chest.js';
 import { shapeItem, shapeId, shapeInfo, lookFacing, oppositeFacing } from '../blocks/woodShapes.js';
+import { SAWHORSE, sawhorseType } from '../blocks/sawhorse.js';
+import { sawhorseAxisAt } from '../game/Sawhorses.js';
 
 // ------------------------------------------------------------
 // STAWIANIE BLOKÓW
@@ -106,6 +108,15 @@ export class BlockPlacer {
         if (blockType === 'vine_trellis' || blockType === 'pea_net') {
             const look = lookFacing(this.player?.yaw ?? 0);
             blockType = look === 'north' || look === 'south' ? blockType : `${blockType}_z`;
+        }
+
+        // Kozioł (1.38.0): belka w poprzek leżącego pnia obok; bez pnia -
+        // w poprzek spojrzenia gracza.
+        if (blockType === SAWHORSE) {
+            const spot = this.targetOf(hit, blockType);
+            const look = lookFacing(this.player?.yaw ?? 0);
+            const axis = (spot && sawhorseAxisAt(this.world, spot.x, spot.y, spot.z)) ?? (look === 'north' || look === 'south' ? 'x' : 'z');
+            blockType = sawhorseType(axis);
         }
 
         const target = this.targetOf(hit, blockType);

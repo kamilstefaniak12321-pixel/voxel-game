@@ -15,7 +15,9 @@ import {
     getBlockId,
     getBlockTypeById,
     isLiquidId,
-    isSolidId
+    isSolidId,
+    isReplaceableId,
+    isPlantId
 } from '../blocks/BlockRegistry.js';
 import { waterUniforms } from '../rendering/BlockRenderData.js';
 import { getItemLabel, ITEM_TYPES, getTool } from '../items/ItemRegistry.js';
@@ -53,6 +55,9 @@ import { WOOD_TRAITS, woodTraits } from '../blocks/woodTraits.js';
 import { PROCHNO, PROCHNO_EMBER } from '../items/prochno.js';
 import { placeFallenInWorld, fallenSpecies, FALLEN_DIRECTIONS, FALLEN_GRID, FALLEN_MAX } from '../world/trees/FallenTrees.js';
 import { nearbySpecies } from '../game/StarterLog.js';
+import { trunkSpan, SPLIT_COUNT, NO_SAWHORSE_SLOW } from '../game/Sawhorses.js';
+import { sawhorseType } from '../blocks/sawhorse.js';
+import { lyingLogType } from '../blocks/lyingLogs.js';
 import { barkType } from '../items/bark.js';
 import { seasonedWood, freshWet, wetOf, setWet, wetWord, wetIgnite, wetHeat, isWet, DRY_WET } from '../items/moisture.js';
 import { dryingRate, dryDaysLeft } from '../game/WoodDrying.js';
@@ -1893,6 +1898,58 @@ export const WORLD_COMMANDS = [
     },
 
     {
+        name: 'kozly',
+        aliases: ['koziol', 'sawhorse', 'sawhorses'],
+        usage: '/kozly | /kozly daj | /kozly postaw [gatunek] [długość 2-8]',
+        description: 'Kozły (1.38.0): bez słowa - czy pień pod celownikiem leży na kozłach (długość odcinka, kozły na końcach, tempo cięcia); "daj" - 2 kozły, siekiera i 3 konary; "postaw" kładzie przed tobą zdrowy leżący pień z kozłem na każdym końcu.',
+
+        run(args, { game, player, world }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (['daj', 'give'].includes(word)) {
+                game.inventory.add('sawhorse', 2);
+                game.inventory.add('axe', 1);
+                game.inventory.add('konar', 3);
+                return 'Dano: 2 kozły, siekierę i 3 konary (3 konary w siatce wytwarzania to kozioł).';
+            }
+
+            if (['postaw', 'place'].includes(word)) {
+                const name = simplify(args[1] ?? '');
+                const species = name ? woodByWord(name) : 'oak';
+                if (!species) throw new CommandError('Podaj gatunek drzewa, np. dab, swierk, brzoza.');
+                const length = args[2] === undefined ? 4 : Number(args[2]);
+                if (!(Number.isInteger(length) && length >= 2 && length <= 8)) throw new CommandError('Długość od 2 do 8.');
+                const yaw = player.yaw ?? 0, fx = -Math.sin(yaw), fz = -Math.cos(yaw);
+                // Pień w poprzek spojrzenia, kozły na końcach.
+                const axis = Math.abs(fx) > Math.abs(fz) ? 'z' : 'x', dx = axis === 'x' ? 1 : 0, dz = axis === 'z' ? 1 : 0;
+                const sx = Math.round(player.pos.x + fx * 4 - dx * (length + 1) / 2), sz = Math.round(player.pos.z + fz * 4 - dz * (length + 1) / 2);
+                const cells = [];
+                for (let i = 0; i <= length + 1; i++) {
+                    const x = sx + dx * i, z = sz + dz * i, y = world.getGroundY(x, z);
+                    if (!(y > 0) || world.getBlockId(x, y, z) !== 0 && !isReplaceableId(world.getBlockId(x, y, z)) && !isPlantId(world.getBlockId(x, y, z))) throw new CommandError('Tu się nie zmieści - potrzeba wolnego, równego miejsca.');
+                    cells.push({ x, y, z });
+                }
+                if (new Set(cells.map((cell) => cell.y)).size !== 1) throw new CommandError('Tu się nie zmieści - potrzeba równego terenu.');
+                cells.forEach((cell, i) => world.setBlock(cell.x, cell.y, cell.z,
+                    i === 0 || i === length + 1 ? sawhorseType(axis === 'x' ? 'z' : 'x') : lyingLogType(species, axis)));
+                return `Położono pień (${TREE_SPECIES[species].labels[0].toLowerCase()}, ${length} m) na kozłach. Siekierą tnij go na pnie; kucając - łup na opał.`;
+            }
+
+            if (word) throw new CommandError('Użycie: /kozly | /kozly daj | /kozly postaw [gatunek] [długość]');
+
+            const hit = game.currentHit?.hit ? game.currentHit.block : null;
+            const span = hit ? trunkSpan(world, hit.x, hit.y, hit.z) : null;
+            if (!span) return 'Wyceluj w leżący pień. Kozioł (3 konary) stawia się po jednym na obu końcach pnia: pień tnie się wtedy 3 razy szybciej, a kucając łupiesz go na opał (4 polana z metra).';
+            const ends = span.sawhorses.filter(Boolean).length;
+            return `Leżący pień: odcinek ${span.length} m, kozłów na końcach: ${ends} z 2. ` +
+                (ends === 2 ? `Leży na kozłach - zwykłe tempo cięcia; kucając łupiesz na opał (${SPLIT_COUNT} polana z metra).`
+                    : `Bez kozłów tnie się ${NO_SAWHORSE_SLOW} razy wolniej i nie da się go łupać.`);
+
+        }
+    },
+
+    {
         name: 'powalone',
         aliases: ['powalony', 'fallen', 'prochno'],
         usage: '/powalone | /powalone tp | /powalone postaw [gatunek] [długość 3-8] | /powalone daj',
@@ -1909,7 +1966,7 @@ export const WORLD_COMMANDS = [
 
             if (['postaw', 'place', 'poloz'].includes(word)) {
                 const name = simplify(args[1] ?? '');
-                const species = name ? TREE_NAMES.find((key) => key === name || simplify(TREE_SPECIES[key].labels[0]).includes(name)) : nearbySpecies(world, Math.floor(player.pos.x), Math.floor(player.pos.z));
+                const species = name ? woodByWord(name) : nearbySpecies(world, Math.floor(player.pos.x), Math.floor(player.pos.z));
                 if (!species || !fallenSpecies(species)) throw new CommandError('Podaj gatunek drzewa, po którym zostaje pień (np. dab, swierk, brzoza); kosodrzewina i baobab nie.');
                 const length = args[2] === undefined ? 6 : Number(args[2]);
                 if (!(Number.isInteger(length) && length >= 3 && length <= FALLEN_MAX)) throw new CommandError(`Długość od 3 do ${FALLEN_MAX}.`);

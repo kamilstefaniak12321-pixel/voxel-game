@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.37.0** - 255 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **1.38.0** - 255 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -42,7 +42,7 @@ Wersja gry **1.37.0** - 255 przedmiotów. Przedmiotu nie da się postawić jak b
 | <img src="ikony/cedar_firewood.png" width="32" height="32" alt=""> | **Opał — cedr** | `cedar_firewood` | **Przepis:** Opał — cedr x4<br>**Służy też jako:** opał do ogniska: zapłon 245°, żar 760°, polano pali się 80 s; pachnący dym; świeżo porąbane jest wilgotne (40% wody) - schnie z czasem, przy ognisku szybko |
 | <img src="ikony/bristlecone_firewood.png" width="32" height="32" alt=""> | **Opał — sosna oścista** | `bristlecone_firewood` | **Przepis:** Opał — sosna oścista x4<br>**Przydaje się do:** Łuczywo<br>**Służy też jako:** opał do ogniska: zapłon 230°, żar 800°, polano pali się 100 s; suche od razu, pali się długo jak na iglaste; pali się nawet świeżo porąbane |
 | <img src="ikony/birch_bark.png" width="32" height="32" alt=""> | **Kora brzozowa** | `birch_bark` | **Skąd:** okorowanie siekierą: Pień brzozy<br>**Przydaje się do:** Lampa<br>**Służy też jako:** podpałka 330° (1,5 raza szybsza od trawy) |
-| <img src="ikony/konar.png" width="32" height="32" alt=""> | **Konar** | `konar` | **Przydaje się do:** Patyk |
+| <img src="ikony/konar.png" width="32" height="32" alt=""> | **Konar** | `konar` | **Przydaje się do:** Kozioł, Patyk |
 | <img src="ikony/rotten_wood.png" width="32" height="32" alt=""> | **Spróchniałe drewno** | `rotten_wood` | **Skąd:** zniszczony blok: Spróchniały pień<br>**Przydaje się do:** Próchno<br>**Służy też jako:** opał do ogniska: zapłon 200°, żar 450°, polano pali się 30 s; zajmuje się od byle czego - dobre na wierzch stosu; grzeje słabo i kopci |
 | <img src="ikony/prochno.png" width="32" height="32" alt=""> | **Próchno** | `prochno` | **Przepis:** Próchno x2<br>**Służy też jako:** podpałka 280° |
 | <img src="ikony/prochno_zar.png" width="32" height="32" alt=""> | **Tlące się próchno** | `prochno_zar` | **Służy też jako:** podpałka 280°; położone na ułożonym stosie rozpala ognisko bez startera |

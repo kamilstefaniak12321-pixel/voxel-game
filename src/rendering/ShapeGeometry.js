@@ -14,6 +14,7 @@ import { shapeBoxes, SIDE_BITS } from '../world/ShapeBoxes.js';
 import { shapeId, shapeItem, shapeBaseType, WOOD_SHAPE_BLOCKS } from '../blocks/woodShapes.js';
 import { BEDDINGS, beddingOf, matId } from '../blocks/bedding.js';
 import { SEWING_TABLE, sewingTableId } from '../blocks/sewingTable.js';
+import { SAWHORSE, SAWHORSE_FIRST_ID } from '../blocks/sawhorse.js';
 import { getAtlasUV } from './TextureAtlas.js';
 
 const FACE_CORNERS = {
@@ -148,6 +149,8 @@ export function itemShapeFaces(type) {
     const bedding = beddingOf(type);
     if (bedding) return matFaces(bedding);
     if (type === SEWING_TABLE) return sewingTableFaces();
+    // Kozioł (1.38.0): belka na nogach.
+    if (type === SAWHORSE) return boxFaces(shapeBoxes(SAWHORSE_FIRST_ID), 'oak_log_side');
     // Kratka, tyczka, pergola (1.30.0): kształt podpory z jej teksturą.
     // (Wigwam z tyczek ma płaską ikonkę - obrazek 2 x 3 bloki nie mieści się
     // w modelu przedmiotu.)

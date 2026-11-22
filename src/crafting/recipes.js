@@ -422,6 +422,9 @@ export const RECIPES = [
     // Konar ze ściętego drzewa (1.36.0, game/Felling.js) łamie się na patyki.
     { id: 'stick_from_konar', result: ['stick', 3], ingredients: ['konar'],
         note: 'Konary spadają ze ściętego drzewa razem z koroną.' },
+    // Kozioł do cięcia leżącego pnia (1.38.0, game/Sawhorses.js).
+    { id: 'sawhorse', result: ['sawhorse', 1], ingredients: ['konar', 'konar', 'konar'],
+        note: 'Postaw po jednym na obu końcach leżącego pnia: pień tnie się 3 razy szybciej, a kucając łupiesz go od razu na opał.' },
     // Spróchniałe drewno z powalonego pnia kruszy się na próchno (1.37.0, items/prochno.js).
     { id: 'prochno', result: ['prochno', 2], ingredients: ['rotten_wood'],
         note: 'Podpałka i nawóz. PPM próchnem na płonącym ognisku daje tlące się próchno - przeniesiesz nim ogień bez startera.' },

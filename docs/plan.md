@@ -23,15 +23,19 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
   drzewa już się nie zetnie; nowy samouczek
   ([powalone-drzewa.md](powalone-drzewa.md)).
 
+- **1.38.0 - Kozły** (PR #191): trzecia wersja części B - część B cała.
+  Kozioł z 3 konarów na obu końcach leżącego pnia: pień tnie się 3 razy
+  szybciej, a kucając łupie się go od razu na opał ([kozly.md](kozly.md)).
+
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony
 21.11.2026 ([drewno.md](drewno.md)). Sześć części; pierwsza (A) jest
 w grze cała (1.32.0 - cechy i ognisko, 1.33.0 - wilgotność, 1.34.0 -
-drewutnia, 1.35.0 - pochodnie i deszcz), druga (B) prawie cała (1.36.0 -
-ścinanie, 1.37.0 - powalone drzewa). Zostało:
+drewutnia, 1.35.0 - pochodnie i deszcz) i druga (B) są w grze całe
+(1.36.0 - ścinanie, 1.37.0 - powalone drzewa, 1.38.0 - kozły). Zostało:
 
-- **B3 - Kozły**: obróbka leżącego pnia (kłody, opał, okorowanie).
+- ~~B3 - Kozły~~: obróbka leżącego pnia (kłody, opał, okorowanie).
 - **C - Narzędzia i kołysanie**: twardość skał, widoczne zużycie,
   kołysanie drzew.
 - **D - Dary pnia**: soki, żywice, guma, łyko - nacinanie nożem.

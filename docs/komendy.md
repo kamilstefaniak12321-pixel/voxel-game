@@ -101,6 +101,9 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/niskie` | rośliny niskie (1.19.0, `docs/rosliny-niskie.md`): lista roślin i biomów, w których rosną |
 | `/niskie galeria` | przed tobą galeria: każda roślina w rzędzie, od lewej kolejne etapy (sadzonka, roślina, kwiaty, owoce), przy dyni młoda i dojrzała dynia, w ostatnim rzędzie torfowce i chrobotek (zmienia świat) |
 | `/niskie znajdz [roślina]` | najbliższa roślina niska we wczytanym terenie (np. `zurawina`, `brusznica`, `poziomka`, `dynia`): odległość i komenda `/tp` |
+| `/kolysanie` | kołysanie drzew na wietrze (1.40.0, `docs/kolysanie.md`): z jaką siłą teraz się kołyszą |
+| `/kolysanie <0-100>` | ustawia siłę kołysania na stałe (100 - wichura, 0 - drzewa stoją) |
+| `/kolysanie pogoda` | wraca do wiatru z pogody |
 | `/siekiera` | twardość i zużycie siekier (1.39.0, `docs/narzedzia.md`): tabela skał - twardość, jakie drewno tną, na ile ciosów wystarczają - i stan siekiery w ręce |
 | `/siekiera daj [skała]` | siekiera z podanej skały: `piaskowiec`, `wapien`, `lupek`, `kamien`, `bazalt`, `granit` |
 | `/siekiera stan <procent 1-100>` | ustawia stan siekiery w ręce (np. 25 - wyszczerbiona, 10 - pęknięta) |

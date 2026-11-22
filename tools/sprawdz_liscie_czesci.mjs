@@ -83,7 +83,9 @@ const motion = (chunk) => Array.from(buildChunkGeometry(chunk, world).getAttribu
 setLeafParts(false);
 const cube = faces(single());
 check(cube === 6, `Blok liści - 6 ścian (${cube})`);
-check(motion(single()).every((n) => n === 0), 'Zwykłe liście stoją');
+// Zwykłe liście nie drżą (faza - co drugi bajt - 0); od 1.40.0 niosą za to
+// wysokość do kołysania całego drzewa (pierwszy bajt).
+check(motion(single()).every((n, index) => index % 2 === 0 || n === 0), 'Zwykłe liście nie drżą');
 
 check(setLeafParts(true) === true && setLeafParts(true) === false, 'Zmiana zgłasza przebudowę raz');
 const parts = faces(single());
@@ -102,7 +104,7 @@ const directions = perDirection(single());
 check(parts > 24 && parts < 48, `Liście z części - ściany zewnętrzne bez zakrytych (${parts})`);
 check(directions.size === 6 && [...directions.values()].every((n) => n >= 3), 'Części widać z każdej strony');
 const sway = motion(single());
-check(sway.some((n) => n > 0), 'Części się kołyszą');
+check(sway.some((n, index) => index % 2 === 1 && n > 0), 'Części drżą (mają fazę)');
 
 // Wnętrze korony: blok otoczony liśćmi - bez ścian (jak zwykłe liście głęboko w koronie).
 const crown = new Chunk(0, 0);
@@ -137,6 +139,6 @@ check(SETTINGS_DEFAULTS.leafModel === 'parts' && SETTINGS_CHOICES.leafModel.join
 check(TOUCH_SETTINGS.leafModel === 'cube', 'Telefon - bloki');
 const shader = { uniforms: {}, vertexShader: '#include <common>\n#include <begin_vertex>\n#include <project_vertex>', fragmentShader: '#include <color_fragment>' };
 try { leafMaterial.onBeforeCompile(shader, { capabilities: { isWebGL2: true } }); } catch { /* shader bloków potrzebuje przeglądarki */ }
-check(shader.vertexShader.includes('plantMotion.x > 0.0') && shader.uniforms.uPlantSway, 'Kołysanie części w shaderze liści');
+check(shader.vertexShader.includes('plantMotion.y > 0.0') && shader.vertexShader.includes('treeSwayOffset(') && shader.uniforms.uPlantSway && shader.uniforms.uTreeWind, 'Drżenie części i kołysanie drzewa w shaderze liści');
 
 console.log(`OK: liście z 8 części - ${checks} sprawdzeń (blok: ${cube} -> ${parts} ścian, korona 7x7x7: ${crownCube} -> ${crownParts}).`);

@@ -5,7 +5,8 @@ import * as THREE from 'three';
 import { campfireLightUniforms, CAMPFIRE_LIGHT_GLSL } from './CampfireLight.js';
 import { SURFACE_LIGHTING_GLSL } from './SurfaceLighting.js';
 import { installLightingDiagnostics } from './LightingDiagnostics.js';
-import { plantWindUniforms, PLANT_WIND_GLSL } from './PlantWind.js';
+import { plantWindUniforms, PLANT_WIND_GLSL, TREE_SWAY_GLSL } from './PlantWind.js';
+import { swayScale } from '../blocks/treeSway.js';
 import { WATER_WAVE_GLSL, SEA_FOAM_GLSL, SEA_SURFACE } from './WaterWave.js';
 import { getSurfaceFaceTexture } from './SurfaceMaterials.js';
 import { blockSurfaceProfile } from './SurfaceProfiles.js';
@@ -148,8 +149,8 @@ export const blockMaterial =
 // Wymaga WebGL 2, jak cała gra (main.js).
 // ------------------------------------------------------------
 
-blockMaterial.defaultAttributeValues = { ...blockMaterial.defaultAttributeValues, surfaceProfile: [0, 0], canopyTint: [1, 1, 1] };
-blockMaterial.onBeforeCompile = (shader, renderer) => {
+blockMaterial.defaultAttributeValues = { ...blockMaterial.defaultAttributeValues, surfaceProfile: [0, 0], canopyTint: [1, 1, 1], plantMotion: [0, 0] };
+blockMaterial.onBeforeCompile = (shader, renderer, nested = false) => {
     installSurfaceProfiles(shader);
     // Only terrain materials use this path. Hands and inventory have their
     // own ModelMaterial, so global view distance never fades held objects.
@@ -606,6 +607,31 @@ blockMaterial.onBeforeCompile = (shader, renderer) => {
     installLightingDiagnostics(shader, { albedo: 'blockTexel', normal: 'vWorldNormal', sky: 'blockSky',
         ao: 'surfaceDecodeLight(vSurfaceOcclusion)', visibility: '\n#ifdef USE_SUN_SHADOWS\nblockSun\n#else\nblockSky\n#endif\n' });
 
+    // Kołysanie drzew (1.40.0): pień wygina się razem z koroną. Tylko
+    // zwykły materiał terenu - rośliny, liście i woda (nested) używają
+    // plantMotion po swojemu i same decydują o ruchu.
+
+    if (!nested) {
+
+        shader.uniforms.uTime = plantWindUniforms.uTime;
+        shader.uniforms.uTreeWind = plantWindUniforms.uTreeWind;
+
+        shader.vertexShader = shader.vertexShader
+            .replace(
+                '#include <common>',
+                `#include <common>
+                uniform float uTime;
+                attribute vec2 plantMotion;
+                ${TREE_SWAY_GLSL}`
+            )
+            .replace(
+                '#include <project_vertex>',
+                `transformed += treeSwayOffset((modelMatrix * vec4(transformed, 1.0)).xyz, plantMotion.x, uTime);
+                #include <project_vertex>`
+            );
+
+    }
+
 };
 
 // ------------------------------------------------------------
@@ -635,7 +661,7 @@ plantMaterial.defaultAttributeValues = { color: [1, 1, 1], uv: [0, 0], uv1: [0, 
 
 plantMaterial.onBeforeCompile = (shader, renderer) => {
 
-    blockMaterial.onBeforeCompile(shader, renderer);
+    blockMaterial.onBeforeCompile(shader, renderer, true);
     Object.assign(shader.uniforms, plantWindUniforms);
 
     // Bez mokrej ziemi i kałuż (to nie są płaskie wierzchy bloków);
@@ -711,7 +737,7 @@ leafMaterial.onBeforeCompile = (shader, renderer) => {
             #include <color_fragment>`
         );
 
-    blockMaterial.onBeforeCompile(shader, renderer);
+    blockMaterial.onBeforeCompile(shader, renderer, true);
 
     // Liście bez kałuż i mokrych plam (mają własne cieniowanie).
     shader.fragmentShader = `#define NO_WET_GROUND\n${shader.fragmentShader}`;
@@ -720,8 +746,13 @@ leafMaterial.onBeforeCompile = (shader, renderer) => {
     // się lekko w całości - plantMotion.x - siła, y - faza (zwykłe liście:
     // 0, stoją). Kołysanie na wietrze wył. (uPlantSway) - stoją wszystkie.
 
+    // Od 1.40.0: plantMotion.x to wysokość dla kołysania całego drzewa
+    // (treeSwayOffset), a y - faza drżenia części (0 - część nie drży);
+    // siła drżenia wynika z fazy.
+
     shader.uniforms.uTime = plantWindUniforms.uTime;
     shader.uniforms.uPlantSway = plantWindUniforms.uPlantSway;
+    shader.uniforms.uTreeWind = plantWindUniforms.uTreeWind;
 
     shader.vertexShader = shader.vertexShader
         .replace(
@@ -729,19 +760,22 @@ leafMaterial.onBeforeCompile = (shader, renderer) => {
             `#include <common>
             uniform float uTime;
             uniform float uPlantSway;
-            attribute vec2 plantMotion;`
+            attribute vec2 plantMotion;
+            ${TREE_SWAY_GLSL}`
         )
         .replace(
             '#include <project_vertex>',
-            `if (plantMotion.x > 0.0) {
+            `if (plantMotion.y > 0.0) {
                 float leafPhase = plantMotion.y * 6.2831853;
                 float leafGust = 0.75 + 0.25 * sin(uTime * 0.37 + leafPhase * 0.5);
+                float leafAmount = 0.6 + 0.4 * fract(plantMotion.y * 7.31);
                 transformed += vec3(
                     sin(uTime * 1.3 + leafPhase),
                     0.45 * sin(uTime * 1.9 + leafPhase * 1.7),
                     cos(uTime * 1.05 + leafPhase * 1.3)
-                ) * plantMotion.x * leafGust * 0.022 * uPlantSway;
+                ) * leafAmount * leafGust * 0.022 * uPlantSway;
             }
+            transformed += treeSwayOffset((modelMatrix * vec4(transformed, 1.0)).xyz, plantMotion.x, uTime);
             #include <project_vertex>`
         );
 
@@ -886,7 +920,7 @@ waterMaterial.defaultAttributeValues = {
 
 waterMaterial.onBeforeCompile = (shader, renderer) => {
 
-    blockMaterial.onBeforeCompile(shader, renderer);
+    blockMaterial.onBeforeCompile(shader, renderer, true);
 
     Object.assign(shader.uniforms, waterUniforms, chunkMaskUniforms);
 
@@ -1444,6 +1478,15 @@ for (
             : null,
 
         leaves: definition.model === 'leaves',
+
+        // Kołysanie drzewa (1.40.0, blocks/treeSway.js): mnożnik wysokości
+        // nad ziemią dla pnia i liści (0 - olbrzym, stoi); null - blok nie
+        // jest częścią żywego drzewa. swayTree - gatunek (pień kołysze
+        // się tylko pod własną koroną).
+        sway: definition.tree && (definition.part === 'log' || definition.part === 'leaves') ? swayScale(definition.tree) : null,
+        swayTree: definition.tree ?? null,
+        swayLog: definition.part === 'log',
+
         // Liście i opadłe liście drzew: kod palety pór roku (LeafSeasons.js); 0 - nie liść.
         // (Liście krzewów jagodowych - pole leafSeason, paleta w LeafSeasons.js.)
         leafCode: definition.tree && (definition.part === 'leaves' || definition.part === 'litter')

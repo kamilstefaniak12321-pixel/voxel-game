@@ -59,6 +59,7 @@ import { trunkSpan, SPLIT_COUNT, NO_SAWHORSE_SLOW } from '../game/Sawhorses.js';
 import { sawhorseType } from '../blocks/sawhorse.js';
 import { ROCK_HARDNESS, maxWoodHardness, canCut, chopsUntilBroken, isWearing, conditionOf, wearStage, STAGE_WORDS } from '../items/toolWear.js';
 import { stoneToolType } from '../items/stoneTools.js';
+import { treeWindStrength } from '../blocks/treeSway.js';
 import { lyingLogType } from '../blocks/lyingLogs.js';
 import { barkType } from '../items/bark.js';
 import { seasonedWood, freshWet, wetOf, setWet, wetWord, wetIgnite, wetHeat, isWet, DRY_WET } from '../items/moisture.js';
@@ -1895,6 +1896,34 @@ export const WORLD_COMMANDS = [
             }
 
             throw new CommandError('Użycie: /pochodnia | /pochodnia daj | /pochodnia paliwo <procent> | /pochodnia czas <minuty>');
+
+        }
+    },
+
+    {
+        name: 'kolysanie',
+        aliases: ['kolysz', 'sway'],
+        usage: '/kolysanie | /kolysanie <siła 0-100> | /kolysanie pogoda',
+        description: 'Kołysanie drzew na wietrze (1.40.0): bez słowa - z jaką siłą teraz się kołyszą i skąd wieje; liczba 0-100 ustawia siłę na stałe (100 - wichura, 0 - drzewa stoją); "pogoda" wraca do wiatru z pogody. Kołysanie wyłącza się razem z kołysaniem roślin w ustawieniach.',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+            if (['pogoda', 'auto', 'weather'].includes(word)) {
+                game.treeWindOverride = null;
+                return 'Drzewa znów kołyszą się tak, jak wieje.';
+            }
+            if (word) {
+                const percent = Number(word);
+                if (!(percent >= 0 && percent <= 100)) throw new CommandError('Podaj siłę od 0 do 100 albo słowo pogoda.');
+                game.treeWindOverride = percent / 100;
+                return `Siła kołysania drzew: ${percent}% (do odwołania - /kolysanie pogoda).`;
+            }
+            const wind = game.weather.wind, speed = wind.speed ?? 0;
+            const strength = game.treeWindOverride ?? treeWindStrength(speed);
+            const off = game.settings.get('plantWind') ? '' : ' Kołysanie roślin jest wyłączone w ustawieniach - drzewa stoją.';
+            return `Drzewa kołyszą się z siłą ${Math.round(strength * 100)}%${game.treeWindOverride != null ? ' (ustawioną komendą)' : ` (wiatr ${speed.toFixed(1)})`}. ` +
+                `Mocno: palma, brzoza, osika, eukaliptus, świerk, jodła, modrzew; ledwo: dąb, buk, oliwka, akacja, cedr; baobab, sekwoja, puchowiec i banian stoją.${off}`;
 
         }
     },

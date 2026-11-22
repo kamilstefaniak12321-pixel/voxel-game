@@ -32,6 +32,10 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
   od siebie, zużywa się (pasek pod ikonką) i pęka, zostawiając patyk
   ([narzedzia.md](narzedzia.md)).
 
+- **1.40.0 - Kołysanie drzew** (PR #193): druga wersja części C - część
+  C cała. Pień z koroną wygina się z wiatrem, zależnie od gatunku
+  i pogody; liczy to karta graficzna ([kolysanie.md](kolysanie.md)).
+
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony

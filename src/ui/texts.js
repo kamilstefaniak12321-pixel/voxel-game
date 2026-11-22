@@ -193,7 +193,7 @@ export const TEXTS = {
         leafModel: (value) => value === 'cube'
             ? 'Bloki: liście drzew to zwykłe sześciany - najmniej do narysowania.'
             : 'Z 8 części: każdy blok liści to 8 mniejszych sześcianów z różnymi kawałkami tekstury, każdy lekko kołysze się na wietrze.',
-        plantWind: 'Trawa, kwiaty, krzaki i części liści poruszają się na wietrze. Liście na wodzie dalej falują z wodą.',
+        plantWind: 'Trawa, kwiaty, krzaki i części liści poruszają się na wietrze, a drzewa wyginają się z pniem. Liście na wodzie dalej falują z wodą.',
         plantAnimations: 'Sprężyste reakcje roślin: postawienie, wzrost, zbiór owoców i kwiatów, zniszczenie.',
         fallingLeaves: 'Z koron drzew powoli spadają liście w ich kolorach, z drzew owocowych (np. jabłoni) czasem spadnie owoc. Tylko obraz - owoce do zbioru zostają.',
         windStreaks: 'Delikatne, półprzezroczyste smugi płynące z wiatrem na otwartym powietrzu. W trybie ziemniaka wyłączone.'

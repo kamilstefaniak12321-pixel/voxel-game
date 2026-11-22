@@ -14,7 +14,9 @@
 > drzewo-byt, ciosy i karb, upadek, leżący pień, konary; od **1.37.0**
 > powalone drzewa jako pierwsze drewno, spróchniałe drewno i próchno,
 > nowy samouczek; od **1.38.0** kozły - **część B jest w grze cała**;
-> od **1.39.0** twardość i zużycie siekier ([narzedzia.md](narzedzia.md)).
+> od **1.39.0** twardość i zużycie siekier ([narzedzia.md](narzedzia.md)),
+> od **1.40.0** kołysanie drzew ([kolysanie.md](kolysanie.md)) -
+> **część C jest w grze cała**.
 > Opis tego, co działa: [ogniska.md](ogniska.md),
 > [scinanie.md](scinanie.md), [powalone-drzewa.md](powalone-drzewa.md),
 > [kozly.md](kozly.md). Reszta czeka - kolejność w rozdziale 11.

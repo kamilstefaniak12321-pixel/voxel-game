@@ -75,6 +75,7 @@ import { TreeParticles } from '../rendering/TreeParticles.js';
 import { WindStreaks } from '../rendering/WindStreaks.js';
 import { Weather } from '../weather/Weather.js';
 import { plantWindUniforms } from '../rendering/PlantWind.js';
+import { treeWindStrength } from '../blocks/treeSway.js';
 import { WaterfallWetRocks } from '../rendering/WaterfallWetRocks.js';
 import { WaterImpactRipples } from '../rendering/WaterImpactRipples.js';
 import { RainEffects } from '../rendering/RainEffects.js';
@@ -1221,6 +1222,13 @@ export class Game extends GameInteraction {
         this.sky.dust = active ? this.weather.dust : 0;
 
         plantWindUniforms.uPlantSway.value = this.settings.get('plantWind') ? this.weather.sway : 0;
+
+        // Kołysanie drzew (1.40.0): kierunek i siła wiatru. W ciszy kierunek
+        // zostaje dawny, a drzewa ledwo oddychają. Wyłącza je to samo
+        // ustawienie, co kołysanie roślin.
+        const treeWind = plantWindUniforms.uTreeWind.value, wind = this.weather.wind;
+        if (wind.speed > 0.2) { treeWind[0] = wind.x / wind.speed; treeWind[1] = wind.z / wind.speed; }
+        treeWind[2] = this.settings.get('plantWind') ? (this.treeWindOverride ?? treeWindStrength(wind.speed)) : 0;
 
         profile?.endStage('weather');
 

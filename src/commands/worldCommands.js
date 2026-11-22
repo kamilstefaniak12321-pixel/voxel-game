@@ -67,6 +67,8 @@ import { dryingRate, dryDaysLeft } from '../game/WoodDrying.js';
 import { WOODPILE, WOODPILE_CAPACITY, newWoodpile, addLogs } from '../game/WoodpileState.js';
 import { TORCH_BURN_SECONDS, TORCH_DIM_PART, LUCZYWO, LUCZYWO_PART, TORCH_STUB, isTorchItem, fuelMinutes } from '../items/torchFuel.js';
 import { stageFor, RAIN_OUT_SECONDS } from '../game/TorchBurn.js';
+import { GIFTS, TREE_GIFTS, DAY_SECONDS as GIFT_DAY_SECONDS, giftOf, seasonFlow, flowSeasonsText, tapsAllowed } from '../blocks/treeGifts.js';
+import { treeOf } from '../game/TreeTaps.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
 import { VINES, VINE_NAMES, VINE_FIRST_ID, VINE_END_ID, VINE_STAGE_SECONDS, vineType, vineInfoById } from '../blocks/vines.js';
 import { MOUNT_OFFSET } from '../game/VineGrowth.js';
@@ -1924,6 +1926,65 @@ export const WORLD_COMMANDS = [
             const off = game.settings.get('plantWind') ? '' : ' Kołysanie roślin jest wyłączone w ustawieniach - drzewa stoją.';
             return `Drzewa kołyszą się z siłą ${Math.round(strength * 100)}%${game.treeWindOverride != null ? ' (ustawioną komendą)' : ` (wiatr ${speed.toFixed(1)})`}. ` +
                 `Mocno: palma, brzoza, osika, eukaliptus, świerk, jodła, modrzew; ledwo: dąb, buk, oliwka, akacja, cedr; baobab, sekwoja, puchowiec i banian stoją.${off}`;
+
+        }
+    },
+
+    {
+        name: 'naciecie',
+        aliases: ['nacinanie', 'dary', 'sok', 'tap'],
+        usage: '/naciecie | /naciecie daj | /naciecie czas <godziny> | /naciecie napelnij',
+        description: 'Dary pnia (1.41.0): bez słowa - które drzewa co dają, co płynie o tej porze roku i stan nacięcia pod celownikiem; "daj" - nóż i 4 gliniane kubki; "czas" przesuwa nacięcia o tyle godzin gry (sok kapie, nacięcia się zabliźniają); "napelnij" wiesza kubki i napełnia wszystkie nacięcia.',
+
+        run(args, { game }) {
+
+            const taps = game.treeTaps, word = simplify(args[0] ?? ''), days = game.time?.days ?? 0;
+
+            if (['daj', 'give', 'zestaw'].includes(word)) {
+                game.inventory.add('knife', 1);
+                game.inventory.add('clay_cup', 4);
+                return 'Dano nóż i 4 gliniane kubki. PPM nożem w bok pnia żywego drzewa - nacięcie; PPM kubkiem na nacięciu - kubek pod sok.';
+            }
+            if (['czas', 'time'].includes(word)) {
+                const hours = Number(String(args[1] ?? '').replace(',', '.'));
+                if (!(hours > 0 && hours <= 24 * 30)) throw new CommandError('Podaj liczbę godzin gry, np. /naciecie czas 12.');
+                const before = taps.taps.size;
+                taps.advance(hours / 24 * GIFT_DAY_SECONDS);
+                return `Nacięcia przesunięte o ${hours} godz. gry (pora roku bez zmian). Nacięć: ${taps.taps.size} (było ${before}).`;
+            }
+            if (['napelnij', 'pelne', 'fill'].includes(word)) {
+                let filled = 0;
+                for (const tap of taps.taps.values()) {
+                    const gift = giftOf(tap.species);
+                    if (!gift) continue;
+                    if (gift.vessel && !tap.cup) tap.cup = 'clay_cup';
+                    tap.amount = gift.max;
+                    filled++;
+                }
+                taps.changed();
+                return filled ? `Napełniono nacięć: ${filled}.` : 'W tym świecie nie ma jeszcze żadnego nacięcia.';
+            }
+            if (word) throw new CommandError('Użycie: /naciecie | /naciecie daj | /naciecie czas <godziny> | /naciecie napelnij');
+
+            const lines = Object.values(GIFTS).map((gift) => {
+                const trees = Object.keys(TREE_GIFTS).filter((species) => giftOf(species) === gift).map(treeOf).join(', ');
+                const flow = seasonFlow(gift, days);
+                return `${gift.label} (${trees}): ${flowSeasonsText(gift)}${gift.vessel ? ', do kubka' : ''} - teraz ${flow > 0 ? `płynie (×${flow})` : 'nie płynie'}`;
+            });
+            const hit = game.currentHit?.hit ? game.currentHit.block : null;
+            const tap = hit ? taps.get(hit) : null;
+            let target = '';
+            if (tap) {
+                const gift = giftOf(tap.species), left = gift.openDays - tap.age / GIFT_DAY_SECONDS;
+                target = ` Pod celownikiem: nacięcie w pniu ${treeOf(tap.species)}, ${gift.vessel ? `kubek: ${tap.cup ? `${Math.round(tap.amount * 100)}%` : 'brak'}` : `żywicy: ${tap.amount.toFixed(2)}`}, ` +
+                    `${left > 0 ? `zabliźni się za ${left.toFixed(1)} doby` : 'zabliźnione'}, nacięć w tym drzewie: ${taps.countOn(tap.tree)} (grubość pnia ${tap.width}).`;
+            }
+            else if (hit) {
+                const check = taps.check(hit.x, hit.y, hit.z);
+                if (check.ok) target = ` Pod celownikiem: pień ${treeOf(check.species)} (grubość ${check.width}) - można naciąć, nacięć: ${taps.countOn(check.tree)} z ${tapsAllowed(check.width)}.`;
+                else if (check.reason) target = ` Pod celownikiem: ${check.reason}.`;
+            }
+            return `Nacięć w świecie: ${taps.taps.size}. ${lines.join('; ')}.${target}`;
 
         }
     },

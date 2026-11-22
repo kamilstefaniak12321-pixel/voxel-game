@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 736
+      "height": 752
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9843,6 +9843,41 @@
       "y": 720,
       "width": 16,
       "height": 16
+    },
+    "birch_sap": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 736,
+      "width": 16,
+      "height": 16
+    },
+    "maple_sap": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 736,
+      "width": 16,
+      "height": 16
+    },
+    "palm_sap": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 736,
+      "width": 16,
+      "height": 16
+    },
+    "baobab_water": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 736,
+      "width": 16,
+      "height": 16
+    },
+    "maple_syrup": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 736,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -17893,6 +17928,31 @@
       "x": 5,
       "y": 97,
       "region": "prochno_zar"
+    },
+    "birch_sap": {
+      "x": 6,
+      "y": 97,
+      "region": "birch_sap"
+    },
+    "maple_sap": {
+      "x": 7,
+      "y": 97,
+      "region": "maple_sap"
+    },
+    "palm_sap": {
+      "x": 8,
+      "y": 97,
+      "region": "palm_sap"
+    },
+    "baobab_water": {
+      "x": 9,
+      "y": 97,
+      "region": "baobab_water"
+    },
+    "maple_syrup": {
+      "x": 10,
+      "y": 97,
+      "region": "maple_syrup"
     }
   }
 }

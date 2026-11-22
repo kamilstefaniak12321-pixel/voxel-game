@@ -6,7 +6,7 @@ import { PROCHNO, PROCHNO_EMBER, EMBER_CARRY_SECONDS, burnEmbers } from '../item
 import { makeItem } from '../items/freshness.js';
 import { getBlockId, isLiquidId, isSolidId, blockExists } from '../blocks/BlockRegistry.js';
 import { CampfireRenderer } from '../rendering/CampfireRenderer.js';
-import { getRoast, isDrink, ROAST_SECONDS } from '../items/foods.js';
+import { getRoast, isDrink, ROAST_SECONDS, roastSeconds, roastWord } from '../items/foods.js';
 import { getItemLabel } from '../items/ItemRegistry.js';
 import { POT, POT_WATER, BOWL, DISHES, dishItem, isIngredient } from '../items/cooking.js';
 import { newPot, addIngredient, canAddIngredient, takePortion, potDrops, potDescription, isCooking } from './CookingState.js';
@@ -128,7 +128,7 @@ export class Campfires {
                 // Garnek (1.20.0): postawiony, składnik, porcja albo zdjęcie.
             } else if (getRoast(type)) {
                 // Samo pieczenie liczy update (trzeba trzymać PPM).
-                if (!canRoastOn(fire)) this.notice(isDrink(getRoast(type)) ? 'Żeby zaparzyć zioła, ognisko musi płonąć albo się żarzyć.' : 'Żeby coś upiec, ognisko musi płonąć albo się żarzyć.');
+                if (!canRoastOn(fire)) this.notice(roastWord(type) === 'odparowywanie' ? 'Żeby odparować sok na syrop, ognisko musi płonąć albo się żarzyć.' : isDrink(getRoast(type)) ? 'Żeby zaparzyć zioła, ognisko musi płonąć albo się żarzyć.' : 'Żeby coś upiec, ognisko musi płonąć albo się żarzyć.');
             } else if (type === 'fire_starter') {
                 if (fire.phase === 'unlit' && (fire.logs.length < 6 || !fire.tinder)) this.notice(`Potrzeba 6 polan i podpałki (${fire.logs.length}/6).`);
                 else if (fire.phase === 'unlit' && !canIgnite(fire)) { this.noticeAt = -10; this.notice(tooCold(fire)); }
@@ -339,8 +339,10 @@ export class Campfires {
         this.roast.time += dt * cookSpeed(campfireTemp(fire));
         if (Math.floor(this.roast.time * 2.5) !== Math.floor(before * 2.5)) game.swingArm();
         if (Math.floor(this.roast.time / 0.9) !== Math.floor(before / 0.9)) game.sounds?.play('sizzle');
-        if (this.roast.time < ROAST_SECONDS) {
-            this.notice(`${isDrink(roasted) ? 'Parzenie' : 'Pieczenie'}: ${Math.round(this.roast.time / ROAST_SECONDS * 100)}% — trzymaj PPM`);
+        const needed = roastSeconds(type);
+        if (this.roast.time < needed) {
+            const word = roastWord(type);
+            this.notice(`${word[0].toUpperCase()}${word.slice(1)}: ${Math.round(this.roast.time / needed * 100)}% — trzymaj PPM`);
             return;
         }
         this.roast = null;

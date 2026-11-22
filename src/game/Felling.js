@@ -232,6 +232,9 @@ export class Felling {
         const fall = { id: this.nextId++, scan, direction, trunk: scan.trunk, time: 0, leaves: leaves.length,
             loot: this.leafLoot(leaves), sample: leaves.filter((_, index) => index % Math.max(1, Math.floor(leaves.length / 36)) === 0) };
 
+        // Nacięcia w pniaku (1.41.0): ścięte drzewo niczego już nie daje.
+        if (scan.trunk) game.treeTaps?.felled([...scan.cut, ...scan.stump]);
+
         if (scan.trunk) {
             // Plan ułożenia liczymy PRZED usunięciem bloków: korona własnego
             // drzewa nie jest przeszkodą (liście się łamią).

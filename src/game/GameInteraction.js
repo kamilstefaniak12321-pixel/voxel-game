@@ -203,6 +203,10 @@ export class GameInteraction {
         const torchInteraction = !fireInteraction && placing && !breakHeld && placePressed &&
             (this.torchBurn?.interact(this.currentHit, this.selectedBlock) || dyeTorch(this, this.currentHit, this.selectedBlock));
 
+        // Nacięcie w pniu (1.41.0, dary pnia): nóż, kubek, zbiór żywicy i soku.
+        const tapInteraction = !fireInteraction && !torchInteraction && !shapeInteraction && !chestInteraction && placing && !breakHeld && placePressed &&
+            Boolean(this.treeTaps?.interact(this.currentHit, this.selectedBlock, this.player.crouching));
+
         // Sen na gołej ziemi: kucnięcie + PPM pustą ręką w ziemię pod nogami.
         const groundSleep = !shapeInteraction && !chestInteraction && !fireInteraction && placing && !breakHeld && placePressed &&
             this.player.crouching && !this.selectedBlock && this.player.onGround && this.currentHit?.hit &&
@@ -211,7 +215,7 @@ export class GameInteraction {
         if (chestInteraction || shapeInteraction || groundSleep) {
             // Ekwipunek ze skrzynią już się otwiera / stół i furtka obsłużone.
         }
-        else if (fireInteraction || torchInteraction) {
+        else if (fireInteraction || torchInteraction || tapInteraction) {
             this.currentHit = this.raycast.castFromCamera(this.camera);
         }
         else if (placing && stripping) {

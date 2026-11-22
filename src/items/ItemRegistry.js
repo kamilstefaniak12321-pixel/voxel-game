@@ -222,6 +222,14 @@ export const ITEM_TYPES = {
     tea_heal: { name: 'Healing Infusion', label: 'Napar leczniczy', icon: 'tea_heal' },
     tea_vigor: { name: 'Invigorating Infusion', label: 'Napar wzmacniający', icon: 'tea_vigor' },
 
+    // Dary pnia (1.41.0, blocks/treeGifts.js): soki z nacięcia w pniu
+    // (nóż + gliniany kubek) i syrop z soku klonowego.
+    birch_sap: { name: 'Birch Sap', label: 'Sok brzozowy', icon: 'birch_sap' },
+    maple_sap: { name: 'Maple Sap', label: 'Sok klonowy', icon: 'maple_sap' },
+    palm_sap: { name: 'Palm Sap', label: 'Sok palmowy', icon: 'palm_sap' },
+    baobab_water: { name: 'Baobab Water', label: 'Woda z baobabu', icon: 'baobab_water' },
+    maple_syrup: { name: 'Maple Syrup', label: 'Syrop klonowy', icon: 'maple_syrup' },
+
     // Zwój kory z okorowanej siekierą brzozy. Kora pozostałych drzew
     // dopisuje się niżej sama (od 0.100.0 - items/bark.js).
     birch_bark: {

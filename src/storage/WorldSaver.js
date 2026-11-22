@@ -78,6 +78,8 @@ export class WorldSaver {
         // Paliwo pochodni (game/TorchBurn.js, 1.35.0) - ustawia Game.
         this.torchBurn = null;
         this.savedTorchVersion = -1;
+        this.treeTaps = null;
+        this.savedTapVersion = -1;
 
 
         // Czas od ostatniego zapisu i od pierwszej niezapisanej zmiany.
@@ -240,6 +242,8 @@ export class WorldSaver {
             if (this.woodpiles) this.worldInfo.woodpiles = this.woodpiles.getState();
             const torchVersion = this.torchBurn?.version ?? 0;
             if (this.torchBurn) this.worldInfo.torchBurn = this.torchBurn.getState();
+            const tapVersion = this.treeTaps?.version ?? 0;
+            if (this.treeTaps) this.worldInfo.treeTaps = this.treeTaps.getState();
             const guests = this.worldInfo.guests;
             if (this.tables) this.worldInfo.carpenterTables = this.tables.getState();
             this.worldInfo.player = this.player.getState();
@@ -262,6 +266,7 @@ export class WorldSaver {
             this.savedSewingVersion = sewingVersion;
             this.savedWoodpileVersion = woodpileVersion;
             this.savedTorchVersion = torchVersion;
+            this.savedTapVersion = tapVersion;
             this.savedGuests = guests;
             this.diagnostic('info', 'world.saved', 'Zakończono zapis świata.', {
                 chunks: chunks.length, immediate, wallMs: performance.now() - diagnosticStart
@@ -312,7 +317,8 @@ export class WorldSaver {
             (this.tables && this.savedTableVersion !== (this.tables.version ?? 0)) ||
             (this.sewingTables && this.savedSewingVersion !== (this.sewingTables.version ?? 0)) ||
             (this.woodpiles && this.savedWoodpileVersion !== (this.woodpiles.version ?? 0)) ||
-            (this.torchBurn && this.savedTorchVersion !== (this.torchBurn.version ?? 0));
+            (this.torchBurn && this.savedTorchVersion !== (this.torchBurn.version ?? 0)) ||
+            (this.treeTaps && this.savedTapVersion !== (this.treeTaps.version ?? 0));
     }
 
     // Wywoływane co klatkę z pętli gry.

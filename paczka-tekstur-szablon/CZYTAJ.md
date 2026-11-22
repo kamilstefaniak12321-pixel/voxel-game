@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.37.0)
+# Paczka tekstur - szablon (Various Roots 1.40.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -108,6 +108,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/baobab/stripped_side.png` | Okorowany pień baobabu, Leżący pień baobabu (okorowany) |
 | `bloki/baobab/stripped_top.png` | Okorowany pień baobabu, Leżący pień baobabu (okorowany) |
 | `bloki/baobab_bark.png` | Kora baobabu |
+| `bloki/baobab_water.png` | Woda z baobabu |
 | `bloki/basalt_side.png` | Bazalt |
 | `bloki/basalt_top.png` | Bazalt |
 | `bloki/bast.png` | Łyko |
@@ -129,6 +130,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/birch_log_side.png` | Pień brzozy, Leżący pień brzozy |
 | `bloki/birch_log_top.png` | Pień brzozy, Leżący pień brzozy |
 | `bloki/birch_planks.png` | Schody brzozowe, Półblok brzozowy, Furtka brzozowa, Stół stolarski brzozowy, Łóżko brzozowe (pościelone), Łóżko brzozowe (stelaż), Stół krawiecki, Deski brzozowe |
+| `bloki/birch_sap.png` | Sok brzozowy |
 | `bloki/birch_sapling.png` | Sadzonka brzozy |
 | `bloki/birch_stripped_side.png` | Okorowany pień brzozy, Leżący pień brzozy (okorowany) |
 | `bloki/birch_stripped_top.png` | Okorowany pień brzozy, Leżący pień brzozy (okorowany) |
@@ -548,6 +550,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/maple/stripped_side.png` | Okorowany pień klonu, Leżący pień klonu (okorowany) |
 | `bloki/maple/stripped_top.png` | Okorowany pień klonu, Leżący pień klonu (okorowany) |
 | `bloki/maple_bark.png` | Kora klonu |
+| `bloki/maple_sap.png` | Sok klonowy |
+| `bloki/maple_syrup.png` | Syrop klonowy |
 | `bloki/meteorite.png` | Meteoryt |
 | `bloki/mob_hedgehog_albino.png` | - |
 | `bloki/mob_hedgehog_brown.png` | - |
@@ -779,7 +783,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/oak_bark.png` | Kora dębu |
 | `bloki/oak_leaf_litter.png` | Opadłe liście dębu |
 | `bloki/oak_leaves.png` | Liście dębu |
-| `bloki/oak_log_side.png` | Ognisko, Stos drewna, Pień dębu, Leżący pień dębu |
+| `bloki/oak_log_side.png` | Kozioł, Ognisko, Stos drewna, Pień dębu, Leżący pień dębu |
 | `bloki/oak_log_top.png` | Pień dębu, Leżący pień dębu |
 | `bloki/oak_planks.png` | Schody dębowe, Półblok dębowy, Furtka dębowa, Stół stolarski dębowy, Łóżko dębowe (pościelone), Łóżko dębowe (stelaż), Deski dębowe |
 | `bloki/oak_sapling.png` | Sadzonka dębu |
@@ -806,6 +810,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/olive/stripped_side.png` | Okorowany pień oliwki, Leżący pień oliwki (okorowany) |
 | `bloki/olive/stripped_top.png` | Okorowany pień oliwki, Leżący pień oliwki (okorowany) |
 | `bloki/olive_bark.png` | Kora oliwki |
+| `bloki/palm_sap.png` | Sok palmowy |
 | `bloki/pea_brush.png` | Siewki grochu, Groch, Groch (kwitnie), Groch (strąki) |
 | `bloki/pea_net.png` | Siatka na groch, Siewki grochu, Groch, Groch (kwitnie), Groch (strąki) |
 | `bloki/pergola_slats.png` | Młoda winorośl, Winorośl, Winorośl (zielone grona), Winorośl (winogrona), Młody chmiel, Chmiel, Chmiel (zielone szyszki), Chmiel (dojrzałe szyszki), Młode kiwi, Pnącze kiwi, Pnącze kiwi (kwitnie), Pnącze kiwi (owoce), Młoda marakuja, Marakuja, Marakuja (kwitnie), Marakuja (zielone owoce), Marakuja (owoce) |

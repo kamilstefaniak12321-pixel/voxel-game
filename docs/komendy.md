@@ -104,6 +104,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/kolysanie` | kołysanie drzew na wietrze (1.40.0, `docs/kolysanie.md`): z jaką siłą teraz się kołyszą |
 | `/kolysanie <0-100>` | ustawia siłę kołysania na stałe (100 - wichura, 0 - drzewa stoją) |
 | `/kolysanie pogoda` | wraca do wiatru z pogody |
+| `/naciecie` | dary pnia (1.41.0, `docs/dary-pnia.md`): które drzewa co dają, co płynie o tej porze roku, stan nacięcia pod celownikiem |
+| `/naciecie daj` | nóż i 4 gliniane kubki |
+| `/naciecie czas <godziny>` | przesuwa nacięcia o tyle godzin gry: sok kapie, nacięcia się zabliźniają (pora roku bez zmian) |
+| `/naciecie napelnij` | wiesza kubki i napełnia wszystkie nacięcia |
 | `/siekiera` | twardość i zużycie siekier (1.39.0, `docs/narzedzia.md`): tabela skał - twardość, jakie drewno tną, na ile ciosów wystarczają - i stan siekiery w ręce |
 | `/siekiera daj [skała]` | siekiera z podanej skały: `piaskowiec`, `wapien`, `lupek`, `kamien`, `bazalt`, `granit` |
 | `/siekiera stan <procent 1-100>` | ustawia stan siekiery w ręce (np. 25 - wyszczerbiona, 10 - pęknięta) |

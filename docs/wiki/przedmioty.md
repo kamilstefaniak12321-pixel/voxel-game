@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.40.0** - 255 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
+Wersja gry **1.41.0** - 260 przedmiotów. Przedmiotu nie da się postawić jak bloku; owoce i nasiona posadzone na ziemi (PPM) wyrastają w krzak albo drzewo, narzędzia przyspieszają kopanie.
 
 
 ## Drewno
@@ -137,6 +137,11 @@ Wersja gry **1.40.0** - 255 przedmiotów. Przedmiotu nie da się postawić jak b
 | <img src="ikony/tea_calm.png" width="32" height="32" alt=""> | **Napar na sen** | `tea_calm` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Kubek ziół na sen<br>**Służy też jako:** napar (spokój, ciepło w brzuchu); nie psuje się |
 | <img src="ikony/tea_heal.png" width="32" height="32" alt=""> | **Napar leczniczy** | `tea_heal` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Kubek ziół leczniczych<br>**Służy też jako:** napar (gojenie, ciepło w brzuchu); nie psuje się |
 | <img src="ikony/tea_vigor.png" width="32" height="32" alt=""> | **Napar wzmacniający** | `tea_vigor` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Kubek ziół wzmacniających<br>**Służy też jako:** napar (wigor, ciepło w brzuchu); nie psuje się |
+| <img src="ikony/birch_sap.png" width="32" height="32" alt=""> | **Sok brzozowy** | `birch_sap` | **Służy też jako:** do picia: sok (pokrzepienie); nie psuje się |
+| <img src="ikony/maple_sap.png" width="32" height="32" alt=""> | **Sok klonowy** | `maple_sap` | **Służy też jako:** do picia: sok; odparowywanie nad ogniskiem: Syrop klonowy; nie psuje się |
+| <img src="ikony/palm_sap.png" width="32" height="32" alt=""> | **Sok palmowy** | `palm_sap` | **Służy też jako:** do picia: sok (pokrzepienie); nie psuje się |
+| <img src="ikony/baobab_water.png" width="32" height="32" alt=""> | **Woda z baobabu** | `baobab_water` | **Służy też jako:** do picia: woda (orzeźwienie); nie psuje się |
+| <img src="ikony/maple_syrup.png" width="32" height="32" alt=""> | **Syrop klonowy** | `maple_syrup` | **Skąd:** nad płonącym ogniskiem (trzymany PPM): Sok klonowy<br>**Służy też jako:** do picia: syrop (ciepło w brzuchu); nie psuje się |
 | <img src="ikony/jablon_jablko.png" width="32" height="32" alt=""> | **Jabłko** | `jablon_jablko` | **Posadzony (PPM na ziemi):** Sadzonka jabłoni<br>**Skąd:** czasem z bloku: Liście jabłoni (5%); czasem z bloku: Liście jabłoni z jabłkami (5%); zbiór (PPM): Liście jabłoni z jabłkami; czasem z bloku: Liście jabłoni (jabłka odrastają) (5%); zniszczony blok: Opadłe owoce jabłoni<br>**Przydaje się do:** Czerwona lampa<br>**Służy też jako:** jedzenie; pieczenie nad ogniskiem: Pieczone jabłko; składnik do garnka; psuje się powoli; suszenie na słońcu: Suszone owoce |
 | <img src="ikony/olcha_szyszki.png" width="32" height="32" alt=""> | **Szyszeczki olchy** | `olcha_szyszki` | **Posadzony (PPM na ziemi):** Sadzonka olchy<br>**Skąd:** czasem z bloku: Liście olchy (6%)<br>**Przydaje się do:** Wieniec świerkowy |
 | <img src="ikony/wierzba_bazie.png" width="32" height="32" alt=""> | **Bazie** | `wierzba_bazie` | **Posadzony (PPM na ziemi):** Sadzonka wierzby<br>**Skąd:** czasem z bloku: Liście wierzby (6%)<br>**Przydaje się do:** Lampa |

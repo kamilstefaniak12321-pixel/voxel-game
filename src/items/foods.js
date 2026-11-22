@@ -99,7 +99,16 @@ export const FOODS = {
     ...DISH_FOODS,
 
     ...Object.fromEntries(Object.entries(TEAS).map(([effect, { tea }]) =>
-        [tea, { energy: 3, fullness: 30, kind: 'drink', effects: [effect, 'warmth'], returns: CUP }]))
+        [tea, { energy: 3, fullness: 30, kind: 'drink', effects: [effect, 'warmth'], returns: CUP }])),
+
+    // Dary pnia (1.41.0, blocks/treeGifts.js): soki z nacięcia w kubku.
+    // word - jak to nazwać zamiast "napar"; sok klonowy odparowany nad
+    // ogniskiem daje syrop (ROASTS).
+    birch_sap: { energy: 4, fullness: 25, kind: 'drink', word: 'sok', effects: ['tonic'], returns: CUP },
+    maple_sap: { energy: 6, fullness: 30, kind: 'drink', word: 'sok', effects: [], returns: CUP },
+    palm_sap: { energy: 8, fullness: 40, kind: 'drink', word: 'sok', effects: ['tonic'], returns: CUP },
+    baobab_water: { energy: 2, fullness: 20, kind: 'drink', word: 'woda', effects: ['refresh'], returns: CUP },
+    maple_syrup: { energy: 24, fullness: 150, kind: 'drink', word: 'syrop', effects: ['warmth'], returns: CUP }
 };
 
 // Pieczenie nad ogniskiem: surowe -> pieczone. Trzeba trzymać PPM przez
@@ -112,10 +121,30 @@ export const ROASTS = {
     pumpkin_slice: 'roasted_pumpkin_slice',
     zucchini: 'roasted_zucchini',
     // Kubek ziół -> napar.
-    ...Object.fromEntries(Object.values(TEAS).map(({ brew, tea }) => [brew, tea]))
+    ...Object.fromEntries(Object.values(TEAS).map(({ brew, tea }) => [brew, tea])),
+    // Sok klonowy -> syrop (1.41.0): odparowuje się go długo.
+    maple_sap: 'maple_syrup'
 };
 
 export const ROAST_SECONDS = 4;
+// Co trwa dłużej niż zwykłe pieczenie (sekundy trzymania PPM).
+const ROAST_TIMES = { maple_sap: 12 };
+export function roastSeconds(type) {
+    return Object.hasOwn(ROAST_TIMES, type ?? '') ? ROAST_TIMES[type] : ROAST_SECONDS;
+}
+
+// Jak nazwać to, co się robi z `type` nad ogniskiem.
+export function roastWord(type) {
+    const into = getRoast(type);
+    if (getFood(into)?.word === 'syrop') return 'odparowywanie';
+    return isDrink(into) ? 'parzenie' : 'pieczenie';
+}
+
+// Rodzaj jedzenia słowami ("napar", "sok", "lekka przekąska").
+export function kindLabel(type) {
+    const food = getFood(type);
+    return food ? food.word ?? KIND_LABELS[food.kind] : '';
+}
 
 export function getRoast(type) {
     return Object.hasOwn(ROASTS, type) ? ROASTS[type] : null;

@@ -16,7 +16,8 @@
 > nowy samouczek; od **1.38.0** kozły - **część B jest w grze cała**;
 > od **1.39.0** twardość i zużycie siekier ([narzedzia.md](narzedzia.md)),
 > od **1.40.0** kołysanie drzew ([kolysanie.md](kolysanie.md)) -
-> **część C jest w grze cała**.
+> **część C jest w grze cała**; od **1.41.0** dary pnia - nacinanie
+> nożem, żywica i soki ([dary-pnia.md](dary-pnia.md)).
 > Opis tego, co działa: [ogniska.md](ogniska.md),
 > [scinanie.md](scinanie.md), [powalone-drzewa.md](powalone-drzewa.md),
 > [kozly.md](kozly.md). Reszta czeka - kolejność w rozdziale 11.
@@ -521,7 +522,8 @@ Każda część to osobna wersja, grywalna sama.
 | B2 | **Powalone drzewa** - **1.37.0, w grze** | stare pnie w lesie jako pierwsze drewno (rozdział 9), spróchniałe drewno i próchno, gołą ręką już się nie zetnie, nowy samouczek ([powalone-drzewa.md](powalone-drzewa.md)) |
 | B3 | **Kozły** - **1.38.0, w grze** | kozioł z 3 konarów na obu końcach pnia: 3 razy szybsze cięcie, łupanie na opał kucając ([kozly.md](kozly.md)) |
 | C | **Narzędzia i kołysanie** | twardość skał, widoczne zużycie, kołysanie drzew |
-| D | **Dary pnia** | soki, żywice, guma, łyko - nacinanie nożem |
+| D1 | **Dary pnia: żywica i soki** - **1.41.0, w grze** | nacinanie nożem, żywica z iglastych, sok brzozowy, klonowy i palmowy, woda z baobabu do kubka, syrop klonowy ([dary-pnia.md](dary-pnia.md)) |
+| D2 | **Dary pnia: reszta** | guma, lateks, smocza krew, czerwona żywica, łyko, kora wierzbowa, garbnik |
 | E | **Pożar** | płonące drzewa i trawa, piorun, popiół, zwęglone pnie |
 | F | **Metal meteorytowy** | węgiel drzewny, dymarka, narzędzia z meteorytu, olbrzymy |
 

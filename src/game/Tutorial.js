@@ -83,7 +83,7 @@ export const TUTORIAL_STEPS = [
         title: 'Zrób siekierę',
         text: 'Potrzebujesz trzech skał i patyka. Skałę wykopiesz spod ziemi albo znajdziesz na zboczach i brzegach. Otwórz ekwipunek ([inventory]) i w siatce wytwarzania ułóż: u góry dwie skały, pod nimi skała i patyk.',
         touch: 'Potrzebujesz trzech skał i patyka. Skałę wykopiesz spod ziemi albo znajdziesz na zboczach i brzegach. Otwórz ekwipunek (skrzynka u góry ekranu) i w siatce wytwarzania ułóż: u góry dwie skały, pod nimi skała i patyk.',
-        hint: 'Przycisk Przepisy w ekwipunku pokazuje wszystko, co da się zrobić. Kilof to 2 skały i patyk, łopata - skała nad patykiem, nóż - skała i patyk na ukos.',
+        hint: 'Skała ma znaczenie: siekiera z piaskowca albo wapienia bierze tylko miękkie drewno (świerk, sosna, lipa), z kamienia - prawie każde. Kilof to 2 skały i patyk, łopata - skała nad patykiem.',
         done: (t) => t.saw('crafted:axe') || t.has(isAxe)
     },
     {

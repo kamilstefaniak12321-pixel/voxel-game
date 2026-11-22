@@ -125,6 +125,13 @@ export class Felling {
         scan = this.target.scan = scanTree(game.world, x, y, z);
         if (!scan || !scan.living || scan.blocked || scan.prop) return false;
 
+        // Za miękka siekiera na to drewno (1.39.0, ToolWear.js).
+        const tooSoft = game.toolWear?.cutCheck(scan.species);
+        if (tooSoft) {
+            if (pressed) { this.noticeAt = -Infinity; this.notice(tooSoft); }
+            return true;
+        }
+
         // Zamach.
         const work = game.wellbeing?.effects?.work ?? 1;
         this.cooldown = CHOP_SECONDS / work;
@@ -157,6 +164,8 @@ export class Felling {
         }
         notch.hits[side]++;
         notch.total++;
+        // Cios zużywa siekierę (liczone przed nim - po ciosie może jej nie być).
+        const wear = game.toolWear?.forChop(scan.species) ?? 0;
         notch.version++;
         for (const name of Object.keys(notch.hits)) notch.sides[name] = notch.hits[name] / notch.limit;
         game.achieve?.('treeChopped', { species: scan.species, width: scan.width, total: notch.total, needed: notch.needed });
@@ -166,6 +175,7 @@ export class Felling {
             this.target = null;
             this.fell(scan, direction);
         }
+        if (wear > 0) game.toolWear.apply(wear);
         return true;
     }
 

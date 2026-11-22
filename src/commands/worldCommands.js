@@ -57,6 +57,8 @@ import { placeFallenInWorld, fallenSpecies, FALLEN_DIRECTIONS, FALLEN_GRID, FALL
 import { nearbySpecies } from '../game/StarterLog.js';
 import { trunkSpan, SPLIT_COUNT, NO_SAWHORSE_SLOW } from '../game/Sawhorses.js';
 import { sawhorseType } from '../blocks/sawhorse.js';
+import { ROCK_HARDNESS, maxWoodHardness, canCut, chopsUntilBroken, isWearing, conditionOf, wearStage, STAGE_WORDS } from '../items/toolWear.js';
+import { stoneToolType } from '../items/stoneTools.js';
 import { lyingLogType } from '../blocks/lyingLogs.js';
 import { barkType } from '../items/bark.js';
 import { seasonedWood, freshWet, wetOf, setWet, wetWord, wetIgnite, wetHeat, isWet, DRY_WET } from '../items/moisture.js';
@@ -1893,6 +1895,48 @@ export const WORLD_COMMANDS = [
             }
 
             throw new CommandError('Użycie: /pochodnia | /pochodnia daj | /pochodnia paliwo <procent> | /pochodnia czas <minuty>');
+
+        }
+    },
+
+    {
+        name: 'siekiera',
+        aliases: ['narzedzia', 'twardosc', 'axe'],
+        usage: '/siekiera | /siekiera daj [skała] | /siekiera stan <procent 1-100>',
+        description: 'Twardość i zużycie siekier (1.39.0): bez słowa - tabela skał (twardość, jakie drewno tną, na ile ciosów w dąb, brzozę i sosnę wystarczają) i stan siekiery w ręce; "daj" - siekiera z podanej skały (piaskowiec, wapien, lupek, kamien, bazalt, granit); "stan" ustawia stan siekiery w ręce w procentach.',
+
+        run(args, { game }) {
+
+            const word = simplify(args[0] ?? '');
+            const rocks = { piaskowiec: 'sandstone', sandstone: 'sandstone', wapien: 'limestone', limestone: 'limestone', lupek: 'slate', slate: 'slate',
+                kamien: 'stone', stone: 'stone', bazalt: 'basalt', basalt: 'basalt', granit: 'granite', granite: 'granite' };
+
+            if (['daj', 'give'].includes(word)) {
+                const rock = rocks[simplify(args[1] ?? 'kamien')];
+                if (!rock) throw new CommandError('Skała: piaskowiec, wapien, lupek, kamien, bazalt albo granit.');
+                const type = stoneToolType('axe', rock);
+                game.inventory.add(type, 1);
+                return `Dano: ${getItemLabel(type).toLowerCase()} (twardość ${ROCK_HARDNESS[rock]}, tnie drewno do twardości ${maxWoodHardness(ROCK_HARDNESS[rock])}).`;
+            }
+
+            const held = game.inventory.selectedItem;
+
+            if (['stan', 'zuzycie', 'wear'].includes(word)) {
+                const percent = Number(args[1]);
+                if (!(percent >= 1 && percent <= 100)) throw new CommandError('Podaj stan od 1 do 100, np. /siekiera stan 25.');
+                if (!held || !isWearing(held.type)) throw new CommandError('Weź siekierę do ręki.');
+                if (percent >= 100) delete held.fresh; else held.fresh = percent / 100;
+                return `Stan siekiery: ${percent}% (${STAGE_WORDS[wearStage(percent / 100)]}).`;
+            }
+
+            if (word) throw new CommandError('Użycie: /siekiera | /siekiera daj [skała] | /siekiera stan <procent>');
+
+            const chops = (value) => (Number.isFinite(value) ? value : 'bez zużycia');
+            const lines = Object.entries(ROCK_HARDNESS).sort((a, b) => a[1] - b[1]).map(([rock, hardness]) =>
+                `${getItemLabel(stoneToolType('axe', rock))}: twardość ${hardness}, drewno do ${maxWoodHardness(hardness)}; ciosów - dąb ${canCut(stoneToolType('axe', rock), 7) ? chops(chopsUntilBroken(hardness, 7)) : 'nie bierze'}, ` +
+                `brzoza ${canCut(stoneToolType('axe', rock), 5) ? chops(chopsUntilBroken(hardness, 5)) : 'nie bierze'}, sosna ${chops(chopsUntilBroken(hardness, 3))}`);
+            const mine = held && isWearing(held.type) ? ` W ręce: ${getItemLabel(held.type).toLowerCase()}, stan ${Math.round(conditionOf(held) * 100)}% (${STAGE_WORDS[wearStage(conditionOf(held))]}).` : '';
+            return `Siekiera tnie drewno najwyżej półtora raza twardsze od siebie; dwa razy miększe jej nie zużywa. ${lines.join('. ')}.${mine}`;
 
         }
     },

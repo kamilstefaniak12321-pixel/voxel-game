@@ -909,6 +909,8 @@ export class GameInteraction {
         const tool = getTool(this.selectedBlock);
 
         const drops = this.breakDrops(type, hit.block, tool);
+        // Zużycie siekiery za ten blok (1.39.0) - liczone, póki blok stoi.
+        const toolWear = this.toolWear?.forBlock(type, hit.block, tool) ?? 0;
 
         // Te same sąsiednie bloki, które usuwa World.setBlock:
         // roślina nad podłożem i dekoracje przylegające do podpory.
@@ -982,6 +984,10 @@ export class GameInteraction {
         this.debris.burst(type, x, y, z);
 
         this.achieve('blockBroken', { type, mode: this.mode, tool });
+
+        // Wykopany pień zużywa siekierę (1.39.0, ToolWear.js).
+
+        if (toolWear > 0) this.toolWear.apply(toolWear);
 
         // Ścięta gołą ręką trawa albo kwiat: nic nie zostało - podpowiedź
         // (nie częściej niż co pół minuty).

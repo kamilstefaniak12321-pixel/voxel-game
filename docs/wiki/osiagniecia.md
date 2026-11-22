@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.38.0** - 145 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.39.0** - 147 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -81,6 +81,7 @@ Wersja gry **1.38.0** - 145 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/spruce_firewood.png" width="32" height="32" alt=""> | **Zapas na zimę** | Ułóż pełny stos drewna: 16 polan (kucnij i kliknij ziemię polanem, potem dokładaj). | „Kto latem układa, ten zimą nie szczęka zębami.” |
 | <img src="ikony/torch_stub.png" width="32" height="32" alt=""> | **Drugie życie ogarka** | Dolej żywicy albo oliwek do wypalonej pochodni (PPM na ogarku). | „Patyk ten sam, płomień nowy. Recykling starszy niż koło.” |
 | <img src="ikony/kapok_firewood.png" width="32" height="32" alt=""> | **Pogoda wygrała** | Bądź przy ognisku, które zgasił deszcz. | „Następnym razem dach. Albo dąb.” |
+| <img src="ikony/stick.png" width="32" height="32" alt=""> | **Do ostatniego ciosu** | Zużyj siekierę tak, żeby pękła w ręce. | „Został patyk. Połowa nowej siekiery.” |
 | <img src="ikony/sawhorse.png" width="32" height="32" alt=""> | **Na kozłach** | Postaw kozły na obu końcach leżącego pnia (kozioł to 3 konary). | „Siekiera nareszcie bije w drewno, a nie w ziemię.” |
 | <img src="ikony/oak_firewood.png" width="32" height="32" alt=""> | **Od razu na opał** | Kucając, połup siekierą pień leżący na kozłach. | „Cztery polana z metra. Zima może przychodzić.” |
 | <img src="ikony/rotten_wood.png" width="32" height="32" alt=""> | **Stare, ale jare** | Wyłam gołą ręką spróchniałe drewno z powalonego pnia w lesie. | „Leżało tu dziesięć lat. Czekało właśnie na ciebie.” |
@@ -118,6 +119,7 @@ Wersja gry **1.38.0** - 145 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/tunic_linen.png" width="32" height="32" alt=""> | **Od stóp do głów** | Ubierz się cały: coś na głowę, na tułów, na nogi i na stopy. | „Wreszcie można iść do ludzi.” |
 | <img src="ikony/olive_firewood.png" width="32" height="32" alt=""> | **Gorąco jak w kuźni** | Rozgrzej ognisko powyżej 930° - potrzeba najgorętszego drewna: oliwki, akacji albo namorzynu. | „Jeszcze trochę i będzie można kuć. Na razie można się poparzyć.” |
 | <img src="ikony/birch_firewood.png" width="32" height="32" alt=""> | **Syczy, ale płonie** | Rozpal ognisko, w którym na wierzchu leży mokre polano. | „Więcej dymu niż ognia. Ale ogień też jest - gdzieś tam, w środku.” |
+| <img src="ikony/axe_granite.png" width="32" height="32" alt=""> | **Twarda sztuka** | Zetnij drzewo o najtwardszym drewnie: akację, namorzyn albo oliwkę. Bierze je tylko siekiera z bazaltu albo granitu. | „Kamienna tylko by się wyszczerbiła.” |
 | <img src="ikony/prochno_zar.png" width="32" height="32" alt=""> | **Niosący ogień** | Rozpal ognisko tlącym się próchnem: zajmij próchno od ognia (PPM), zanieś i połóż na ułożonym stosie. | „Starter ognia? Po co, skoro ogień już jest.” |
 | <img src="ikony/konar.png" width="32" height="32" alt=""> | **Zna las od pnia** | Zetnij drzewa ośmiu różnych gatunków. | „Każde pada inaczej. Każde tak samo głośno.” |
 | <img src="ikony/spruce_log.png" width="32" height="32" alt=""> | **Mówili, żeby nie stać** *(sekret)* | Daj się przygnieść padającemu drzewu. | „Drzewo pada od ciebie. Chyba że staniesz z drugiej strony.” |

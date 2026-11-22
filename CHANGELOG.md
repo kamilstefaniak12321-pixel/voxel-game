@@ -11,6 +11,26 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.40.0 - Kołysanie drzew
+
+PR #193. Druga wersja części C projektu drewna - część C jest w grze
+cała (`docs/drewno.md`, opis: `docs/kolysanie.md`).
+
+- **Drzewa kołyszą się na wietrze**: pień z koroną wygina się - przy
+  ziemi wcale, im wyżej, tym bardziej.
+- **Zależy od gatunku**: mocno - palma, brzoza, osika, eukaliptus,
+  świerk, jodła, modrzew; średnio - sosna, lipa, wierzba, klon...;
+  ledwo - dąb, buk, oliwka, akacja, cedr; baobab, sekwoja, puchowiec
+  i banian stoją (ruszają się tylko liście).
+- **Zależy od pogody**: w ciszy drzewa ledwo oddychają, w wichurze
+  wyginają się w stronę, w którą wieje.
+- To sam wygląd - kolizje i celowanie bez zmian. Pień postawiony ręką
+  (bez korony nad sobą) stoi.
+- Liczy to karta graficzna; wyłącza się razem z kołysaniem roślin
+  (Ustawienia → Modele).
+- Komenda `/kolysanie`.
+- Luki (cienie, dalekie drzewa) - `docs/kolysanie.md`.
+
 ## 1.39.0 - Twardość siekier
 
 PR #192. Pierwsza wersja części C projektu drewna (`docs/drewno.md`,

@@ -11,8 +11,31 @@ export const plantWindUniforms = {
     uSeaWave: { value: [0, 1, 0, 64] },
     // Kołysanie roślin na wietrze: 1 - wł., 0 - wył. (Ustawienia -> Modele).
     // Liście na wodzie dalej falują razem z wodą.
-    uPlantSway: { value: 1 }
+    uPlantSway: { value: 1 },
+    // Kołysanie drzew (1.40.0, blocks/treeSway.js): xy - kierunek wiatru
+    // (x, z świata), z - siła 0-1 (0 - wyłączone), w - wolne. Ustawia Game.
+    uTreeWind: { value: [1, 0, 0.12, 0] }
 };
+
+// Wygięcie drzewa: wierzchołek pnia albo liści niesie w plantMotion.x
+// wysokość nad ziemią × pierwiastek z giętkości gatunku (bajt, ćwierć
+// bloku na krok). Przy ziemi zero, wyżej rośnie z kwadratem. Faza zależy
+// tylko od miejsca w świecie (wolno zmienna), więc całe drzewo idzie razem.
+// Stałe: blocks/treeSway.js (SWAY_STEPS, SWAY_BEND, SWAY_MAX).
+export const TREE_SWAY_GLSL = /* glsl */ `
+    uniform vec4 uTreeWind;
+    vec3 treeSwayOffset(vec3 worldPosition, float code, float time) {
+        if (code <= 0.0 || uTreeWind.z <= 0.0) return vec3(0.0);
+        float height = code * 63.75;
+        float bend = min(0.45, height * height * 0.0016) * uTreeWind.z;
+        float phase = worldPosition.x * 0.06 + worldPosition.z * 0.045;
+        // Wiatr przygina drzewo i puszcza: stałe wychylenie plus powolne podmuchy.
+        float gust = 0.5 + 0.34 * sin(time * 0.8 + phase) + 0.16 * sin(time * 1.9 + phase * 1.7);
+        float side = 0.22 * sin(time * 1.1 + phase * 1.3);
+        vec2 push = (uTreeWind.xy * gust + vec2(-uTreeWind.y, uTreeWind.x) * side) * bend;
+        return vec3(push.x, 0.0, push.y);
+    }
+`;
 
 export const plantShadowState = { natural: false };
 

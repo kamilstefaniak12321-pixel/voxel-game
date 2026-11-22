@@ -551,6 +551,8 @@ function addLeafParts(id, renderData, lx, y, lz, faceCount, baseX, baseZ, faceGr
 
     const wx = baseX + lx, wz = baseZ + lz;
 
+    const leafSwayBase = swayBase(renderData, lx, y, lz);
+
     leafLightReady.fill(0);
 
     for (const faces of faceGroups) {
@@ -597,9 +599,10 @@ function addLeafParts(id, renderData, lx, y, lz, faceCount, baseX, baseZ, faceGr
             const uMin = Math.min(uv[0], uv[2], uv[4], uv[6]), uMax = Math.max(uv[0], uv[2], uv[4], uv[6]);
             const vMin = Math.min(uv[1], uv[3], uv[5], uv[7]), vMax = Math.max(uv[1], uv[3], uv[5], uv[7]);
 
-            // Kołysanie części: siła i faza z miejsca bloku i numeru części.
-            const amplitude = 150 + plantRandom(wx, y, wz, 61 + part.partIndex) * 105;
-            const phase = plantRandom(wx, y, wz, 71 + part.partIndex) * 255;
+            // Drżenie części: faza z miejsca bloku i numeru części (1-255;
+            // siła wynika z fazy). Od 1.40.0 w x jest wysokość dla kołysania
+            // całego drzewa (swayBase).
+            const phase = 1 + plantRandom(wx, y, wz, 71 + part.partIndex) * 254;
 
             const face = BLOCK_FACES[faceIndex];
 
@@ -620,7 +623,7 @@ function addLeafParts(id, renderData, lx, y, lz, faceCount, baseX, baseZ, faceGr
                 uvBuffer[t + i * 2] = uMin + part.uv[i][0] * (uMax - uMin);
                 uvBuffer[t + i * 2 + 1] = vMax - part.uv[i][1] * (vMax - vMin);
 
-                plantMotionBuffer[t + i * 2] = amplitude;
+                plantMotionBuffer[t + i * 2] = leafSwayBase < 0 ? 0 : swayByte(y + corner[1] - leafSwayBase, renderData.sway);
                 plantMotionBuffer[t + i * 2 + 1] = phase;
 
                 const values = leafValues.fill(0);
@@ -746,6 +749,53 @@ let surfaceEmissionBuffer = null;
 let surfaceProfileBuffer = null;
 let tintBuffer = null;
 let plantMotionBuffer = null;
+
+// ------------------------------------------------------------
+// Kołysanie drzew (1.40.0, blocks/treeSway.js): wierzchołek pnia albo
+// liści niesie w plantMotion.x wysokość nad ziemią (× giętkość gatunku).
+// Ziemię pod kolumną i najwyższe liście w kolumnie liczymy raz na
+// kolumnę chunka (dopiero gdy stoi w niej drzewo).
+// ------------------------------------------------------------
+let swayChunk = null;
+let swayStamp = 0;
+const swayColumnStamp = new Uint32Array(S * S);
+const swayGroundY = new Int16Array(S * S);
+const swayLeafY = new Int16Array(S * S);
+const swayLeafTree = new Array(S * S).fill(null);
+
+function swayColumn(lx, lz) {
+    const column = lz * S + lx;
+    if (swayColumnStamp[column] === swayStamp) return column;
+    swayColumnStamp[column] = swayStamp;
+    let leafY = -1, leafTree = null, ground = 0;
+    for (let y = Math.min(swayChunk.maxY, H - 1); y >= 0; y--) {
+        const id = swayChunk.getId(lx, y, lz);
+        if (id === 0) continue;
+        const data = blockRenderData[id];
+        // Bloki drzewa (pień, liście) to nie ziemia.
+        if (data && data.sway !== null) {
+            if (leafY < 0 && data.leaves) { leafY = y; leafTree = data.swayTree; }
+            continue;
+        }
+        if (isSolidId(id) && isOpaqueId(id)) { ground = y + 1; break; }
+    }
+    swayGroundY[column] = ground;
+    swayLeafY[column] = leafY;
+    swayLeafTree[column] = leafTree;
+    return column;
+}
+
+// Ziemia pod blokiem drzewa w (lx, y, lz), od której liczy się wygięcie,
+// albo -1: blok się nie kołysze (olbrzym, pień bez własnej korony nad
+// sobą - np. ściana domu z pni).
+function swayBase(renderData, lx, y, lz) {
+    if (!(renderData.sway > 0) || swayChunk === null || lx < 0 || lz < 0 || lx >= S || lz >= S) return -1;
+    const column = swayColumn(lx, lz);
+    if (renderData.swayLog && !(swayLeafY[column] > y && swayLeafTree[column] === renderData.swayTree)) return -1;
+    return swayGroundY[column];
+}
+
+const swayByte = (height, scale) => (height <= 0 ? 0 : Math.min(255, Math.round(height * scale)));
 let splitBuffer = null;
 
 
@@ -1888,6 +1938,8 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
 
     const tinted = renderData.tint && meshTint !== null;
 
+    const cubeSwayBase = renderData.sway === null ? -1 : swayBase(renderData, lx, y, lz);
+
     // Górny blok wody (nad nim nie ma wody ani pełnego bloku) jest
     // trochę niższy - jego górne rogi są na wysokości WATER_SURFACE.
 
@@ -1988,8 +2040,10 @@ function addCubeFaces(id, renderData, lx, y, lz, faceCount, baseX, baseZ, textur
             // Water reuses the otherwise idle plant bytes: x = wave weight,
             // y = top (255), bottom (0), side (128). Side upper edges receive
             // the same wave as the top; integer-height waterfall joins do not.
+            // (Pień i liście drzewa - 1.40.0 - niosą tu wysokość do kołysania.)
             plantMotionBuffer[t + i * 2] = water && corner[1] === 1 && height < 1
-                ? Math.round(height / WATER_SURFACE * 255) : 0;
+                ? Math.round(height / WATER_SURFACE * 255)
+                : cubeSwayBase < 0 ? 0 : swayByte(y + corner[1] - cubeSwayBase, renderData.sway);
             plantMotionBuffer[t + i * 2 + 1] = water
                 ? face.normal[1] > 0 ? 255 : face.normal[1] < 0 ? 0 : 128 : 0;
 
@@ -2313,6 +2367,9 @@ function* buildChunkGeometrySteps(chunk, world, { terrain, plants: includePlants
     if (overrides) for (const event of overrides.values()) height = Math.max(height, event.y + 1);
 
     meshFlow = chunk.flow;
+
+    swayChunk = chunk;
+    swayStamp = (swayStamp + 1) >>> 0 || 1;
 
     meshTint = chunk.tint ?? null;
     meshHabitats = chunk.habitats ?? null;

@@ -6,6 +6,7 @@ import { GROUPS, RECIPES } from './recipes.js';
 import { stoneToolInfo, stoneToolResult } from '../items/stoneTools.js';
 import { choppedFresh } from '../items/moisture.js';
 import { isTorchItem, fuelOf } from '../items/torchFuel.js';
+import { isWearing, repairedCondition } from '../items/toolWear.js';
 
 // ------------------------------------------------------------
 // WYTWARZANIE (crafting) - siatka 2 x 2 w ekwipunku
@@ -331,6 +332,14 @@ export function gridResult(grid) {
         return null;
     }
 
+    // Naprawa siekiery smołą klejącą (1.42.0, items/toolWear.js): wynik to
+    // ta sama siekiera w lepszym stanie; całej się nie klei.
+    if (recipe.repair) {
+        const tool = grid.find((item) => item && isWearing(item.type));
+        const fresh = repairedCondition(tool);
+        return fresh === null ? null : { recipe, type: tool.type, count: 1, fresh };
+    }
+
     const type = recipe.stoneTool ? stoneToolResult(recipe.stoneTool, grid) : recipe.result[0];
 
     // Pochodnia z pochodni (barwienie, 1.35.0): paliwa tyle, ile miała.
@@ -584,8 +593,8 @@ export function fillGrid(inventory, recipe, times = 1) {
         if (type) {
 
             const count = keepsIngredient(recipe, type) ? 1 : possible;
-            inventory.remove(type, count);
-            inventory.craft[index] = { type, count };
+            // Ze stanem (świeżość, zużycie siekiery, wygląd) - nie jako nowe.
+            inventory.craft[index] = inventory.removeStack(type, count) ?? { type, count };
 
         }
 

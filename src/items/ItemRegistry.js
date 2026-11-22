@@ -229,6 +229,16 @@ export const ITEM_TYPES = {
     palm_sap: { name: 'Palm Sap', label: 'Sok palmowy', icon: 'palm_sap' },
     baobab_water: { name: 'Baobab Water', label: 'Woda z baobabu', icon: 'baobab_water' },
     maple_syrup: { name: 'Maple Syrup', label: 'Syrop klonowy', icon: 'maple_syrup' },
+    // Druga połowa darów (1.42.0): guma, lateks, żywice-barwniki, to, co
+    // z nich powstaje, i napar z kory wierzby.
+    tree_gum: { name: 'Tree Gum', label: 'Guma drzewna', icon: 'tree_gum' },
+    latex: { name: 'Latex', label: 'Bryłka lateksu', icon: 'latex', category: 'narzedzia' },
+    dragon_blood: { name: "Dragon's Blood", label: 'Smocza krew', icon: 'dragon_blood', category: 'narzedzia' },
+    kino: { name: 'Kino', label: 'Czerwona żywica eukaliptusa', icon: 'kino', category: 'narzedzia' },
+    pitch_glue: { name: 'Pitch Glue', label: 'Smoła klejąca', icon: 'pitch_glue', category: 'narzedzia' },
+    tannin: { name: 'Tannin', label: 'Garbnik', icon: 'tannin', category: 'narzedzia' },
+    brew_willow: { name: 'Cup of Willow Bark', label: 'Kubek kory wierzbowej', icon: 'brew_willow', category: 'owoce' },
+    tea_willow: { name: 'Willow Bark Infusion', label: 'Napar z kory wierzbowej', icon: 'tea_willow' },
 
     // Zwój kory z okorowanej siekierą brzozy. Kora pozostałych drzew
     // dopisuje się niżej sama (od 0.100.0 - items/bark.js).

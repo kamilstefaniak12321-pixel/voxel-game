@@ -29,6 +29,7 @@ export const DAY_SECONDS = DAY_LENGTH_MINUTES * 60;
 // Pola daru:
 //   item    - co się zbiera (żywica: sztuki; sok: kubek soku),
 //   vessel  - czy trzeba kubka (bez niego kapie na ziemię),
+//   solid   - w kubku ścina się w bryłkę: zbierasz ją, a kubek wraca (lateks),
 //   max     - ile najwięcej czeka w nacięciu (żywica: kropli; sok: 1 kubek),
 //   perDay  - ile przybywa na dobę w najlepszej porze, w pniu grubości 1,
 //   seasons - mnożnik w porach roku [wiosna, lato, jesień, zima],
@@ -57,6 +58,29 @@ export const GIFTS = {
     baobab_water: {
         item: 'baobab_water', vessel: true, max: 1, perDay: 2, seasons: [1, 1, 1, 1], openDays: 3,
         name: 'wodę', label: 'woda z baobabu', color: 0xbfd8e6
+    },
+
+    // 1.42.0 (druga połowa darów - docs/dary-pnia.md).
+    // Guma z wiśni i akacji: bursztynowe łzy na korze, jadalna, klei.
+    tree_gum: {
+        item: 'tree_gum', vessel: false, max: 3, perDay: 2, seasons: [0, 1, 0, 0], openDays: 5,
+        name: 'gumę', label: 'guma drzewna', color: 0xc9772a
+    },
+    // Lateks z banianu: białe mleko, w kubku ścina się w bryłkę
+    // (solid - zbierasz bryłkę, a kubek wraca do ręki).
+    latex: {
+        item: 'latex', vessel: true, solid: true, max: 1, perDay: 2, seasons: [1, 1, 1, 1], openDays: 3,
+        name: 'lateks', label: 'lateks', color: 0xf4f1e6
+    },
+    // Smocza krew z draceny: ciemnoczerwona żywica, płynie powoli.
+    dragon_blood: {
+        item: 'dragon_blood', vessel: false, max: 3, perDay: 1, seasons: [1, 1, 1, 1], openDays: 5,
+        name: 'smoczą krew', label: 'smocza krew', color: 0xa3161c
+    },
+    // Kino: czerwona żywica eukaliptusa.
+    kino: {
+        item: 'kino', vessel: false, max: 3, perDay: 2, seasons: [0, 1, 0, 0], openDays: 5,
+        name: 'czerwoną żywicę', label: 'czerwona żywica', color: 0x8c2f1a
     }
 };
 
@@ -66,7 +90,11 @@ export const TREE_GIFTS = {
     birch: 'birch_sap',
     maple: 'maple_sap',
     coconut_palm: 'palm_sap',
-    baobab: 'baobab_water'
+    baobab: 'baobab_water',
+    cherry: 'tree_gum', acacia: 'tree_gum',
+    banyan: 'latex',
+    dragon_tree: 'dragon_blood',
+    rainbow_eucalyptus: 'kino'
 };
 
 // Mnożniki pory doby dla soków (średnio w dobie ok. 1).

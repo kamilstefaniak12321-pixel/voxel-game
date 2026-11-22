@@ -17,7 +17,9 @@
 > od **1.39.0** twardość i zużycie siekier ([narzedzia.md](narzedzia.md)),
 > od **1.40.0** kołysanie drzew ([kolysanie.md](kolysanie.md)) -
 > **część C jest w grze cała**; od **1.41.0** dary pnia - nacinanie
-> nożem, żywica i soki ([dary-pnia.md](dary-pnia.md)).
+> nożem, żywica i soki, a od **1.42.0** guma, lateks, barwniki z żywic,
+> garbnik i napar z kory wierzby ([dary-pnia.md](dary-pnia.md)) -
+> **część D jest w grze cała**.
 > Opis tego, co działa: [ogniska.md](ogniska.md),
 > [scinanie.md](scinanie.md), [powalone-drzewa.md](powalone-drzewa.md),
 > [kozly.md](kozly.md). Reszta czeka - kolejność w rozdziale 11.
@@ -367,8 +369,9 @@ ma znaczenie.
 Bez soku: buk, olcha, osika, jabłoń, oliwka, jakaranda, miłorząb,
 cypryśnik, puchowiec, jukka (te dają owoce, włókno albo samo drewno).
 
-Do czego dokładnie służy klej i lateks - do ustalenia, gdy do nich
-dojdziemy.
+Do czego służy klej i lateks - ustalone 22.11.2026 (Kamil wybrał
+wszystkie trzy): naprawa siekiery smołą klejącą, lateks na ubraniu
+(mokre grzeje jak suche) i spoiwo w przepisach zamiast żywicy.
 
 ---
 
@@ -523,7 +526,7 @@ Każda część to osobna wersja, grywalna sama.
 | B3 | **Kozły** - **1.38.0, w grze** | kozioł z 3 konarów na obu końcach pnia: 3 razy szybsze cięcie, łupanie na opał kucając ([kozly.md](kozly.md)) |
 | C | **Narzędzia i kołysanie** | twardość skał, widoczne zużycie, kołysanie drzew |
 | D1 | **Dary pnia: żywica i soki** - **1.41.0, w grze** | nacinanie nożem, żywica z iglastych, sok brzozowy, klonowy i palmowy, woda z baobabu do kubka, syrop klonowy ([dary-pnia.md](dary-pnia.md)) |
-| D2 | **Dary pnia: reszta** | guma, lateks, smocza krew, czerwona żywica, łyko, kora wierzbowa, garbnik |
+| D2 | **Dary pnia: reszta** - **1.42.0, w grze** | guma, lateks, smocza krew, czerwona żywica, garbnik, napar z kory wierzby; smoła klejąca (naprawa siekiery), lateks na ubraniu ([dary-pnia.md](dary-pnia.md)) |
 | E | **Pożar** | płonące drzewa i trawa, piorun, popiół, zwęglone pnie |
 | F | **Metal meteorytowy** | węgiel drzewny, dymarka, narzędzia z meteorytu, olbrzymy |
 

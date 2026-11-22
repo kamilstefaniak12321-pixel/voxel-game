@@ -74,7 +74,7 @@ const manifest = textureManifest();
 
 {
     check(C.retsInto('len_wiazka') === 'flax_retted' && C.retsInto('nettle') === 'nettle_retted' && C.retsInto('linden_bark') === 'bast' &&
-        C.retsInto('oak_bark') === null && C.retsInto(null) === null && C.retsInto('toString') === null, 'Co się moczy');
+        C.retsInto('oak_bark') === 'tannin' && C.retsInto('birch_bark') === null && C.retsInto(null) === null && C.retsInto('toString') === null, 'Co się moczy');
     for (const [from, into] of Object.entries(C.RETTING)) check(itemExists(from) && itemExists(into), `${from} -> ${into}: przedmioty istnieją`);
     check(C.RET_SECONDS >= 60 && C.RET_SECONDS <= 180, 'Moczenie trwa półtorej minuty');
     check(findRecipe(['flax_retted'])?.result.join() === 'flax_fiber,2' && findRecipe(['nettle_retted'])?.result.join() === 'nettle_fiber,1', 'Włókno z moczonego lnu i pokrzywy');

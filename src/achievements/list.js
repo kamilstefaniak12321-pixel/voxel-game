@@ -42,6 +42,7 @@ import { WOOD_TRAITS } from '../blocks/woodTraits.js';
 import { getPlantPack } from '../blocks/plantPacks.js';
 
 import { BIOMES, LAND_BIOMES } from '../world/terrain/Biomes.js';
+import { GIFTS as TREE_GIFT_TABLE } from '../blocks/treeGifts.js';
 
 
 // Rangi: nazwa, punkty, kolor (do księgi i powiadomień - także
@@ -105,6 +106,8 @@ const WORLD_FRUITS = ['banyan_fig', 'baobab_fruit', 'dragon_tree_berries', 'josh
 // Ile jest rodzajów naparów - do "Zielarza".
 
 const TEA_KINDS = Object.keys(TEAS).length;
+const TREE_GIFT_KINDS = Object.keys(TREE_GIFT_TABLE).length;
+const HERB_TEAS = new Set(Object.values(TEAS).map(({ tea }) => tea));
 
 
 // Biom, w którym stoi gracz (teren realistyczny; klasyczny - null).
@@ -1150,6 +1153,56 @@ export const ACHIEVEMENTS = [
         on: 'treeTapped',
         when: (data) => data.full === true
     },
+    // Dary pnia, druga połowa (1.42.0).
+    {
+        id: 'axe_glued',
+        tier: 'common',
+        title: 'Na słowo honoru',
+        task: 'Napraw zużytą siekierę smołą klejącą.',
+        comment: 'Trzyma. Nie pytaj jak długo.',
+        icon: 'pitch_glue',
+        on: 'crafted',
+        when: (data) => data.recipe === 'axe_repair'
+    },
+    {
+        id: 'garment_proofed',
+        tier: 'rare',
+        title: 'Jak z gęsi woda',
+        task: 'Wetrzyj lateks w ubranie na stole krawieckim.',
+        comment: 'Pachnie dziwnie. Za to rzeka przestała być problemem.',
+        icon: 'latex',
+        on: 'garmentProofed'
+    },
+    {
+        id: 'dragon_blood',
+        tier: 'rare',
+        title: 'Krew smoka',
+        task: 'Zbierz smoczą krew z nacięcia w pniu draceny.',
+        comment: 'Smok nie ucierpiał. To tylko drzewo z dobrym marketingiem.',
+        icon: 'dragon_blood',
+        on: 'giftCollected',
+        when: (data) => data.item === 'dragon_blood'
+    },
+    {
+        id: 'willow_tea',
+        tier: 'common',
+        title: 'Apteka nad rzeką',
+        task: 'Wypij napar z kory wierzbowej.',
+        comment: 'Gorzkie jak lekarstwo. Bo to jest lekarstwo.',
+        icon: 'tea_willow',
+        on: 'ate',
+        when: (data) => data.type === 'tea_willow'
+    },
+    {
+        id: 'all_tree_gifts',
+        tier: 'epic',
+        title: 'Każde drzewo coś daje',
+        task: 'Zbierz z nacięć wszystkie dary: żywicę, cztery napoje, gumę, lateks, smoczą krew i czerwoną żywicę.',
+        comment: 'Dziewięć darów. Wystarczyło ładnie poprosić. Nożem.',
+        icon: 'kino',
+        on: 'giftCollected',
+        when: (data, book) => book.collect('tree_gifts', data.gift) >= TREE_GIFT_KINDS
+    },
     // Twardość i zużycie siekier (1.39.0).
     {
         id: 'axe_broke',
@@ -1779,7 +1832,8 @@ export const ACHIEVEMENTS = [
         comment: 'Na wszystko jest zioło. Trzeba tylko wiedzieć, które.',
         icon: 'tea_heal',
         on: 'ate',
-        when: (data, book) => data.kind === 'drink' && book.collect('teas', data.type) >= TEA_KINDS
+        // (Tylko napary z ziół: w 1.41.0 liczyły się tu przez pomyłkę także soki z pnia.)
+        when: (data, book) => HERB_TEAS.has(data.type) && book.collect('herb_teas', data.type) >= TEA_KINDS
     },
     {
         id: 'blackout',

@@ -67,7 +67,9 @@ const read = (path) => readFileSync(new URL(path, root), 'utf8');
         // 1.31.0: nasiona na następny rok.
         'beans', 'peas',
         // 1.41.0: soki z pnia i syrop - napoje, jak napary.
-        'birch_sap', 'maple_sap', 'palm_sap', 'baobab_water', 'maple_syrup'];
+        'birch_sap', 'maple_sap', 'palm_sap', 'baobab_water', 'maple_syrup',
+        // 1.42.0: guma drzewna i napar z kory wierzby.
+        'tree_gum', 'tea_willow'];
     for (const type of Object.keys(FOODS)) {
         const kind = spoilKind(type);
         check(keeps.includes(type) ? kind === null : ['soft', 'firm', 'roasted', 'dish'].includes(kind), `${type}: ${keeps.includes(type) ? 'nie psuje się' : 'psuje się'}`);

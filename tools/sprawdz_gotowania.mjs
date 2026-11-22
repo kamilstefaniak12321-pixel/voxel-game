@@ -97,7 +97,7 @@ const manifest = textureManifest();
 
     // Każdy surowy przysmak nadaje się do garnka; gotowe jedzenie - nie.
     for (const [type, food] of Object.entries(FOODS)) {
-        const raw = food.kind === 'snack' && !food.returns;
+        const raw = food.kind === 'snack' && !food.returns && food.ingredient !== false;
         check(isIngredient(type) === raw, `${type}: ${raw ? 'składnik' : 'nie do garnka'}`);
     }
     check(ingredientKind('pumpkin_slice') === 'vegetable' && ingredientKind('hazelnut') === 'nut' && ingredientKind('raspberry') === 'fruit' &&

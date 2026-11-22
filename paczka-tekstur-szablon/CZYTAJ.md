@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.40.0)
+# Paczka tekstur - szablon (Various Roots 1.41.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -146,6 +146,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/brew_calm.png` | Kubek ziół na sen |
 | `bloki/brew_heal.png` | Kubek ziół leczniczych |
 | `bloki/brew_vigor.png` | Kubek ziół wzmacniających |
+| `bloki/brew_willow.png` | Kubek kory wierzbowej |
 | `bloki/bristlecone/cone.png` | Szyszka sosny ościstej |
 | `bloki/bristlecone/leaves.png` | Igliwie sosny ościstej, Igliwie sosny ościstej (szyszki odrastają) |
 | `bloki/bristlecone/leaves_variant.png` | Igliwie sosny ościstej z szyszkami |
@@ -251,6 +252,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/door_sequoia_edge.png` | - |
 | `bloki/door_spruce_edge.png` | - |
 | `bloki/door_wierzba_edge.png` | - |
+| `bloki/dragon_blood.png` | Smocza krew |
 | `bloki/dragon_tree/berries.png` | Jagody draceny |
 | `bloki/dragon_tree/leaves.png` | Liście draceny, Liście draceny (jagody odrastają) |
 | `bloki/dragon_tree/leaves_variant.png` | Liście draceny z jagodami |
@@ -450,6 +452,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/kapok/stripped_side.png` | Okorowany pień puchowca, Leżący pień puchowca (okorowany) |
 | `bloki/kapok/stripped_top.png` | Okorowany pień puchowca, Leżący pień puchowca (okorowany) |
 | `bloki/kapok_bark.png` | Kora puchowca |
+| `bloki/kino.png` | Czerwona żywica eukaliptusa |
 | `bloki/knife.png` | Nóż |
 | `bloki/knife_basalt.png` | Nóż bazaltowy |
 | `bloki/knife_granite.png` | Nóż granitowy |
@@ -475,6 +478,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/larch/stripped_side.png` | Okorowany pień modrzewia, Leżący pień modrzewia (okorowany) |
 | `bloki/larch/stripped_top.png` | Okorowany pień modrzewia, Leżący pień modrzewia (okorowany) |
 | `bloki/larch_bark.png` | Kora modrzewia |
+| `bloki/latex.png` | Bryłka lateksu |
 | `bloki/lepidolite.png` | Lepidolit |
 | `bloki/lime_plaster.png` | Tynk wapienny |
 | `bloki/limestone.png` | Wapień |
@@ -837,6 +841,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/pine_sapling.png` | Sadzonka sosny |
 | `bloki/pine_stripped_side.png` | Okorowany pień sosny, Leżący pień sosny (okorowany) |
 | `bloki/pine_stripped_top.png` | Okorowany pień sosny, Leżący pień sosny (okorowany) |
+| `bloki/pitch_glue.png` | Smoła klejąca |
 | `bloki/plantain.png` | Babka zwyczajna |
 | `bloki/polished_stone.png` | Polerowany kamień |
 | `bloki/poppy.png` | Mak |
@@ -1004,9 +1009,11 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/strawberry_bush_few.png` | - |
 | `bloki/strawberry_bush_full.png` | - |
 | `bloki/tall_grass.png` | Wysoka trawa |
+| `bloki/tannin.png` | Garbnik |
 | `bloki/tea_calm.png` | Napar na sen |
 | `bloki/tea_heal.png` | Napar leczniczy |
 | `bloki/tea_vigor.png` | Napar wzmacniający |
+| `bloki/tea_willow.png` | Napar z kory wierzbowej |
 | `bloki/terracotta.png` | Terakota |
 | `bloki/tilled_coarse.png` | Rozgrzebana ziemia kamienista |
 | `bloki/tilled_compost.png` | Pole z kompostem |
@@ -1130,6 +1137,7 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/trapdoor_wierzba.png` | Klapa wierzbowa |
 | `bloki/trapdoor_wierzba_bottom.png` | - |
 | `bloki/trapdoor_wierzba_edge.png` | - |
+| `bloki/tree_gum.png` | Guma drzewna |
 | `bloki/trousers_linen.png` | Spodnie lniane |
 | `bloki/trousers_nettle.png` | Spodnie pokrzywowe |
 | `bloki/tunic_linen.png` | Tunika lniana |

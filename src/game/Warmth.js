@@ -34,7 +34,7 @@ import { SEA_LEVEL } from '../config.js';
 import { getBlockId } from '../blocks/BlockRegistry.js';
 import { isTorchId, torchStage } from '../blocks/torches.js';
 import { tempAtHeight } from '../weather/WeatherField.js';
-import { wornWarmth } from '../items/clothing.js';
+import { wornWarmth, proofWarmth } from '../items/clothing.js';
 import { fireWarmth, WARMTH_FROM, WARMTH_DEGREES, COLLAPSE_WARMTH } from './CampfireState.js';
 
 export const SHELTER = 5;
@@ -110,7 +110,7 @@ export function blocksHeat(world, x, y, z) {
 // czy gracz jest w wodzie, heat - ciepło ognisk i pochodni, food -
 // ciepło z jedzenia, clothes - ciepło ubrań (suchych).
 // Zwraca { felt, air, shelter, wind, water, heat, food, clothes }.
-export function feltTemperature({ air = 10, sky = 15, wind = 0, water = false, heat = 0, food = 0, clothes = 0 } = {}) {
+export function feltTemperature({ air = 10, sky = 15, wind = 0, water = false, heat = 0, food = 0, clothes = 0, proof = 0 } = {}) {
     const exposure = Math.max(0, Math.min(1, sky / 15));
     const parts = {
         air,
@@ -119,7 +119,8 @@ export function feltTemperature({ air = 10, sky = 15, wind = 0, water = false, h
         water: water ? -WATER_CHILL : 0,
         heat,
         food,
-        clothes: water ? clothes * WET_CLOTHES : clothes
+        // proof (1.42.0) - ta część ciepła ubrań, która nie boi się wody (lateks).
+        clothes: water ? Math.min(clothes, proof) + Math.max(0, clothes - proof) * WET_CLOTHES : clothes
     };
     parts.felt = parts.air + parts.shelter + parts.wind + parts.water + parts.heat + parts.food + parts.clothes;
     return parts;
@@ -180,7 +181,8 @@ export class Warmth {
             water: Boolean(player.swimming) || (player.submerged ?? 0) > 0.5,
             heat: this.heat,
             food: game.wellbeing?.effectSum?.('heat') ?? 0,
-            clothes: wornWarmth(game.inventory?.equip)
+            clothes: wornWarmth(game.inventory?.equip),
+            proof: proofWarmth(game.inventory?.equip)
         });
     }
 

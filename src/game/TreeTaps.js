@@ -212,13 +212,18 @@ export class TreeTaps {
 
         // Zbiór: żywica do ręki albo pełny kubek.
         if (ready > 0 && !(crouching && type)) {
-            if (!game.inventory.canAdd(gift.item, ready)) { game.onNotice?.('Nie masz miejsca w ekwipunku'); return true; }
+            // Lateks ścina się w kubku: do ręki idzie bryłka i sam kubek.
+            const back = gift.solid ? tap.cup : null;
+            const fits = back ? game.inventory.canAddAll?.([{ type: gift.item, count: ready }, { type: back, count: 1 }]) ?? game.inventory.canAdd(gift.item, ready)
+                : game.inventory.canAdd(gift.item, ready);
+            if (!fits) { game.onNotice?.('Nie masz miejsca w ekwipunku'); return true; }
             game.inventory.add(gift.item, ready);
+            if (back) game.inventory.add(back, 1);
             tap.amount = gift.vessel ? 0 : tap.amount - ready;
             if (gift.vessel) tap.cup = null;
             this.version++;
             game.sounds?.play('harvest', { volume: 0.4, pitch: 0.9 });
-            game.onNotice?.(gift.vessel ? `Kubek pełny: ${gift.label}` : `Zebrano: ${gift.label} (${ready})`);
+            game.onNotice?.(gift.solid ? `Zebrano: ${gift.label} (kubek wraca do ręki)` : gift.vessel ? `Kubek pełny: ${gift.label}` : `Zebrano: ${gift.label} (${ready})`);
             game.achieve?.('giftCollected', { species: tap.species, gift: giftKey(tap.species), item: gift.item, count: ready });
             if (isHealed(tap) && readyCount(tap) === 0) this.remove(tap, false);
             return true;

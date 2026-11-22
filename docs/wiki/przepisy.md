@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.41.0** - 265 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.42.0** - 271 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -586,20 +586,26 @@ Wersja gry **1.41.0** - 265 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x zioło wzmacniające (pokrzywa, nasiona gorczycy) (bez kształtu). Nazwa przepisu: `brew_vigor`. Przytrzymaj PPM na płonącym ognisku - powstanie napar. Mniej się męczysz i sprawniej pracujesz.
 
+### Kubek kory wierzbowej
+
+<img src="przepisy/brew_willow.png" alt="Kubek kory wierzbowej: 1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x Kora wierzby (obojętne gdzie)">
+
+1 x gliniany kubek (z dowolnej gliny, suchy) + 2 x Kora wierzby (bez kształtu). Nazwa przepisu: `brew_willow`. Korę zdejmij z wierzby siekierą (PPM). Przytrzymaj PPM na płonącym ognisku - powstanie napar: lekko goi i uspokaja przed snem.
+
 
 ## Światło
 
 ### Pochodnia x4
 
-<img src="przepisy/torch.png" alt="Pochodnia x4: 1 x Patyk + 1 x żywica albo oliwki (obojętne gdzie)">
+<img src="przepisy/torch.png" alt="Pochodnia x4: 1 x Patyk + 1 x żywica, oliwki, guma drzewna albo lateks (obojętne gdzie)">
 
-1 x Patyk + 1 x żywica albo oliwki (bez kształtu). Nazwa przepisu: `torch`. Żywicę zbierz PPM z pnia sosny, oliwki - z liści oliwki. Pochodnię postaw na podłożu albo na ścianie. Pali się godzinę, potem zostaje ogarek.
+1 x Patyk + 1 x żywica, oliwki, guma drzewna albo lateks (bez kształtu). Nazwa przepisu: `torch`. Żywicę zbierz PPM z pnia sosny, oliwki - z liści oliwki. Pochodnię postaw na podłożu albo na ścianie. Pali się godzinę, potem zostaje ogarek.
 
 ### Pochodnia
 
-<img src="przepisy/torch_from_stub.png" alt="Pochodnia: 1 x Ogarek pochodni + 1 x żywica albo oliwki (obojętne gdzie)">
+<img src="przepisy/torch_from_stub.png" alt="Pochodnia: 1 x Ogarek pochodni + 1 x żywica, oliwki, guma drzewna albo lateks (obojętne gdzie)">
 
-1 x Ogarek pochodni + 1 x żywica albo oliwki (bez kształtu). Nazwa przepisu: `torch_from_stub`. Ogarek po wypalonej pochodni i świeże paliwo. Na postawiony ogarek wystarczy PPM żywicą albo oliwkami.
+1 x Ogarek pochodni + 1 x żywica, oliwki, guma drzewna albo lateks (bez kształtu). Nazwa przepisu: `torch_from_stub`. Ogarek po wypalonej pochodni i świeże paliwo. Na postawiony ogarek wystarczy PPM żywicą albo oliwkami.
 
 ### Łuczywo x4
 
@@ -705,9 +711,9 @@ Wersja gry **1.41.0** - 265 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 ### Lampa x2
 
-<img src="przepisy/lamp.png" alt="Lampa x2: 1 x Lepidolit + 1 x żywica albo oliwki + 1 x Kora brzozowa (obojętne gdzie)">
+<img src="przepisy/lamp.png" alt="Lampa x2: 1 x Lepidolit + 1 x żywica, oliwki, guma drzewna albo lateks + 1 x Kora brzozowa (obojętne gdzie)">
 
-1 x Lepidolit + 1 x żywica albo oliwki + 1 x Kora brzozowa (bez kształtu). Nazwa przepisu: `lamp`. Lepidolit z gór, żywica z sosny (albo oliwki), kora z brzozy (siekierą).
+1 x Lepidolit + 1 x żywica, oliwki, guma drzewna albo lateks + 1 x Kora brzozowa (bez kształtu). Nazwa przepisu: `lamp`. Lepidolit z gór, żywica z sosny (albo oliwki), kora z brzozy (siekierą).
 
 ### Czerwona lampa
 
@@ -1351,6 +1357,36 @@ Wersja gry **1.41.0** - 265 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 
 1 x Biała glina (bez kształtu). Nazwa przepisu: `wet_white_clay_brick`. Mokrą cegłę trzeba wysuszyć: wyrzuć ją (klawisz wyrzucania, domyślnie Q) na słońce - po ok. 2 minutach dnia wyschnie.
 
+### Smoła klejąca x2
+
+<img src="przepisy/pitch_glue.png" alt="Smoła klejąca x2: 1 x klej z drzewa (guma drzewna albo lateks) + 1 x Żywica (obojętne gdzie)">
+
+1 x klej z drzewa (guma drzewna albo lateks) + 1 x Żywica (bez kształtu). Nazwa przepisu: `pitch_glue`. Guma z wiśni albo akacji (lato) lub lateks z banianu, do tego żywica. Smołą klejącą naprawia się siekierę.
+
+### Siekiera
+
+<img src="przepisy/axe_repair.png" alt="Siekiera: 1 x siekiera (dowolny kamień) + 1 x Smoła klejąca (obojętne gdzie)">
+
+1 x siekiera (dowolny kamień) + 1 x Smoła klejąca (bez kształtu). Nazwa przepisu: `axe_repair`. Naprawa: zużyta siekiera odzyskuje część stanu (najwyżej do czterech piątych - klejona nie jest jak nowa). Wynik to ta sama siekiera.
+
+### Barwnik czerwony x2
+
+<img src="przepisy/dye_red_dragon.png" alt="Barwnik czerwony x2: 1 x Smocza krew (obojętne gdzie)">
+
+1 x Smocza krew (bez kształtu). Nazwa przepisu: `dye_red_dragon`. Smocza krew z nacięcia w pniu draceny - mocny czerwony barwnik.
+
+### Barwnik brązowy x2
+
+<img src="przepisy/dye_brown_kino.png" alt="Barwnik brązowy x2: 1 x Czerwona żywica eukaliptusa (obojętne gdzie)">
+
+1 x Czerwona żywica eukaliptusa (bez kształtu). Nazwa przepisu: `dye_brown_kino`. Czerwona żywica z nacięcia w pniu eukaliptusa (latem) - po roztarciu brązowy barwnik.
+
+### Barwnik czarny
+
+<img src="przepisy/dye_black_tannin.png" alt="Barwnik czarny: 1 x Garbnik (obojętne gdzie)">
+
+1 x Garbnik (bez kształtu). Nazwa przepisu: `dye_black_tannin`. Garbnik: korę dębu, namorzynu albo sekwoi wrzuć do wody i poczekaj. Ciemny barwnik bez mieszania trzech innych.
+
 ### Starter ognia
 
 <img src="przepisy/fire_starter.png" alt="Starter ognia: 2 x Patyk (obojętne gdzie)">
@@ -1634,7 +1670,9 @@ Składnik z grupy to dowolna rzecz z listy (np. patyki z desek różnych drzew).
 - **szyszka (dowolna)**: Szyszka świerka, Szyszka sosny, Szyszeczki olchy, Szyszka kosodrzewiny, Szyszka sekwoi
 - **gliniany kubek (z dowolnej gliny, suchy)**: Gliniany kubek, Czerwony gliniany kubek, Biały gliniany kubek
 - **trawa (krótka, wysoka, wydmowa) albo trzcina**: Krótka trawa, Wysoka trawa, Piaskownica (trawa wydmowa), Trzcina
-- **żywica albo oliwki**: Żywica, Oliwki
+- **żywica, oliwki, guma drzewna albo lateks**: Żywica, Oliwki, Guma drzewna, Bryłka lateksu
+- **klej z drzewa (guma drzewna albo lateks)**: Guma drzewna, Bryłka lateksu
+- **kora dębu, namorzynu albo sekwoi**: Kora dębu, Kora namorzynu, Kora sekwoi
 - **igliwie (świerka albo sosny)**: Igliwie świerka, Igliwie sosny
 - **opadłe liście (dowolne)**: Opadłe liście buka, Opadłe liście dębu, Opadłe liście jabłoni, Opadłe liście olchy, Opadłe liście wierzby, Opadłe liście klonu, Opadłe liście baobabu, Opadłe igliwie modrzewia, Opadłe liście puchowca, Opadłe liście osiki, Opadłe liście figowca
 - **coś czerwonego (mak, truskawki, papryczki chili, wiecha amarantusa, korzeń marzanny)**: Mak, Truskawki, Papryczki chili, Wiecha amarantusa, Korzeń marzanny

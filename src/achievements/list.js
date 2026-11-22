@@ -1078,6 +1078,26 @@ export const ACHIEVEMENTS = [
         icon: 'kapok_firewood',
         on: 'fireDoused'
     },
+    // Twardość i zużycie siekier (1.39.0).
+    {
+        id: 'axe_broke',
+        tier: 'common',
+        title: 'Do ostatniego ciosu',
+        task: 'Zużyj siekierę tak, żeby pękła w ręce.',
+        comment: 'Został patyk. Połowa nowej siekiery.',
+        icon: 'stick',
+        on: 'toolBroke'
+    },
+    {
+        id: 'hard_wood_felled',
+        tier: 'rare',
+        title: 'Twarda sztuka',
+        task: 'Zetnij drzewo o najtwardszym drewnie: akację, namorzyn albo oliwkę. Bierze je tylko siekiera z bazaltu albo granitu.',
+        comment: 'Kamienna tylko by się wyszczerbiła.',
+        icon: 'axe_granite',
+        on: 'treeFelled',
+        when: (data) => data.hardness >= 8
+    },
     // Kozły (1.38.0).
     {
         id: 'sawhorses_ready',

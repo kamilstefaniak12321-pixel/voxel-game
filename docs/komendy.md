@@ -101,6 +101,9 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/niskie` | rośliny niskie (1.19.0, `docs/rosliny-niskie.md`): lista roślin i biomów, w których rosną |
 | `/niskie galeria` | przed tobą galeria: każda roślina w rzędzie, od lewej kolejne etapy (sadzonka, roślina, kwiaty, owoce), przy dyni młoda i dojrzała dynia, w ostatnim rzędzie torfowce i chrobotek (zmienia świat) |
 | `/niskie znajdz [roślina]` | najbliższa roślina niska we wczytanym terenie (np. `zurawina`, `brusznica`, `poziomka`, `dynia`): odległość i komenda `/tp` |
+| `/siekiera` | twardość i zużycie siekier (1.39.0, `docs/narzedzia.md`): tabela skał - twardość, jakie drewno tną, na ile ciosów wystarczają - i stan siekiery w ręce |
+| `/siekiera daj [skała]` | siekiera z podanej skały: `piaskowiec`, `wapien`, `lupek`, `kamien`, `bazalt`, `granit` |
+| `/siekiera stan <procent 1-100>` | ustawia stan siekiery w ręce (np. 25 - wyszczerbiona, 10 - pęknięta) |
 | `/kozly` | kozły (1.38.0, `docs/kozly.md`): czy pień pod celownikiem leży na kozłach - długość odcinka, kozły na końcach, tempo cięcia |
 | `/kozly daj` | do ekwipunku: 2 kozły, siekiera, 3 konary |
 | `/kozly postaw [gatunek] [długość 2-8]` | kładzie przed tobą zdrowy leżący pień z kozłem na każdym końcu (domyślnie dąb, 4 m) |

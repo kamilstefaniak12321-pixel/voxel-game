@@ -150,9 +150,9 @@ Rzeczy, których w 1.36.0 nie ma albo są uproszczone:
   ([powalone-drzewa.md](powalone-drzewa.md)).
 - ~~Kozłów nie ma~~ - są od 1.38.0 ([kozly.md](kozly.md)); bez nich
   leżący pień tnie się 3 razy wolniej.
-- **Każda siekiera tnie tak samo.** Twardość skał i zużycie to część C;
-  do tego czasu kamienna siekiera bierze też olbrzymy (sekwoja,
-  puchowiec), które docelowo mają wymagać metalu.
+- ~~Każda siekiera tnie tak samo~~ - od 1.39.0 liczy się twardość
+  skały ([narzedzia.md](narzedzia.md)). Olbrzymy (sekwoja, puchowiec)
+  nadal bierze każda siekiera - metal to część F.
 - **Karby nie są zapisywane**: znikają po 10 minutach bez ciosu i po
   wyjściu ze świata.
 - **Gra ze znajomymi**: upadek (bryłę) widzi tylko ten, kto ścina. Inni

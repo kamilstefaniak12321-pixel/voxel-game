@@ -104,6 +104,7 @@ import { Woodpiles } from './Woodpiles.js';
 import { Felling } from './Felling.js';
 import { StarterLog } from './StarterLog.js';
 import { Sawhorses } from './Sawhorses.js';
+import { ToolWear } from './ToolWear.js';
 import { TorchBurn } from './TorchBurn.js';
 import { Warmth } from './Warmth.js';
 import { Freeze } from './Freeze.js';
@@ -869,6 +870,8 @@ export class Game extends GameInteraction {
         this.felling = new Felling(this);
         // Kozły (1.38.0): leżący pień między dwoma kozłami tnie się szybko.
         this.sawhorses = new Sawhorses(this);
+        // Twardość i zużycie siekiery (1.39.0).
+        this.toolWear = new ToolWear(this);
         // Powalony pień przy miejscu startu nowego świata (1.37.0).
         this.starterLog = new StarterLog(this, !worldInfo.player);
         this.onOpenChest = null;

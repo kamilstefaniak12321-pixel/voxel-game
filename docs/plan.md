@@ -27,6 +27,11 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
   Kozioł z 3 konarów na obu końcach leżącego pnia: pień tnie się 3 razy
   szybciej, a kucając łupie się go od razu na opał ([kozly.md](kozly.md)).
 
+- **1.39.0 - Twardość siekier** (PR #192): pierwsza wersja części C.
+  Skała siekiery ma twardość: tnie drewno najwyżej półtora raza twardsze
+  od siebie, zużywa się (pasek pod ikonką) i pęka, zostawiając patyk
+  ([narzedzia.md](narzedzia.md)).
+
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony

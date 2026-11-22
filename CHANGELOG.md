@@ -11,6 +11,31 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.39.0 - Twardość siekier
+
+PR #192. Pierwsza wersja części C projektu drewna (`docs/drewno.md`,
+opis: `docs/narzedzia.md`).
+
+- **Skała siekiery ma znaczenie.** Twardość: piaskowiec 2, wapień 3,
+  łupek 4, kamień 5, bazalt 6, granit 7.
+- Siekiera **tnie drewno najwyżej półtora raza twardsze** od siebie:
+  piaskowcowa tylko miękkie (świerk, sosna, lipa), kamienna wszystko
+  oprócz akacji, namorzynu i oliwki, bazaltowa i granitowa - wszystko.
+  Za miękką nie zetniesz drzewa; gra mówi, jakiej skały trzeba.
+- **Siekiera się zużywa** - tym szybciej, im twardsze drewno. Kamienna
+  wystarcza na dwa dęby albo sześć brzóz.
+- Drewno **dwa razy miększe od skały nie zużywa jej wcale** (kamienna
+  na świerku, granitowa na sośnie).
+- Stan widać na **pasku pod ikonką** (szary, pomarańczowy, czerwony)
+  i w opisie; gra mówi, gdy siekiera się wyszczerbi i gdy pęka.
+  **Pęknięta zostawia patyk.**
+- Leżący pień cięty **bez kozłów zużywa siekierę dwa razy szybciej**.
+- Siekiery ze starych zapisów są jak nowe.
+- Komenda `/siekiera`, osiągnięcia „Do ostatniego ciosu" i „Twarda
+  sztuka", dwie nowe linie w poradniku, podpowiedź w samouczku.
+- Luki (trzy wyglądy siekiery, kilof i łopata, metal) -
+  `docs/narzedzia.md`.
+
 ## 1.38.0 - Kozły
 
 PR #191. Trzecia wersja części B projektu drewna - część B jest w grze

@@ -30,15 +30,17 @@ import { isGarment, cleanLook, sameLook } from './clothing.js';
 import { isSeasonable, wetBar } from './moisture.js';
 import { isTorchItem, fuelBar } from './torchFuel.js';
 import { isEmber, emberBar } from './prochno.js';
+import { isWearing, wearBar } from './toolWear.js';
 
 // Czy stos tej rzeczy niesie pole `fresh` (świeżość jedzenia, suchość
 // drewna albo - od 1.35.0 - paliwo pochodni, items/torchFuel.js).
 // Od 1.37.0 także tlące się próchno (items/prochno.js): ile jeszcze się tli.
-export const hasFresh = (type) => isPerishable(type) || isSeasonable(type) || isTorchItem(type) || isEmber(type);
+// Od 1.39.0 także siekiery (items/toolWear.js): stan głowicy.
+export const hasFresh = (type) => isPerishable(type) || isSeasonable(type) || isTorchItem(type) || isEmber(type) || isWearing(type);
 
 // Rzeczy, których stos w pełnym stanie (1) nie ma pola: suche polano,
 // nowa pochodnia.
-const bareWhenFull = (type) => isSeasonable(type) || isTorchItem(type);
+const bareWhenFull = (type) => isSeasonable(type) || isTorchItem(type) || isWearing(type);
 
 // Najwięcej sztuk w stosie (Inventory.js - STACK_SIZE).
 export const MAX_STACK = 64;
@@ -77,6 +79,8 @@ export function freshBar(item, spoiling = true) {
     if (item && isTorchItem(item.type)) return fuelBar(item);
     // Tlące się próchno (1.37.0): czerwony pasek - ile jeszcze się tli.
     if (item && isEmber(item.type)) return emberBar(item);
+    // Siekiera (1.39.0): stan głowicy - szary, pomarańczowy, czerwony.
+    if (item && isWearing(item.type)) return wearBar(item);
     if (!spoiling) return null;
     const fresh = freshOf(item);
     if (fresh === undefined || fresh >= FRESH_BAR_FROM) return null;

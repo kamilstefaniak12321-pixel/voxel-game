@@ -122,6 +122,8 @@ export const GUIDE = [
                 touch: 'Siekierą w pień żywego drzewa (trzymaj palec na pniu) zadajesz ciosy. W pniu rośnie karb, a po ostatnim ciosie pada całe drzewo - z koroną.' },
             'Drzewo pada od ciebie - tam, gdzie patrzysz przy ostatnim ciosie. Stań po przeciwnej stronie, niż chcesz je położyć. Najpierw trzeszczy i się przechyla.',
             'Ile ciosów, zależy od drewna: świerk 3, sosna 5, brzoza 8, dąb i buk 11. Każdy zamach kosztuje trochę energii.',
+            'Liczy się skała siekiery: piaskowiec 2, wapień 3, łupek 4, kamień 5, bazalt 6, granit 7. Siekiera tnie drewno najwyżej półtora raza twardsze od siebie.',
+            'Siekiera się zużywa (pasek pod ikonką): kamienna starcza na dwa dęby albo sześć brzóz. Drewno dwa razy miększe od skały nie zużywa jej wcale. Pęknięta zostawia patyk.',
             'Gruby pień (2 × 2) trzeba ciąć z dwóch stron: karb z jednej dochodzi tylko do połowy. Najgrubsze drzewa - z czterech stron.',
             'Po upadku zostaje pniak i leżący pień - wykop go siekierą, da zwykłe pnie. Z korony spadają konary (konar w siatce wytwarzania to 3 patyki), patyki, sadzonki i owoce.',
             'Pień układa się na ziemi. Na uskoku albo przy skale pęka, a kawałki, które się nie mieszczą, leżą jako pnie do zebrania.',

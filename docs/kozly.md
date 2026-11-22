@@ -73,8 +73,8 @@ polana. Przepis „pień + siekiera" w siatce wytwarzania zostaje.
 
 ## Luki
 
-- **Siekiera nie zużywa się** - „dwa razy szybsze zużycie bez kozłów"
-  przyjdzie z twardością i zużyciem narzędzi (część C).
+- ~~Siekiera nie zużywa się~~ - od 1.39.0 zużywa się, a bez kozłów
+  dwa razy szybciej ([narzedzia.md](narzedzia.md)).
 - Kłoda **nie odpada „z tego końca, przy którym stoisz"** - tniesz ten
   metr, w który celujesz.
 - Przepis na opał w siatce wytwarzania **zostaje** (projekt mówi, że

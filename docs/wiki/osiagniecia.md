@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.37.0** - 143 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.38.0** - 145 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -81,6 +81,8 @@ Wersja gry **1.37.0** - 143 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/spruce_firewood.png" width="32" height="32" alt=""> | **Zapas na zimę** | Ułóż pełny stos drewna: 16 polan (kucnij i kliknij ziemię polanem, potem dokładaj). | „Kto latem układa, ten zimą nie szczęka zębami.” |
 | <img src="ikony/torch_stub.png" width="32" height="32" alt=""> | **Drugie życie ogarka** | Dolej żywicy albo oliwek do wypalonej pochodni (PPM na ogarku). | „Patyk ten sam, płomień nowy. Recykling starszy niż koło.” |
 | <img src="ikony/kapok_firewood.png" width="32" height="32" alt=""> | **Pogoda wygrała** | Bądź przy ognisku, które zgasił deszcz. | „Następnym razem dach. Albo dąb.” |
+| <img src="ikony/sawhorse.png" width="32" height="32" alt=""> | **Na kozłach** | Postaw kozły na obu końcach leżącego pnia (kozioł to 3 konary). | „Siekiera nareszcie bije w drewno, a nie w ziemię.” |
+| <img src="ikony/oak_firewood.png" width="32" height="32" alt=""> | **Od razu na opał** | Kucając, połup siekierą pień leżący na kozłach. | „Cztery polana z metra. Zima może przychodzić.” |
 | <img src="ikony/rotten_wood.png" width="32" height="32" alt=""> | **Stare, ale jare** | Wyłam gołą ręką spróchniałe drewno z powalonego pnia w lesie. | „Leżało tu dziesięć lat. Czekało właśnie na ciebie.” |
 | <img src="ikony/axe.png" width="32" height="32" alt=""> | **Drzewooo!** | Zetnij drzewo siekierą: bij w pień, aż padnie. | „Padło tam, gdzie miało. Mniej więcej.” |
 | <img src="ikony/oak_log.png" width="32" height="32" alt=""> | **Z dwóch stron** | Zetnij drzewo o grubym pniu (2 × 2 albo grubszym) - trzeba je obejść. | „Pierwszy karb to dopiero połowa roboty.” |

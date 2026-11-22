@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.37.0** - 264 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.38.0** - 265 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -1167,6 +1167,12 @@ Wersja gry **1.37.0** - 264 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/flower_wreath.png" alt="Wianek z kwiatów: 4 x kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne) (ułożenie: FF / FF; F = kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne))">
 
 4 x kwiat (mak, chaber, rumianek, mniszek, krokus, wrzos i inne) (z kształtem). Nazwa przepisu: `flower_wreath`. Cztery dowolne kwiaty. Wiesza się na ścianie jak wieniec świerkowy.
+
+### Kozioł
+
+<img src="przepisy/sawhorse.png" alt="Kozioł: 3 x Konar (obojętne gdzie)">
+
+3 x Konar (bez kształtu). Nazwa przepisu: `sawhorse`. Postaw po jednym na obu końcach leżącego pnia: pień tnie się 3 razy szybciej, a kucając łupiesz go od razu na opał.
 
 ### Wieniec świerkowy
 

@@ -18,7 +18,8 @@ kiedyś sam upadł i leży w lesie**:
 | siekierą | **zdrowe pnie** z reszty - każdy metr to jeden pień |
 
 To wystarcza na pierwsze ognisko (bez siekiery) i na siekierę (patyk).
-Potem pień tnie się siekierą, a po więcej trzeba już ściąć drzewo.
+Potem pień tnie się siekierą (bez kozłów - wolno, [kozly.md](kozly.md)),
+a po więcej trzeba już ściąć drzewo.
 
 ## Gdzie leżą
 
@@ -117,7 +118,7 @@ albo bliżej - kroki da się pomijać.
 
 - **Pusta kłoda jako blok** (kryjówka dla jeży, koryto na kwiaty)
   i **wichura**, która powala drzewa w trakcie gry - później.
-- **Kozłów dalej nie ma** (następna wersja).
+- ~~Kozłów dalej nie ma~~ - są od 1.38.0 ([kozly.md](kozly.md)).
 - **Sucha gałąź** ma jeden wygląd (skrzyżowane obrazki) na wszystkich
   poziomach „Modeli roślin" - bez wersji półrealistycznej i szczegółowej.
 - Pień z generatora nie ma **pniaka** ani **hub**; gatunków nie da się

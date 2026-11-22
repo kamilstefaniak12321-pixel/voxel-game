@@ -125,6 +125,8 @@ export const GUIDE = [
             'Gruby pień (2 × 2) trzeba ciąć z dwóch stron: karb z jednej dochodzi tylko do połowy. Najgrubsze drzewa - z czterech stron.',
             'Po upadku zostaje pniak i leżący pień - wykop go siekierą, da zwykłe pnie. Z korony spadają konary (konar w siatce wytwarzania to 3 patyki), patyki, sadzonki i owoce.',
             'Pień układa się na ziemi. Na uskoku albo przy skale pęka, a kawałki, które się nie mieszczą, leżą jako pnie do zebrania.',
+            'Kozioł to 3 konary. Postaw po jednym na obu końcach leżącego pnia - pień na kozłach tnie się 3 razy szybciej niż na ziemi.',
+            'Na kozłach, kucając, łupiesz pień od razu na opał: metr pnia to 4 polana. Kozły zabierasz i stawiasz przy następnym pniu.',
             'Cios w konar odcina sam konar. Nie stój tam, gdzie pada pień: stracisz przytomność i obudzisz się obok, wyczerpany.',
             'Kosodrzewinę i baobab rąbie się po staremu, blok po bloku - także ręką. Pień postawiony ręką (ściana domu) też kopie się jak zwykły blok.'
         ]

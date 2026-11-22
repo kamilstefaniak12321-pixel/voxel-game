@@ -101,6 +101,9 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/niskie` | rośliny niskie (1.19.0, `docs/rosliny-niskie.md`): lista roślin i biomów, w których rosną |
 | `/niskie galeria` | przed tobą galeria: każda roślina w rzędzie, od lewej kolejne etapy (sadzonka, roślina, kwiaty, owoce), przy dyni młoda i dojrzała dynia, w ostatnim rzędzie torfowce i chrobotek (zmienia świat) |
 | `/niskie znajdz [roślina]` | najbliższa roślina niska we wczytanym terenie (np. `zurawina`, `brusznica`, `poziomka`, `dynia`): odległość i komenda `/tp` |
+| `/kozly` | kozły (1.38.0, `docs/kozly.md`): czy pień pod celownikiem leży na kozłach - długość odcinka, kozły na końcach, tempo cięcia |
+| `/kozly daj` | do ekwipunku: 2 kozły, siekiera, 3 konary |
+| `/kozly postaw [gatunek] [długość 2-8]` | kładzie przed tobą zdrowy leżący pień z kozłem na każdym końcu (domyślnie dąb, 4 m) |
 | `/powalone` | powalone drzewa (1.37.0, `docs/powalone-drzewa.md`): gdzie leży najbliższy powalony pień z generatora terenu |
 | `/powalone tp` | przenosi do najbliższego powalonego pnia |
 | `/powalone postaw [gatunek] [długość 3-8]` | kładzie pień przed tobą: zdrowe i spróchniałe kawałki, mech, suche gałęzie (bez gatunku - jak najbliższe drzewo) |

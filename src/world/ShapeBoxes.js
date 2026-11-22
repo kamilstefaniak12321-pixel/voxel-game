@@ -84,6 +84,16 @@ const TABLE_PART = {
 };
 const FULL = [[0, 0, 0, 1, 1, 1]];
 
+// Kozioł (1.38.0): belka wzdłuż X, nogi rozstawione w Z (dół szerzej).
+const SAWHORSE = [
+    px(0, 9, 6, 16, 12, 10),
+    ...[1, 13].flatMap((x) => [
+        px(x, 0, 1, x + 2, 5, 4), px(x, 5, 3, x + 2, 9, 6),
+        px(x, 0, 12, x + 2, 5, 15), px(x, 5, 10, x + 2, 9, 13)
+    ])
+];
+const SAWHORSE_SOLID = [px(0, 0, 3, 16, 12, 13)];
+
 // --- Drzwi i klapy (0.91.0) ------------------------------------------------
 // Drzwi z modelu Kamila (drzwi.bbmodel): płyta 16 x 32 x 2 px przy
 // północnym brzegu, zawias po zachodniej stronie (lewa patrzącego na
@@ -305,6 +315,9 @@ export function shapeBoxes(id, purpose = 'render', mask = 0) {
         case 'sewing':
             if (purpose === 'collision' || purpose === 'outline') return FULL;
             return [...TABLE_COMMON, ...TABLE_PART[info.part]].map((box) => rotateBox(box, info.facing));
+        // Kozioł (1.38.0, blocks/sawhorse.js): belka na czterech nogach.
+        case 'sawhorse':
+            return (purpose === 'collision' || purpose === 'outline' ? SAWHORSE_SOLID : SAWHORSE).map((box) => rotateBox(box, info.facing));
         default:
             return null;
     }

@@ -22,6 +22,7 @@ import { CHEST_BLOCKS } from './chest.js';
 import { WOOD_SHAPE_BLOCKS } from './woodShapes.js';
 import { BEDDING_BLOCKS } from './bedding.js';
 import { SEWING_TABLE_BLOCKS } from './sewingTable.js';
+import { SAWHORSE_BLOCKS } from './sawhorse.js';
 import { DECORATION_BLOCKS } from './decorations.js';
 import { FLOWING_WATER_BLOCKS, WATER_SOURCE_ID, WATER_FALLING_LAST_ID, plainWaterLevel, waterHeightForLevel } from './water.js';
 export { WATER_SOURCE_ID, WATER_FALLING_ID, WATER_FALL_MAX, waterIdForLevel, isFallingWaterId, waterFallDistance, fallingWaterId } from './water.js';
@@ -61,7 +62,8 @@ export const AIR_ID = 0;
 //   15000-15199             rośliny niskie (1.19.0, po 8 na roślinę - lowPlants.js),
 //   15200-15399             opadłe owoce (1.22.0 - fallenFruit.js),
 //   15400-15499             pola z nawozem i z innej ziemi (1.24.0, 1.25.0 - fertilizers.js),
-//   15500-15599             stanowiska pracy (1.27.0: stół krawiecki 15500-15507 - sewingTable.js),
+//   15500-15599             stanowiska pracy (1.27.0: stół krawiecki 15500-15507 - sewingTable.js;
+//                           1.38.0: kozioł 15510-15511 - sawhorse.js),
 //   15600-15999             pnącza i ich podpory (1.30.0 - vines.js),
 //   16000-16089             etapy wypalania pochodni (1.35.0, torches.js),
 //   16100-16299             leżące pnie (1.36.0, po 2 na gatunek: wzdłuż X i Z - lyingLogs.js),
@@ -408,6 +410,8 @@ export const BLOCK_TYPES = {
     ...BEDDING_BLOCKS,
     // Stół krawiecki (1.27.0): dwa bloki, kierunek x część.
     ...SEWING_TABLE_BLOCKS,
+    // Kozioł do cięcia leżącego pnia (1.38.0): belka wzdłuż X albo Z.
+    ...SAWHORSE_BLOCKS,
     ...DECORATION_BLOCKS,
     campfire: { id: 10000, name: 'Campfire', label: 'Ognisko', solid: false, opaque: false,
         model: 'structure', flat: { attach: 'down' }, inventory: false, creative: false,

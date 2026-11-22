@@ -148,8 +148,8 @@ Rzeczy, których w 1.36.0 nie ma albo są uproszczone:
 - ~~Gołą ręką pień żywego drzewa kopie się jak dotąd~~ - od 1.37.0 już
   nie: pierwsze drewno bierze się z powalonego pnia
   ([powalone-drzewa.md](powalone-drzewa.md)).
-- **Kozłów nie ma**: leżący pień kopie się siekierą blok po bloku
-  i każdy blok daje zwykły pień.
+- ~~Kozłów nie ma~~ - są od 1.38.0 ([kozly.md](kozly.md)); bez nich
+  leżący pień tnie się 3 razy wolniej.
 - **Każda siekiera tnie tak samo.** Twardość skał i zużycie to część C;
   do tego czasu kamienna siekiera bierze też olbrzymy (sekwoja,
   puchowiec), które docelowo mają wymagać metalu.

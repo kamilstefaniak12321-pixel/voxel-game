@@ -320,6 +320,9 @@ export class GameInteraction {
                     }
 
                     // Pochodnia (1.35.0): paliwa tyle, ile miał stos; łuczywo - mało.
+                    // Kozioł (1.38.0): podpowiedź, czy pień leży już na kozłach.
+                    if (block === 'sawhorse' && target) this.sawhorses?.placed(target);
+
                     const torch = typeof placed === 'string' ? getBlockDefinition(placed)?.torch : null;
                     if (torch && target) this.torchBurn?.placedItem(target, this.inventory.selectedItem, torch.colorKey);
 
@@ -496,7 +499,9 @@ export class GameInteraction {
 
         // Zmęczony kopie wolniej, w świetnej formie szybciej.
 
-        const time = getBreakTime(type, getTool(this.selectedBlock)) / this.wellbeing.effects.work;
+        // (Leżący pień bez kozłów - 1.38.0 - tnie się trzy razy wolniej.)
+
+        const time = getBreakTime(type, getTool(this.selectedBlock)) * (this.sawhorses?.slow(hit.block) ?? 1) / this.wellbeing.effects.work;
 
         mining.progress = time <= 0 ? 1 : mining.progress + dt / time;
 
@@ -1136,6 +1141,9 @@ export class GameInteraction {
         if (type === 'woodpile') return this.woodpiles.drops(position);
         // Pochodnia (1.35.0): z resztą paliwa albo ogarek.
         if (this.torchBurn && getBlockDefinition(type)?.torch) return this.torchBurn.drops(type, position);
+        // Pień na kozłach (1.38.0, Sawhorses.js): kucając, łupiesz go na opał.
+        const split = this.sawhorses?.drops(type, position, tool);
+        if (split) return split;
 
         const drops = [];
         const drop = getDropType(type);

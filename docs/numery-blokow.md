@@ -37,7 +37,10 @@ więcej niż dotąd - bez kolejnej zmiany zapisu.
 | 16000-16089 | etapy wypalania pochodni (1.35.0, `src/blocks/torches.js`): 16000-16084 przygasające pochodnie (17 odmian × 5 mocowań, kolejność jak 10010-10094), 16085-16089 ogarki (5 mocowań) |
 | 16090-16099 | wolne |
 | 16100-16299 | leżące pnie ściętych drzew (1.36.0, `src/blocks/lyingLogs.js`): 16100 + 2 × miejsce gatunku na liście `LYING_WOODS` (świerk 16100, sosna 16102, buk 16104, lipa 16106, dąb 16108, brzoza 16110... sosna oścista 16162), +0 wzdłuż X, +1 wzdłuż Z; zajęte 16100-16163, reszta dla kolejnych gatunków |
-| 16300-65279 | wolne na przyszłość |
+| 16300-16302 | powalone drzewa (1.37.0, `src/blocks/lyingLogs.js`): spróchniały pień 16300 (wzdłuż X) i 16301 (wzdłuż Z), sucha gałąź 16302 |
+| 16303-16399 | wolne |
+| 16400-16599 | okorowane leżące pnie (1.37.0): 16400 + 2 × miejsce gatunku na liście `LYING_WOODS`, +0 wzdłuż X, +1 wzdłuż Z (jak 16100-16299); zajęte 16400-16463 |
+| 16600-65279 | wolne na przyszłość |
 | 65280-65535 | zarezerwowane dla gry, nigdy w zapisie (np. odcienie trawy dalekiego terenu) |
 
 Stałe: `MAX_BLOCK_ID` w `src/blocks/BlockRegistry.js` (tam też ta lista),

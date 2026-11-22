@@ -11,6 +11,37 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.37.0 - Powalone drzewa
+
+PR #190. Druga wersja części B projektu drewna (`docs/drewno.md`,
+opis: `docs/powalone-drzewa.md`). Pomysł Kamila.
+
+- **Gołą ręką żywego drzewa już się nie zetnie** - potrzeba siekiery.
+  Pierwsze drewno bierze się ze **starego, powalonego pnia**.
+- **Powalone pnie leżą w lasach** co jakiś czas (w nowo odkrytym
+  terenie), a **przy miejscu startu nowego świata zawsze jeden** -
+  kilka kroków przed graczem.
+- Z takiego pnia **gołą ręką**: patyki z suchych gałęzi obok, **kora**
+  (PPM w pień pustą ręką - podpałka) i **spróchniałe drewno**
+  z ciemnych, dziurawych kawałków. **Siekierą**: zdrowe pnie z reszty.
+- **Spróchniałe drewno** to polano na start: zajmuje się od byle czego
+  (200°), ale grzeje słabo, pali się pół minuty i kopci. Położone na
+  wierzchu stosu rozpala resztę.
+- **Próchno** (spróchniałe drewno w siatce wytwarzania): podpałka, która
+  długo się tli, i nawóz jak kompost.
+- **Próchno niesie ogień**: PPM próchnem na płonącym ognisku albo żarze
+  daje tlące się próchno. Tli się 4 minuty; położone na ułożonym stosie
+  rozpala go samo, bez startera ognia.
+- **Leżący pień da się okorować** (siekierą albo pustą ręką).
+- **Nowy samouczek**: powalony pień → kora i próchno → siekiera →
+  pocięcie pnia → ścięcie drzewa → deski.
+- Komenda `/powalone`, osiągnięcia „Stare, ale jare" i „Niosący ogień",
+  nowy rozdział poradnika.
+- Bez zmian: pień postawiony ręką, pniak, kosodrzewina i baobab kopią
+  się ręką; tryb twórczy.
+- Luki (kozły, pusta kłoda, wichura, stare światy) -
+  `docs/powalone-drzewa.md`.
+
 ## 1.36.0 - Ścinanie drzew
 
 PR #189. Pierwsza wersja części B projektu drewna (`docs/drewno.md`,

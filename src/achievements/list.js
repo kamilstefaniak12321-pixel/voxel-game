@@ -440,7 +440,8 @@ function logSpecies(type) {
 
     const definition = getBlockDefinition(type);
 
-    return definition?.part === 'log' || definition?.part === 'stripped' ? definition.tree : null;
+    // (Leżący pień - 1.36.0 - też jest pniem: od ścinania to jego się tnie na kłody.)
+    return ['log', 'stripped', 'lying'].includes(definition?.part) ? definition.tree : null;
 
 }
 
@@ -1076,6 +1077,27 @@ export const ACHIEVEMENTS = [
         comment: 'Następnym razem dach. Albo dąb.',
         icon: 'kapok_firewood',
         on: 'fireDoused'
+    },
+    // Powalone drzewa (1.37.0).
+    {
+        id: 'first_rotten',
+        tier: 'common',
+        title: 'Stare, ale jare',
+        task: 'Wyłam gołą ręką spróchniałe drewno z powalonego pnia w lesie.',
+        comment: 'Leżało tu dziesięć lat. Czekało właśnie na ciebie.',
+        icon: 'rotten_wood',
+        on: 'blockBroken',
+        when: (data) => getBlockDefinition(data.type)?.rotten === true && data.mode === 'adventure'
+    },
+    {
+        id: 'ember_carried',
+        tier: 'rare',
+        title: 'Niosący ogień',
+        task: 'Rozpal ognisko tlącym się próchnem: zajmij próchno od ognia (PPM), zanieś i połóż na ułożonym stosie.',
+        comment: 'Starter ognia? Po co, skoro ogień już jest.',
+        icon: 'prochno_zar',
+        on: 'fireLit',
+        when: (data) => data.carried === true
     },
     // Ścinanie drzew (1.36.0).
     {

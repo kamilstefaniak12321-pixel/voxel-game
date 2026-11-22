@@ -1,7 +1,9 @@
-import { newCampfire, restoreCampfire, updateCampfire, addFirewood, addTinder, addKindling,
-    fuelWood, isTinder, campfireDrops, burnSecondsLeft, TINDERS, FIRE_WOODS, KINDLING, KINDLING_MAX, KINDLING_TEMP,
+import { SELF_LIGHTING, newCampfire, restoreCampfire, updateCampfire, addFirewood, addTinder, addKindling,
+    fuelWood, fuelName, isTinder, campfireDrops, burnSecondsLeft, TINDERS, FIRE_WOODS, KINDLING, KINDLING_MAX, KINDLING_TEMP,
     canIgnite, catchesFromEmbers, startTemp, emberTemp, campfireTemp, cookSpeed, logIgnite, topLog } from './CampfireState.js';
 import { wetOf, isWet } from '../items/moisture.js';
+import { PROCHNO, PROCHNO_EMBER, EMBER_CARRY_SECONDS, burnEmbers } from '../items/prochno.js';
+import { makeItem } from '../items/freshness.js';
 import { getBlockId, isLiquidId, isSolidId, blockExists } from '../blocks/BlockRegistry.js';
 import { CampfireRenderer } from '../rendering/CampfireRenderer.js';
 import { getRoast, isDrink, ROAST_SECONDS } from '../items/foods.js';
@@ -26,7 +28,7 @@ const EMBER_NOTICE_RANGE = 8;
 const degrees = (temp) => `${Math.round(temp / 10) * 10}°`;
 
 // Nazwa drewna wielką literą ("Dąb", "Sosna oścista").
-const woodName = (wood) => { const name = FIRE_WOODS[wood]?.[0] ?? wood; return name[0].toUpperCase() + name.slice(1); };
+const woodName = (wood) => { const name = fuelName(wood); return name[0].toUpperCase() + name.slice(1); };
 
 const keyOf = ({x, y, z}) => `${x},${y},${z}`;
 
@@ -91,11 +93,24 @@ export class Campfires {
                 }
                 else this.notice(fire.phase === 'unlit' ? `Jest już 6 polan. ${TINDER_HINT}.`
                     : fire.phase === 'burning' ? 'Ognisko jest pełne - dołóż, gdy polano się wypali.' : 'Poczekaj, aż polana opadną w żar.');
+            } else if (type === PROCHNO && (fire.phase === 'burning' || fire.embers > 0)) {
+                // Próchno na ogniu albo żarze (1.37.0): zajmuje się i niesie żar.
+                const ember = makeItem(PROCHNO_EMBER, 1, 1);
+                this.noticeAt = -10;
+                if (game.mode === 'adventure' && held?.count > 1 && !game.inventory.canAdd(PROCHNO_EMBER)) this.notice('Ekwipunek pełny');
+                else {
+                    this.consume();
+                    game.inventory.addItem(ember);
+                    game.sounds?.play('sizzle', { position: { x: fire.x + .5, y: fire.y + .4, z: fire.z + .5 }, volume: 0.4 });
+                    this.notice(`Próchno zajęło się żarem - tli się ${Math.round(EMBER_CARRY_SECONDS / 60)} minuty. Połóż je na ułożonym stosie.`);
+                    game.achieve('emberTaken', {});
+                }
             } else if (isTinder(type)) {
                 if (addTinder(fire, type)) {
                     this.consume(); game.playBlockSound('place', blockExists(type) ? type : 'short_grass', fire);
                     // Za słaba na polano z wierzchu - od razu wiadomo, co zrobić.
                     if (!canIgnite(fire)) { this.noticeAt = -10; this.notice(tooCold(fire)); }
+                    else if (type === PROCHNO_EMBER) { this.noticeAt = -10; this.notice('Tlące się próchno na stosie - ognisko rozpali się samo'); }
                     // Lepsza podpałka - krótsze rozpalanie.
                     else if (TINDERS[type] > 1) this.notice('Dobra podpałka - ognisko rozpali się szybciej');
                 }
@@ -228,6 +243,7 @@ export class Campfires {
             // Deszcz (1.35.0): pada na ogniska pod gołym niebem.
             fire.rain = chunk && rain > 0 && (fire.phase !== 'unlit' || fire.embers > 0) &&
                 (game.world.getLight?.(fire.x, fire.y + 1, fire.z)?.sky ?? 0) >= OPEN_SKY ? rain : 0;
+            const selfLit = fire.tinder === SELF_LIGHTING;
             const cooked = updateCampfire(fire, dt, active);
             if (fire.doused) {
                 // Deszcz zgasił ognisko: syk i napis dla gracza obok.
@@ -251,6 +267,10 @@ export class Campfires {
                     this.noticeAt = -10;
                     this.notice('Ognisko rozpalone');
                     game.achieve('fireLit', { wood: topLog(fire).wood, woods: fire.logs.map((log) => log.wood), embers: false, wet: topLog(fire).wet ?? 0 });
+                } else if (selfLit && fire.phase === 'burning') {
+                    // Tlące się próchno rozpaliło stos (1.37.0).
+                    if (this.near(fire, EMBER_NOTICE_RANGE * 2)) { this.noticeAt = -10; this.notice('Ognisko rozpalone od tlącego się próchna'); }
+                    game.achieve('fireLit', { wood: topLog(fire).wood, woods: fire.logs.map((log) => log.wood), embers: false, carried: true, wet: topLog(fire).wet ?? 0 });
                 } else if (phase === 'unlit' && fire.phase === 'burning' && this.near(fire, EMBER_NOTICE_RANGE)) {
                     // Polano zajęło się samo od żaru.
                     this.noticeAt = -10;
@@ -264,6 +284,8 @@ export class Campfires {
             }
         }
         this.updateRoast(dt, holding, hit);
+        // Tlące się próchno w ekwipunku przygasa (items/prochno.js).
+        if (burnEmbers(game.inventory, dt) > 0) { this.noticeAt = -10; this.notice('Tlące się próchno zgasło'); }
         this.renderer.update(dt, this.fires, this.clock);
     }
 

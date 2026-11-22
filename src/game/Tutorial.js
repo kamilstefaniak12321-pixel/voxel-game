@@ -48,6 +48,8 @@ export const TUTORIAL_WALK_BLOCKS = 8;
 const isLog = (type) => ['log', 'stripped'].includes(BLOCK_TYPES[type]?.part);
 const isPlanks = (type) => BLOCK_TYPES[type]?.part === 'planks' || type === 'dark_planks';
 const isAxe = (type) => getTool(type) === 'axe';
+const isBark = (type) => typeof type === 'string' && type.endsWith('_bark');
+const isRotten = (type) => type === 'rotten_wood' || type === 'prochno';
 // Pełna godzina w świecie gry: 'Jest po 14:00 - ' (bez zegara - nic).
 const hourText = (time) => (time?.formatClock ? `Jest po ${Number(time.formatClock().split(':')[0])}:00 - poczekaj` : 'Poczekaj');
 const anyFire = (game, test) => [...(game.campfires?.fires?.values() ?? [])].some(test);
@@ -61,33 +63,50 @@ export const TUTORIAL_STEPS = [
         done: (t) => t.walked >= TUTORIAL_WALK_BLOCKS
     },
     {
-        id: 'wood',
-        title: 'Zdobądź drewno',
-        text: 'Podejdź do drzewa, wyceluj w pień i przytrzymaj {break}, aż pień pęknie. Trafi do paska na dole ekranu.',
-        touch: 'Podejdź do drzewa, wyceluj w pień i przytrzymaj na nim palec, aż pęknie. Trafi do paska na dole ekranu.',
-        hint: 'Gołą ręką idzie to powoli - za chwilę zrobisz siekierę.',
-        done: (t) => t.saw('log') || t.has(isLog) || t.has(isPlanks)
+        id: 'fallen',
+        title: 'Znajdź powalone drzewo',
+        text: 'Gołą ręką żywego drzewa nie zetniesz. Niedaleko leży stary, powalony pień - podejdź do niego. Obok sterczą suche gałęzie: wyceluj w jedną i przytrzymaj {break}, aż się złamie. Dostaniesz patyki.',
+        touch: 'Gołą ręką żywego drzewa nie zetniesz. Niedaleko leży stary, powalony pień - podejdź do niego. Obok sterczą suche gałęzie: wyceluj w jedną i przytrzymaj na niej palec, aż się złamie. Dostaniesz patyki.',
+        hint: 'Takie pnie leżą w lasach co jakiś czas. To z nich bierze się pierwsze drewno.',
+        done: (t) => t.saw('branch') || t.has((type) => type === 'stick') || t.has(isAxe)
     },
     {
-        id: 'planks',
-        title: 'Zrób deski',
-        text: 'Otwórz ekwipunek ([inventory]). Po prawej jest siatka wytwarzania 2 × 2: połóż w niej pień i zabierz deski z pola wyniku.',
-        touch: 'Otwórz ekwipunek (skrzynka u góry ekranu). Jest w nim siatka wytwarzania 2 × 2: połóż w niej pień i zabierz deski z pola wyniku.',
-        hint: 'Przycisk Przepisy w ekwipunku pokazuje wszystko, co da się zrobić - kliknięcie przepisu samo układa składniki.',
-        done: (t) => t.saw('crafted:planks') || t.has(isPlanks) || t.has((type) => type === 'stick') || t.has(isAxe)
-    },
-    {
-        id: 'sticks',
-        title: 'Zrób patyki',
-        text: 'W siatce wytwarzania połóż dwie deski jedna nad drugą - wyjdą cztery patyki. Przydadzą się do narzędzi i ogniska.',
-        done: (t) => t.saw('crafted:stick') || t.has((type) => type === 'stick') || t.has(isAxe)
+        id: 'rotten',
+        title: 'Zedrzyj korę, wyłam próchno',
+        text: 'Wyceluj w leżący pień i kliknij pustą ręką ([use]) - zedrzesz z niego korę, czyli podpałkę. Ciemne, dziurawe kawałki pnia są spróchniałe: przytrzymaj na nich {break}, a wyłamiesz spróchniałe drewno.',
+        touch: 'Wyceluj w leżący pień i stuknij go pustą ręką - zedrzesz z niego korę, czyli podpałkę. Ciemne, dziurawe kawałki pnia są spróchniałe: przytrzymaj na nich palec, a wyłamiesz spróchniałe drewno.',
+        hint: 'Spróchniałe drewno zajmuje się od byle czego - przyda się do pierwszego ogniska. Zdrowej części pnia ręką nie ruszysz.',
+        done: (t) => (t.saw('stripped') || t.has(isBark)) && (t.saw('rotten') || t.has(isRotten))
     },
     {
         id: 'axe',
         title: 'Zrób siekierę',
-        text: 'Potrzebujesz trzech skał i patyka. Skałę wykopiesz spod ziemi albo znajdziesz na zboczach i brzegach. W siatce ułóż: u góry dwie skały, pod nimi skała i patyk.',
-        hint: 'Siekiera ścina drzewa trzy razy szybciej. Kilof (2 skały + patyk) tak samo przyspiesza kopanie skał, łopata (skała nad patykiem) - ziemi. Nóż (skała i patyk na ukos) ścina trawę i kwiaty.',
+        text: 'Potrzebujesz trzech skał i patyka. Skałę wykopiesz spod ziemi albo znajdziesz na zboczach i brzegach. Otwórz ekwipunek ([inventory]) i w siatce wytwarzania ułóż: u góry dwie skały, pod nimi skała i patyk.',
+        touch: 'Potrzebujesz trzech skał i patyka. Skałę wykopiesz spod ziemi albo znajdziesz na zboczach i brzegach. Otwórz ekwipunek (skrzynka u góry ekranu) i w siatce wytwarzania ułóż: u góry dwie skały, pod nimi skała i patyk.',
+        hint: 'Przycisk Przepisy w ekwipunku pokazuje wszystko, co da się zrobić. Kilof to 2 skały i patyk, łopata - skała nad patykiem, nóż - skała i patyk na ukos.',
         done: (t) => t.saw('crafted:axe') || t.has(isAxe)
+    },
+    {
+        id: 'logs',
+        title: 'Potnij pień',
+        text: 'Weź siekierę do ręki, wyceluj w zdrową część leżącego pnia i przytrzymaj {break}. Każdy metr pnia to jeden pień do paska na dole ekranu.',
+        touch: 'Weź siekierę do ręki, wyceluj w zdrową część leżącego pnia i przytrzymaj na niej palec. Każdy metr pnia to jeden pień do paska na dole ekranu.',
+        done: (t) => t.saw('log') || t.has(isLog) || t.has(isPlanks)
+    },
+    {
+        id: 'fell',
+        title: 'Zetnij drzewo',
+        text: 'Teraz stojące drzewo: siekierą bij w pień ({break}), aż padnie. W pniu rośnie karb. Drzewo pada od ciebie - tam, gdzie patrzysz - więc nie stój po tej stronie.',
+        touch: 'Teraz stojące drzewo: siekierą bij w pień (trzymaj na nim palec), aż padnie. W pniu rośnie karb. Drzewo pada od ciebie - tam, gdzie patrzysz - więc nie stój po tej stronie.',
+        hint: 'Na początek cienki świerk, sosna albo brzoza - kilka ciosów. Gruby pień trzeba ciąć z dwóch stron. Po upadku zostaje leżący pień i konary (konar to 3 patyki).',
+        done: (t) => t.saw('felled')
+    },
+    {
+        id: 'planks',
+        title: 'Zrób deski',
+        text: 'W siatce wytwarzania 2 × 2 w ekwipunku połóż pień i zabierz deski z pola wyniku. Z desek powstaje skrzynia, stół stolarski i budowle.',
+        hint: 'Dwie deski jedna nad drugą to cztery patyki.',
+        done: (t) => t.saw('crafted:planks') || t.has(isPlanks)
     },
     {
         id: 'eat',
@@ -108,16 +127,16 @@ export const TUTORIAL_STEPS = [
     {
         id: 'campfire',
         title: 'Ułóż ognisko',
-        text: 'Zrób opał: w siatce wytwarzania połóż pień obok siekiery (siekiera zostaje). Z opałem w ręce kliknij ziemię ([use]) i dokładaj, aż będzie 6 polan.',
-        touch: 'Zrób opał: w siatce wytwarzania połóż pień obok siekiery (siekiera zostaje). Z opałem w ręce stuknij ziemię i dokładaj, aż będzie 6 polan.',
+        text: 'Zrób opał: w siatce wytwarzania połóż pień obok siekiery (siekiera zostaje). Z opałem w ręce kliknij ziemię ([use]) i dokładaj, aż będzie 6 polan. Na sam wierzch połóż spróchniałe drewno.',
+        touch: 'Zrób opał: w siatce wytwarzania połóż pień obok siekiery (siekiera zostaje). Z opałem w ręce stuknij ziemię i dokładaj, aż będzie 6 polan. Na sam wierzch połóż spróchniałe drewno.',
         hint: 'Z jednego pnia wychodzą 4 polana - potrzebujesz dwóch pni. Świeże polana są mokre (niebieski pasek): schną z czasem, najszybciej przy ognisku albo na stosie (kucnij i kliknij ziemię polanem).',
         done: (t) => t.saw('fireLit') || anyFire(t.game, (fire) => fire.logs.length >= 6)
     },
     {
         id: 'fire',
         title: 'Rozpal ognisko',
-        text: 'Podpałką jest kora: kliknij pień siekierą ([use]) i dołóż korę do ogniska. Mokre albo twarde drewno potrzebuje jeszcze rozpałki - dołóż patyk albo dwa. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj [use] przez 5 sekund.',
-        touch: 'Podpałką jest kora: stuknij pień siekierą i dołóż korę do ogniska. Mokre albo twarde drewno potrzebuje jeszcze rozpałki - dołóż patyk albo dwa. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj przycisk z kostką przez 5 sekund.',
+        text: 'Podpałką jest kora z leżącego pnia: dołóż ją do ogniska. Mokre albo twarde drewno potrzebuje jeszcze rozpałki - dołóż patyk albo dwa. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj [use] przez 5 sekund.',
+        touch: 'Podpałką jest kora z leżącego pnia: dołóż ją do ogniska. Mokre albo twarde drewno potrzebuje jeszcze rozpałki - dołóż patyk albo dwa. Z dwóch patyków zrób starter ognia, wyceluj nim w ognisko i przytrzymaj przycisk z kostką przez 5 sekund.',
         hint: 'Nad ogniem upieczesz jabłka, orzechy i żołędzie. Każde drewno pali się inaczej: świerk krótko, dąb długo i gorąco. Do płonącego ogniska możesz dokładać polana.',
         done: (t) => t.saw('fireLit')
     },
@@ -137,7 +156,11 @@ export const TUTORIAL_STEPS = [
 
 // Zdarzenia gry (game.achieve) -> znaczniki samouczka.
 const EVENT_FLAGS = {
-    blockBroken: (data) => (isLog(data.type) ? ['log'] : []),
+    // (Leżący pień - 1.37.0 - daje pień; spróchniały i sucha gałąź osobno.)
+    blockBroken: (data) => (data.type === 'dead_branch' ? ['branch'] : BLOCK_TYPES[data.type]?.rotten ? ['rotten']
+        : isLog(data.type) || BLOCK_TYPES[data.type]?.lying ? ['log'] : []),
+    stripped: () => ['stripped'],
+    treeFelled: () => ['felled'],
     crafted: (data) => [isPlanks(data.type) ? 'crafted:planks' : isAxe(data.type) ? 'crafted:axe' : `crafted:${data.type}`],
     ate: () => ['ate'],
     slept: (data) => (data.early && !(data.hours >= 1) ? [] : ['slept'])

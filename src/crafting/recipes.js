@@ -422,6 +422,9 @@ export const RECIPES = [
     // Konar ze ściętego drzewa (1.36.0, game/Felling.js) łamie się na patyki.
     { id: 'stick_from_konar', result: ['stick', 3], ingredients: ['konar'],
         note: 'Konary spadają ze ściętego drzewa razem z koroną.' },
+    // Spróchniałe drewno z powalonego pnia kruszy się na próchno (1.37.0, items/prochno.js).
+    { id: 'prochno', result: ['prochno', 2], ingredients: ['rotten_wood'],
+        note: 'Podpałka i nawóz. PPM próchnem na płonącym ognisku daje tlące się próchno - przeniesiesz nim ogień bez startera.' },
 
 
     // NARZĘDZIA: głowica ze skały, trzonek z patyka.

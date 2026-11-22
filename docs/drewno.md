@@ -11,10 +11,12 @@
 > wilgotność polan i schnięcie; od **1.34.0** drewutnia (stos polan);
 > od **1.35.0** wypalające się pochodnie, łuczywo i deszcz gaszący
 > ognisko - **część A jest w grze cała**; od **1.36.0** ścinanie:
-> drzewo-byt, ciosy i karb, upadek, leżący pień, konary (część B bez
-> kozłów i powalonych drzew). Opis tego, co działa:
-> [ogniska.md](ogniska.md), [scinanie.md](scinanie.md). Reszta czeka -
-> kolejność w rozdziale 11.
+> drzewo-byt, ciosy i karb, upadek, leżący pień, konary; od **1.37.0**
+> powalone drzewa jako pierwsze drewno, spróchniałe drewno i próchno,
+> nowy samouczek (z części B zostały kozły). Opis tego, co działa:
+> [ogniska.md](ogniska.md), [scinanie.md](scinanie.md),
+> [powalone-drzewa.md](powalone-drzewa.md). Reszta czeka - kolejność
+> w rozdziale 11.
 
 ## W skrócie
 
@@ -513,7 +515,7 @@ Każda część to osobna wersja, grywalna sama.
 | A2b | **Drewutnia** - **1.34.0, w grze** | stos 16 polan: schną jak na powietrzu i nie zajmują ekwipunku; pod dachem nie mokną |
 | A3 | **Pochodnie i deszcz** - **1.35.0, w grze** | wypalające się pochodnie (przygasanie, ogarek, dolewanie paliwa), łuczywo, deszcz chłodzi i gasi ognisko, gasi pochodnie |
 | B1 | **Ścinanie** - **1.36.0, w grze** | drzewo-byt, ciosy i karb, upadek od gracza, leżący pień, konary, gracz pod drzewem ([scinanie.md](scinanie.md)) |
-| B2 | **Powalone drzewa** | stare pnie w lesie jako pierwsze drewno (rozdział 9), spróchniałe drewno i próchno, gołą ręką już się nie zetnie, nowy samouczek |
+| B2 | **Powalone drzewa** - **1.37.0, w grze** | stare pnie w lesie jako pierwsze drewno (rozdział 9), spróchniałe drewno i próchno, gołą ręką już się nie zetnie, nowy samouczek ([powalone-drzewa.md](powalone-drzewa.md)) |
 | B3 | **Kozły** | obróbka leżącego pnia: kłody, łupanie na opał, okorowanie |
 | C | **Narzędzia i kołysanie** | twardość skał, widoczne zużycie, kołysanie drzew |
 | D | **Dary pnia** | soki, żywice, guma, łyko - nacinanie nożem |

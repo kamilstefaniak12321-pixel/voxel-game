@@ -79,7 +79,9 @@ check(PLANT_MODELS.length >= 45 && PLANT_MODELS.slice(0, 5).map((model) => model
 // Wszystkie rośliny gry mają trzy wersje - poza tymi, które leżą na
 // ścianie, ziemi albo wodzie jedną warstwą pikseli (jedna wersja na
 // wszystkie poziomy).
-const SINGLE_LAYER = new Set(['water_lily', 'duckweed', 'water_milfoil']);
+// (Sucha gałąź przy powalonym pniu - 1.37.0 - to nie roślina z paczki: ma
+// jeden obrazek na wszystkie poziomy; docs/powalone-drzewa.md, Luki.)
+const SINGLE_LAYER = new Set(['water_lily', 'duckweed', 'water_milfoil', 'dead_branch']);
 const modelled = new Set(PLANT_MODELS.flatMap((model) => model.stages.map((stage) => stage.type)));
 const { BLOCK_TYPES } = await import('../src/blocks/BlockRegistry.js');
 for (const [type, definition] of Object.entries(BLOCK_TYPES)) {

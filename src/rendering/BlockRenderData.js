@@ -1411,7 +1411,7 @@ for (
         // opaque/cutout face and material instead of adding overlay geometry.
         // Pień z arkuszem kory: boki losowane z 64 kafelków.
         // (Leżący pień - 1.36.0 - ma arkusz stojącego pnia swojego gatunku.)
-        bark: barkSheet(definition.lying ? `${definition.tree}_log` : name),
+        bark: barkSheet(definition.barkOf ?? name),
 
         worldTextureVariants: name === 'pine_log_upper'
             ? [definition.textures.side, ...PINE_TRANSITION_TEXTURES].map(texture => FACE_NAMES.map(faceName =>

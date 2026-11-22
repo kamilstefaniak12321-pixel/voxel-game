@@ -31,7 +31,8 @@ const OWN_USES = {
     // Wypalające się pochodnie (1.35.0, items/torchFuel.js).
     luczywo: 'postawione świeci jak pochodnia przez kilka minut',
     torch_stub: 'z żywicą albo oliwkami znów jest pochodnią',
-    // Ścinanie drzew (1.36.0, game/Felling.js).
+    // Powalone drzewa (1.37.0, items/prochno.js).
+    prochno_zar: 'położone na ułożonym stosie rozpala ognisko bez startera',
     // Gotowanie (1.20.0, items/cooking.js).
     clay_pot: 'gotowanie: nabierz wody (PPM na wodzie)',
     clay_pot_water: 'gotowanie: postaw na ognisku i wrzuć 2-3 składniki',
@@ -84,7 +85,7 @@ export function itemUses(type) {
         uses.push(`opał do ogniska: zapłon ${wood.ignite}°, żar ${wood.heat}°, polano pali się ${wood.burn} s`);
         uses.push(wood.note);
         // Wilgotność (1.33.0, items/moisture.js).
-        uses.push(isWet(wood.fresh) ? `świeżo porąbane jest ${wetWord(wood.fresh)} (${Math.round(wood.fresh * 100)}% wody) - schnie z czasem, przy ognisku szybko` : 'pali się nawet świeżo porąbane');
+        if (fuelWood(type) !== 'rotten') uses.push(isWet(wood.fresh) ? `świeżo porąbane jest ${wetWord(wood.fresh)} (${Math.round(wood.fresh * 100)}% wody) - schnie z czasem, przy ognisku szybko` : 'pali się nawet świeżo porąbane');
     }
     // Mokra glina (items/clay.js): schnie na słońcu.
     if (driesInto(type)) uses.push(`suszenie na słońcu: ${getItemLabel(driesInto(type))}`);

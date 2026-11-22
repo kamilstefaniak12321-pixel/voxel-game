@@ -101,6 +101,10 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/niskie` | rośliny niskie (1.19.0, `docs/rosliny-niskie.md`): lista roślin i biomów, w których rosną |
 | `/niskie galeria` | przed tobą galeria: każda roślina w rzędzie, od lewej kolejne etapy (sadzonka, roślina, kwiaty, owoce), przy dyni młoda i dojrzała dynia, w ostatnim rzędzie torfowce i chrobotek (zmienia świat) |
 | `/niskie znajdz [roślina]` | najbliższa roślina niska we wczytanym terenie (np. `zurawina`, `brusznica`, `poziomka`, `dynia`): odległość i komenda `/tp` |
+| `/powalone` | powalone drzewa (1.37.0, `docs/powalone-drzewa.md`): gdzie leży najbliższy powalony pień z generatora terenu |
+| `/powalone tp` | przenosi do najbliższego powalonego pnia |
+| `/powalone postaw [gatunek] [długość 3-8]` | kładzie pień przed tobą: zdrowe i spróchniałe kawałki, mech, suche gałęzie (bez gatunku - jak najbliższe drzewo) |
+| `/powalone daj` | do ekwipunku: 8 spróchniałego drewna, 8 próchna, 2 tlące się próchna, 4 kory dębu, 3 konary, 6 patyków |
 | `/scinanie` | ścinanie drzew (1.36.0, `docs/scinanie.md`): co gra wie o drzewie pod celownikiem - gatunek, twardość, grubość pnia, ile ciosów i z ilu stron, ile kłód spadnie |
 | `/scinanie zetnij [polnoc\|poludnie\|wschod\|zachod]` | kładzie drzewo (albo odcina konar) pod celownikiem od razu; bez strony - tam, gdzie patrzysz |
 | `/scinanie cios [liczba]` | zadaje podaną liczbę ciosów siekierą bez czekania na zamach (tryb przygody, siekiera w ręce) |

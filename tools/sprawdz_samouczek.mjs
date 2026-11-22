@@ -81,17 +81,20 @@ const check = (condition, message) => { assert.ok(condition, message); checks++;
     const text = (id) => TUTORIAL_STEPS.find((step) => step.id === id);
     check(text('fire').text.includes(`${CAMPFIRE_IGNITE_SECONDS} sekund`) && text('campfire').text.includes(`${CAMPFIRE_CAPACITY} polan`), 'Ognisko: liczby jak w grze');
     check(text('sleep').text.includes(`${NIGHT_FROM}:00`), 'Sen: godzina nocy jak w grze');
-    check(TINDERS.oak_bark === 1 && TINDERS.birch_bark === 1.5 && /korę/.test(text('fire').text), 'Kora jest podpałką (krok o rozpalaniu)');
+    check(TINDERS.oak_bark === 1 && TINDERS.birch_bark === 1.5 && /kor[aę]/.test(text('fire').text), 'Kora jest podpałką (krok o rozpalaniu)');
     // Domyślne klawisze w tekstach - jak dotąd.
     check(/klawiszami W, A, S, D, skok to Spacja/.test(formatKeys(text('move').text)), 'Ruch: W, A, S, D i Spacja');
-    check(/przytrzymaj lewy przycisk myszy, aż/.test(formatKeys(text('wood').text)), 'Drewno: lewy przycisk myszy');
-    check(/ekwipunek \(E\)/.test(formatKeys(text('planks').text)) && /naciśnij F\./.test(formatKeys(text('eat').text)) && /Naciśnij C,/.test(formatKeys(text('status').text)), 'Ekwipunek E, jedzenie F, status C');
-    check(/kucnij \(Shift\)/.test(formatKeys(text('sleep').text)) && /przytrzymaj PPM przez 5 sekund/.test(formatKeys(text('fire').text)) && /pień siekierą \(PPM\)/.test(formatKeys(text('fire').text)), 'Kucanie Shift, rozpalanie PPM');
+    check(/przytrzymaj lewy przycisk myszy, aż/.test(formatKeys(text('fallen').text)), 'Sucha gałąź: lewy przycisk myszy');
+    check(/ekwipunek \(E\)/.test(formatKeys(text('axe').text)) && /naciśnij F\./.test(formatKeys(text('eat').text)) && /Naciśnij C,/.test(formatKeys(text('status').text)), 'Ekwipunek E, jedzenie F, status C');
+    check(/kucnij \(Shift\)/.test(formatKeys(text('sleep').text)) && /przytrzymaj PPM przez 5 sekund/.test(formatKeys(text('fire').text)) && /pustą ręką \(PPM\)/.test(formatKeys(text('rotten').text)), 'Kucanie Shift, rozpalanie PPM, kora pustą ręką');
+    // 1.37.0: pierwsze drewno z powalonego pnia, potem siekiera i ścinanie.
+    check(TUTORIAL_STEPS.map((step) => step.id).join() === 'move,fallen,rotten,axe,logs,fell,planks,eat,status,campfire,fire,sleep', 'Kolejność kroków: powalony pień, siekiera, pień, drzewo');
+    check(/spróchniałe drewno/.test(text('campfire').text) && /Gołą ręką żywego drzewa nie zetniesz/.test(text('fallen').text) && /pada od ciebie/.test(text('fell').text), 'Samouczek mówi o powalonym pniu, próchnie i kierunku upadku');
     // Po zmianie klawiszy teksty idą za nimi.
     {
         const custom = new Bindings({ eat: 'KeyG', break: 'KeyK', use: 'Mouse3', crouch: 'ControlLeft', forward: 'ArrowUp' });
         check(/naciśnij G\./.test(custom.format(text('eat').text)) && /zbierasz kliknięciem \(Mysz 4\)/.test(custom.format(text('eat').text)), 'Zmienione: jedzenie pod G, zbieranie bocznym przyciskiem');
-        check(/przytrzymaj klawisz K, aż/.test(custom.format(text('wood').text)), 'Zmienione: kopanie klawiszem K');
+        check(/przytrzymaj klawisz K, aż/.test(custom.format(text('fallen').text)), 'Zmienione: kopanie klawiszem K');
         check(/kucnij \(Lewy Ctrl\)/.test(custom.format(text('sleep').text)) && /klawiszami ↑, A, S, D/.test(custom.format(text('move').text)), 'Zmienione: kucanie i ruch');
     }
     // Przepisy, o których mówi samouczek.
@@ -170,31 +173,52 @@ const settle = (game) => run(game, TUTORIAL_DONE_SECONDS + 0.6);
     run(game, TUTORIAL_DONE_SECONDS - 0.6);
     check(current(game) === 'move', '"Zrobione!" zostaje na ekranie chwilę');
     run(game, 0.8);
-    check(current(game) === 'wood' && game.worldInfo.tutorial.step === 1, 'Potem następny krok (zapisany)');
+    check(current(game) === 'fallen' && game.worldInfo.tutorial.step === 1, 'Potem następny krok (zapisany)');
 
-    // 2. Drewno: zdarzenie z gry (rozbity pień).
+    // 2. Powalony pień: sucha gałąź (zdarzenie z gry) albo patyki w ekwipunku.
     game.achieve('blockBroken', { type: 'stone' });
     run(game, 0.6);
-    check(!tutorial.view().completed, 'Rozbity kamień to nie drewno');
-    game.achieve('blockBroken', { type: 'birch_log' });
+    check(!tutorial.view().completed, 'Rozbity kamień to nie gałąź');
+    game.achieve('blockBroken', { type: 'dead_branch' });
     settle(game);
-    check(current(game) === 'planks', 'Rozbity pień zalicza krok');
+    check(current(game) === 'rotten', 'Złamana sucha gałąź zalicza krok');
 
-    // 3-4. Deski i patyki: zdarzenie wytworzenia albo rzecz w ekwipunku.
-    game.achieve('crafted', { type: 'spruce_planks', count: 4 });
+    // 3. Kora i spróchniałe drewno: potrzeba obu.
+    game.achieve('stripped', { type: 'birch_log_x', into: 'birch_log_stripped_x', item: 'birch_bark' });
+    run(game, 0.6);
+    check(!tutorial.view().completed, 'Sama kora to połowa kroku');
+    game.achieve('blockBroken', { type: 'rotten_log_x' });
     settle(game);
-    check(current(game) === 'sticks', 'Wytworzone deski');
-    inventory.add('stick', 4);
-    settle(game);
-    check(current(game) === 'axe', 'Patyki w ekwipunku też się liczą');
+    check(current(game) === 'axe', 'Kora i spróchniałe drewno');
 
-    // 5. Siekiera (dowolna skała).
+    // 4. Siekiera (dowolna skała).
     inventory.add('pickaxe', 1);
     run(game, 0.6);
     check(!tutorial.view().completed, 'Kilof to nie siekiera');
     game.achieve('crafted', { type: 'axe_granite', count: 1 });
     settle(game);
-    check(current(game) === 'eat', 'Granitowa siekiera zalicza krok');
+    check(current(game) === 'logs', 'Granitowa siekiera zalicza krok');
+
+    // 5. Pień z leżącego pnia (blok leżący daje zwykły pień).
+    game.achieve('blockBroken', { type: 'rotten_log_z' });
+    run(game, 0.6);
+    check(!tutorial.view().completed, 'Spróchniały kawałek to nie pień');
+    game.achieve('blockBroken', { type: 'birch_log_x' });
+    settle(game);
+    check(current(game) === 'fell', 'Wykopany leżący pień zalicza krok');
+
+    // 6. Ścięte drzewo.
+    game.achieve('treeChopped', { species: 'spruce' });
+    run(game, 0.6);
+    check(!tutorial.view().completed, 'Sam cios to jeszcze nie ścięte drzewo');
+    game.achieve('treeFelled', { species: 'spruce', width: 1 });
+    settle(game);
+    check(current(game) === 'planks', 'Ścięte drzewo zalicza krok');
+
+    // 7. Deski: zdarzenie wytworzenia albo rzecz w ekwipunku.
+    game.achieve('crafted', { type: 'spruce_planks', count: 4 });
+    settle(game);
+    check(current(game) === 'eat', 'Wytworzone deski');
 
     // 6-7. Jedzenie i okno statusu.
     game.achieve('ate', { type: 'strawberry', meal: false });
@@ -251,12 +275,16 @@ const settle = (game) => run(game, TUTORIAL_DONE_SECONDS + 0.6);
     game.tutorial.start();
     game.achieve('ate', { type: 'acorn' });                               // zjadł, zanim samouczek o to poprosił
     game.inventory.add('oak_log', 3);
+    game.inventory.add('oak_planks', 4);
     game.inventory.add('axe', 1);
+    game.inventory.add('oak_bark', 1);
+    game.inventory.add('rotten_wood', 1);
+    game.achieve('treeFelled', { species: 'oak', width: 1 });
     run(game, 4, 4);
     let seconds = 0;
     while (current(game) !== 'status' && seconds < 30) { run(game, 0.25); seconds += 0.25; }
-    check(current(game) === 'status', 'Gracz z siekierą i po posiłku przeskakuje do okna statusu');
-    check(seconds <= 5 * (TUTORIAL_QUICK_SECONDS + 0.6), `Gotowe kroki migają krótko (${seconds} s na pięć kroków)`);
+    check(current(game) === 'status', 'Gracz z siekierą, drewnem i po posiłku przeskakuje do okna statusu');
+    check(seconds <= 7 * (TUTORIAL_QUICK_SECONDS + 0.6), `Gotowe kroki migają krótko (${seconds} s na siedem kroków)`);
 
     // Pomijanie kroku i wyłączenie.
     check(game.tutorial.skipStep() && current(game) === 'campfire', '"Pomiń krok" przechodzi dalej');
@@ -270,7 +298,7 @@ const settle = (game) => run(game, TUTORIAL_DONE_SECONDS + 0.6);
     check(game.tutorial.start() && current(game) === 'move' && game.worldInfo.tutorial.step === 0 && !game.worldInfo.tutorial.done, 'Powtórka zaczyna od pierwszego kroku');
     run(game, 4, 4);
     run(game, 12);
-    check(current(game) === 'eat', 'Powtórka: rzeczy w ekwipunku się liczą, dawny posiłek już nie');
+    check(current(game) === 'fell', 'Powtórka: rzeczy w ekwipunku się liczą, dawne ścięcie drzewa już nie');
 
     // Ostatni krok pominięty: też koniec (bez "pominięty").
     for (let index = 0; index < TUTORIAL_STEPS.length; index++) game.tutorial.skipStep();
@@ -286,7 +314,7 @@ const settle = (game) => run(game, TUTORIAL_DONE_SECONDS + 0.6);
     check(game.tutorial.view() === null, 'Pominięty - karta się nie pokazuje');
 
     // Zapis i odczyt.
-    const saved = makeGame({ tutorial: { step: 5, done: false, skipped: false } });
+    const saved = makeGame({ tutorial: { step: 7, done: false, skipped: false } });
     check(saved.tutorial.active && current(saved) === 'eat', 'Po wczytaniu świata samouczek wraca w tym samym kroku');
     check(makeGame({ tutorial: { step: 99 } }).tutorial.active === false, 'Numer kroku spoza listy - skończony');
     check(current(makeGame({ tutorial: { step: -4 } })) === 'move' && current(makeGame({ tutorial: { step: 'trzy' } })) === 'move', 'Uszkodzony numer kroku - od początku');

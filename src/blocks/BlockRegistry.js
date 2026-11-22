@@ -65,7 +65,9 @@ export const AIR_ID = 0;
 //   15600-15999             pnącza i ich podpory (1.30.0 - vines.js),
 //   16000-16089             etapy wypalania pochodni (1.35.0, torches.js),
 //   16100-16299             leżące pnie (1.36.0, po 2 na gatunek: wzdłuż X i Z - lyingLogs.js),
-//   16090-16099, 16300-65279 wolne na przyszłość.
+//   16300-16302             spróchniały pień (X, Z) i sucha gałąź (1.37.0 - lyingLogs.js),
+//   16400-16599             okorowane leżące pnie (1.37.0, po 2 na gatunek - lyingLogs.js),
+//   16090-16099, 16303-16399, 16600-65279 wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 

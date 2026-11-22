@@ -50,6 +50,9 @@ import { newPot, cookPot } from '../game/CookingState.js';
 import { newCampfire, addFirewood, FIRE_WOODS, fuelType, woodHeat, stackSeconds, emberSeconds, TINDER_TEMPS,
     KINDLING, KINDLING_MAX, KINDLING_TEMP, EMBER_HOT_SECONDS, EMBER_MAX_SECONDS, WARMTH_FROM, WARMTH_DEGREES } from '../game/CampfireState.js';
 import { WOOD_TRAITS, woodTraits } from '../blocks/woodTraits.js';
+import { PROCHNO, PROCHNO_EMBER } from '../items/prochno.js';
+import { placeFallenInWorld, fallenSpecies, FALLEN_DIRECTIONS, FALLEN_GRID, FALLEN_MAX } from '../world/trees/FallenTrees.js';
+import { nearbySpecies } from '../game/StarterLog.js';
 import { barkType } from '../items/bark.js';
 import { seasonedWood, freshWet, wetOf, setWet, wetWord, wetIgnite, wetHeat, isWet, DRY_WET } from '../items/moisture.js';
 import { dryingRate, dryDaysLeft } from '../game/WoodDrying.js';
@@ -1885,6 +1888,66 @@ export const WORLD_COMMANDS = [
             }
 
             throw new CommandError('Użycie: /pochodnia | /pochodnia daj | /pochodnia paliwo <procent> | /pochodnia czas <minuty>');
+
+        }
+    },
+
+    {
+        name: 'powalone',
+        aliases: ['powalony', 'fallen', 'prochno'],
+        usage: '/powalone | /powalone tp | /powalone postaw [gatunek] [długość 3-8] | /powalone daj',
+        description: 'Powalone drzewa (1.37.0): bez słowa - gdzie leży najbliższy powalony pień z generatora terenu; "tp" przenosi do niego; "postaw" kładzie pień przed tobą (zdrowe i spróchniałe kawałki, mech, suche gałęzie); "daj" - spróchniałe drewno, próchno, tlące się próchno, kora i konary.',
+
+        run(args, { game, player, world }) {
+
+            const word = simplify(args[0] ?? '');
+
+            if (['daj', 'give', 'zestaw'].includes(word)) {
+                for (const item of [makeItem('rotten_wood', 8), makeItem(PROCHNO, 8), makeItem(PROCHNO_EMBER, 2, 1), makeItem('oak_bark', 4), makeItem('konar', 3), makeItem('stick', 6)]) game.inventory.addItem(item);
+                return 'Dano: 8 spróchniałego drewna, 8 próchna, 2 tlące się próchna, 4 kory dębu, 3 konary i 6 patyków.';
+            }
+
+            if (['postaw', 'place', 'poloz'].includes(word)) {
+                const name = simplify(args[1] ?? '');
+                const species = name ? TREE_NAMES.find((key) => key === name || simplify(TREE_SPECIES[key].labels[0]).includes(name)) : nearbySpecies(world, Math.floor(player.pos.x), Math.floor(player.pos.z));
+                if (!species || !fallenSpecies(species)) throw new CommandError('Podaj gatunek drzewa, po którym zostaje pień (np. dab, swierk, brzoza); kosodrzewina i baobab nie.');
+                const length = args[2] === undefined ? 6 : Number(args[2]);
+                if (!(Number.isInteger(length) && length >= 3 && length <= FALLEN_MAX)) throw new CommandError(`Długość od 3 do ${FALLEN_MAX}.`);
+                const yaw = player.yaw ?? 0, fx = -Math.sin(yaw), fz = -Math.cos(yaw);
+                const direction = Math.abs(fx) > Math.abs(fz) ? 1 : 0;
+                const [dx, dz] = FALLEN_DIRECTIONS[direction];
+                const sx = Math.round(player.pos.x + fx * 4 - dx * length / 2), sz = Math.round(player.pos.z + fz * 4 - dz * length / 2);
+                const placed = placeFallenInWorld(world, sx, sz, direction, fallenSpecies(species), length);
+                if (!placed) throw new CommandError('Tu się nie zmieści: potrzeba równej ziemi (trawa, ziemia) bez wody i przeszkód.');
+                const count = (kind, test = () => true) => placed.filter((block) => block.kind === kind && test(block)).length;
+                return `Położono pień: ${TREE_SPECIES[fallenSpecies(species)].labels[0].toLowerCase()}, ${count('log')} bloków (${count('log', (block) => block.type.startsWith('rotten'))} spróchniałych), ` +
+                    `mech ${count('moss')}, suche gałęzie ${count('branch')}.`;
+            }
+
+            if (word && !['tp', 'znajdz', 'find'].includes(word)) throw new CommandError('Użycie: /powalone | /powalone tp | /powalone postaw [gatunek] [długość] | /powalone daj');
+
+            const fallen = world.generator?.forests?.fallen;
+            if (!fallen) return 'W tym terenie generator nie kładzie powalonych pni. Użyj /powalone postaw.';
+            const gx = Math.floor(player.pos.x / FALLEN_GRID), gz = Math.floor(player.pos.z / FALLEN_GRID);
+            let best = null;
+            for (let dx = -12; dx <= 12; dx++) {
+                for (let dz = -12; dz <= 12; dz++) {
+                    const found = fallen.at(gx + dx, gz + dz);
+                    if (!found) continue;
+                    const distance = Math.hypot(found.x - player.pos.x, found.z - player.pos.z);
+                    if (!best || distance < best.distance) best = { found, distance };
+                }
+            }
+            if (!best) return `W promieniu ${12 * FALLEN_GRID} bloków nie ma powalonego pnia - tu nie ma lasu.`;
+            const { found } = best, log = found.blocks[0];
+            if (word === 'tp') {
+                player.pos.set(log.x + 0.5, log.y + 2, log.z + 0.5);
+                player.vel?.set(0, 0, 0);
+                return `Przeniesiono do powalonego pnia (${TREE_SPECIES[found.species].labels[0].toLowerCase()}, ${found.length} bloków).`;
+            }
+            return `Powalone pnie leżą w lasach co jakiś czas (w nowym świecie jeden zawsze przy miejscu startu). ` +
+                `Najbliższy: ${TREE_SPECIES[found.species].labels[0].toLowerCase()}, ${found.length} bloków, ${Math.round(best.distance)} bloków stąd ` +
+                `(${log.x}, ${log.y}, ${log.z}). /powalone tp - przenosi.`;
 
         }
     },

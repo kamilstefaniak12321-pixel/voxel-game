@@ -16,7 +16,7 @@
 // ------------------------------------------------------------
 
 import { WOODPILE, WOODPILE_CAPACITY, newWoodpile, restoreWoodpile, addLogs, takeLogs, topRun, woodpileDrops, pileWet, pileRoom } from './WoodpileState.js';
-import { FIRE_WOODS, fuelWood } from './CampfireState.js';
+import { fuelName, fuelWood } from './CampfireState.js';
 import { getBlockId, isLiquidId, isSolidId } from '../blocks/BlockRegistry.js';
 import { wetOf, isWet, wetWord } from '../items/moisture.js';
 import { WoodpileRenderer } from '../rendering/WoodpileRenderer.js';
@@ -49,7 +49,7 @@ export class Woodpiles {
         if (pile.logs.length === 0) return 'Pusty stos drewna - dokładaj polana PPM';
         const woods = new Map();
         for (const log of pile.logs) woods.set(log.wood, (woods.get(log.wood) ?? 0) + 1);
-        const list = [...woods].map(([wood, count]) => `${FIRE_WOODS[wood][0]} ${count}`).join(', ');
+        const list = [...woods].map(([wood, count]) => `${fuelName(wood)} ${count}`).join(', ');
         const wet = pileWet(pile), damp = pile.logs.filter((log) => isWet(log.wet ?? 0)).length;
         const state = damp === 0 ? 'suche' : damp === pile.logs.length ? `${wetWord(wet)} (${Math.round(wet * 100)}% wody) - schnie` : `mokrych ${damp} z ${pile.logs.length} - schnie`;
         return `Stos drewna ${pile.logs.length}/${WOODPILE_CAPACITY}: ${list} - ${state}`;

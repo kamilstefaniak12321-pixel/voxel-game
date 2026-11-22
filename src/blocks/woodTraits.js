@@ -66,9 +66,15 @@ export const WOOD_TRAITS = {
     dragon_tree: { hardness: 2, fresh: WET, ignite: 300, heat: 640, burn: 55, sparks: 0, smoke: 1, note: 'słabo grzeje' }
 };
 
+// Spróchniałe drewno z powalonego pnia (1.37.0, blocks/lyingLogs.js) -
+// nie gatunek drzewa: zajmuje się od byle czego (zapłon niższy niż
+// każde zdrowe drewno), ale grzeje słabo, pali się pół minuty i kopci.
+export const ROTTEN_TRAITS = { hardness: 1, fresh: DRY, ignite: 200, heat: 450, burn: 30, sparks: 0, smoke: 3,
+    note: 'zajmuje się od byle czego - dobre na wierzch stosu; grzeje słabo i kopci' };
+
 // Cechy gatunku (nieznane drewno - jak świerk, żeby nic się nie wywróciło).
 export function woodTraits(wood) {
-    return WOOD_TRAITS[wood] ?? WOOD_TRAITS.spruce;
+    return wood === 'rotten' ? ROTTEN_TRAITS : WOOD_TRAITS[wood] ?? WOOD_TRAITS.spruce;
 }
 
 // Przedziały do opisów i sprawdzeń.

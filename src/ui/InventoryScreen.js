@@ -34,6 +34,7 @@ import { freshText } from '../items/spoilage.js';
 import { fireNotes } from '../items/woodNotes.js';
 import { wetNotes } from '../items/moisture.js';
 import { fuelNotes } from '../items/torchFuel.js';
+import { emberNotes } from '../items/prochno.js';
 import { garmentInfo, fitsSlot, lookText, SLOTS as CLOTHING_SLOTS, SLOT_LABELS, GARMENTS } from '../items/clothing.js';
 import { garmentIcon } from './garmentIcons.js';
 
@@ -1987,7 +1988,7 @@ export class InventoryScreen {
     fireNote(type, item = null) {
 
         // (Od 1.35.0 także paliwo pochodni - items/torchFuel.js.)
-        return [...fireNotes(type), ...wetNotes(item?.type === type ? item : null), ...fuelNotes(type, item)].map((text) => el('div', 'inv-tooltip-note', text));
+        return [...fireNotes(type), ...wetNotes(item?.type === type ? item : null), ...fuelNotes(type, item), ...emberNotes(type, item)].map((text) => el('div', 'inv-tooltip-note', text));
 
     }
 

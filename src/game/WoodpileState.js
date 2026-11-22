@@ -12,7 +12,7 @@
 // ------------------------------------------------------------
 
 import { CHUNK_HEIGHT, WORLD_BORDER } from '../config.js';
-import { FIRE_WOODS, fuelType } from './CampfireState.js';
+import { isFuelWood, fuelType } from './CampfireState.js';
 
 export const WOODPILE = 'woodpile';
 export const WOODPILE_ROW = 4;
@@ -31,7 +31,7 @@ export function restoreWoodpile(value) {
         value.x < -WORLD_BORDER || value.x >= WORLD_BORDER || value.z < -WORLD_BORDER || value.z >= WORLD_BORDER) return null;
     const pile = newWoodpile(value.x, value.y, value.z, value.axis);
     pile.logs = (Array.isArray(value.logs) ? value.logs : []).slice(0, WOODPILE_CAPACITY)
-        .filter((log) => log && Object.hasOwn(FIRE_WOODS, log.wood))
+        .filter((log) => log && isFuelWood(log.wood))
         .map((log) => ({ wood: log.wood, ...wetField(clamp01(log.wet)) }));
     return pile;
 }
@@ -40,7 +40,7 @@ export const pileRoom = (pile) => WOODPILE_CAPACITY - pile.logs.length;
 
 // Dokłada do `count` polan; zwraca, ile się zmieściło.
 export function addLogs(pile, wood, count = 1, wet = 0) {
-    if (!Object.hasOwn(FIRE_WOODS, wood)) return 0;
+    if (!isFuelWood(wood)) return 0;
     const added = Math.max(0, Math.min(Math.floor(count), pileRoom(pile)));
     for (let i = 0; i < added; i++) pile.logs.push({ wood, ...wetField(clamp01(wet)) });
     return added;

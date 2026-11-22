@@ -134,6 +134,21 @@ export const GUIDE = [
         ]
     },
     {
+        id: 'tree-gifts',
+        title: 'Dary pnia: żywica i soki',
+        lines: [
+            { text: 'Nożem w bok pnia żywego drzewa ([use]) robisz nacięcie. Drzewo puszcza to, co ma pod korą: iglaste - żywicę, brzoza, klon i palma - sok, baobab - wodę.',
+                touch: 'Nożem w bok pnia żywego drzewa (stuknij pień) robisz nacięcie. Drzewo puszcza to, co ma pod korą: iglaste - żywicę, brzoza, klon i palma - sok, baobab - wodę.' },
+            'Żywica zastyga na korze pod nacięciem - zbierz ją ręką. Płynie cały rok, latem najszybciej, zimą ledwo.',
+            'Sok kapie na ziemię, więc powieś pod nacięciem gliniany kubek. Pełny kubek zdejmujesz ręką; niepełny - kucając, pustą ręką (to, co nakapało, się wyleje).',
+            'Liczy się pora: brzoza daje sok tylko wiosną, klon od połowy zimy do końca wiosny, palma i baobab cały rok. Soki płyną głównie za dnia.',
+            'Gruby pień daje więcej. Kilka nacięć w jednym drzewie niczego nie przyspiesza - drzewo dzieli sok między nie.',
+            'Po kilku dobach nacięcie się zabliźnia. Wtedy natnij je nożem jeszcze raz.',
+            'Sok brzozowy i palmowy krzepią, woda z baobabu orzeźwia. Sok klonowy trzymany nad ogniskiem odparowuje na syrop klonowy - słodki i bardzo sycący.',
+            'Ścięte drzewo niczego już nie da: kubek i zastygła żywica spadną na ziemię.'
+        ]
+    },
+    {
         id: 'fire',
         title: 'Ognisko',
         lines: [

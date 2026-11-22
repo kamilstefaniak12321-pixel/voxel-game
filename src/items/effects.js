@@ -34,6 +34,9 @@ export const EFFECTS = {
     tonic: { label: 'pokrzepienie', text: 'Przez chwilę mniej się męczysz', hours: 2, drain: 0.9 },
     warm: { label: 'rozgrzanie', text: 'Robi ci się gorąco - praca idzie raźniej', hours: 2, work: 1.06, heat: 4 },
 
+    // Woda z baobabu (1.41.0, dary pnia): chłodna i czysta.
+    refresh: { label: 'orzeźwienie', text: 'Zmęczenie przychodzi wolniej', hours: 3, drain: 0.93 },
+
     // Zimno (1.26.0): ciepła potrawa z garnka albo napar grzeje od środka.
     warmth: { label: 'ciepło w brzuchu', text: 'Ciepłe jedzenie grzeje od środka', hours: 3, heat: 6 }
 };

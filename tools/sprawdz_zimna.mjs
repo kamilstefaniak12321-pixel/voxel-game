@@ -203,7 +203,9 @@ const freezeTime = (felt, activity = {}) => {
     check(EFFECTS.warmth.heat > 0 && EFFECTS.warm.heat > 0 && EFFECTS.warmth.hours >= 2, 'Ciepło w brzuchu i rozgrzanie grzeją');
     for (const [type, food] of Object.entries(FOODS)) {
         if (type.startsWith('dish_')) check(food.effects.includes('warmth'), `${type}: potrawa z garnka grzeje`);
-        if (food.kind === 'drink') check(food.effects.includes('warmth'), `${type}: napar grzeje`);
+        // (Zimne soki z pnia - 1.41.0 - nie grzeją; syrop prosto z ogniska - tak.)
+        if (food.kind === 'drink' && (!food.word || food.word === 'syrop')) check(food.effects.includes('warmth'), `${type}: napar grzeje`);
+        if (food.word === 'sok' || food.word === 'woda') check(!food.effects.includes('warmth'), `${type}: zimny napój nie grzeje`);
     }
     for (const { tea } of Object.values(TEAS)) check(FOODS[tea].effects[0] !== 'warmth', `${tea}: dalej przede wszystkim swój efekt`);
     check(!FOODS.raspberry.effects.includes('warmth') && !FOODS.roasted_apple.effects.includes('warmth'), 'Owoce i pieczone nie grzeją od środka');

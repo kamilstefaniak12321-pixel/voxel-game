@@ -14,7 +14,7 @@
 
 import { RECIPES, GROUPS } from '../crafting/recipes.js';
 import { ITEM_TYPES, getItemLabel, getTool } from './ItemRegistry.js';
-import { getFood, getRoast, isDrink } from './foods.js';
+import { getFood, getRoast, isDrink, roastWord } from './foods.js';
 import { EFFECTS } from './effects.js';
 import { TINDERS, fuelWood, tinderTemp, KINDLING, KINDLING_MAX, KINDLING_TEMP } from '../game/CampfireState.js';
 import { woodTraits } from '../blocks/woodTraits.js';
@@ -67,10 +67,10 @@ export function itemUses(type) {
     const food = getFood(type);
     if (food) {
         const effects = food.effects.map((effect) => EFFECTS[effect].label).join(', ');
-        uses.push(food.kind === 'drink' ? `napar${effects ? ` (${effects})` : ''}` : `jedzenie${effects ? ` z działaniem (${effects})` : ''}`);
+        uses.push(food.kind === 'drink' ? (food.word ? `do picia: ${food.word}${effects ? ` (${effects})` : ''}` : `napar${effects ? ` (${effects})` : ''}`) : `jedzenie${effects ? ` z działaniem (${effects})` : ''}`);
     }
     const roasted = getRoast(type);
-    if (roasted) uses.push(`${isDrink(roasted) ? 'parzenie' : 'pieczenie'} nad ogniskiem: ${getItemLabel(roasted)}`);
+    if (roasted) uses.push(`${roastWord(type)} nad ogniskiem: ${getItemLabel(roasted)}`);
     if (isIngredient(type)) uses.push('składnik do garnka');
     if (spoilText(type)) uses.push(spoilText(type));
     if (Object.hasOwn(TINDERS, type)) {

@@ -68,7 +68,7 @@ export function statusView(game) {
             ...(info.effects.length ? [['Działa', info.effects.map((effect) => `${effect.label} (${hoursText(effect.hours)})`).join(', ')]] : [])
         ],
         history: info.history,
-        held: food ? { type: held, label: getItemLabel(held), kind: KIND_LABELS[food.kind], drink: food.kind === 'drink', can: wellbeing.canEat(held), spoils: (game.spoilage?.active && freshText(game.inventory.selectedItem, game.spoilage.temperature())) || spoilText(held) } : null
+        held: food ? { type: held, label: getItemLabel(held), kind: food.word ?? KIND_LABELS[food.kind], drink: food.kind === 'drink', can: wellbeing.canEat(held), spoils: (game.spoilage?.active && freshText(game.inventory.selectedItem, game.spoilage.temperature())) || spoilText(held) } : null
     };
 }
 

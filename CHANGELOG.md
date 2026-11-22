@@ -11,6 +11,27 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.41.0 - Dary pnia: żywica i soki
+
+PR #194. Pierwsza wersja części D projektu drewna (`docs/drewno.md`,
+opis: `docs/dary-pnia.md`).
+
+- **Nacinanie pni**: PPM nożem w bok pnia żywego drzewa robi nacięcie.
+  Widać je na korze.
+- **Żywica** z ośmiu drzew iglastych zastyga pod nacięciem (zaciek
+  i kropla) - zbiera się ją PPM. Latem płynie najszybciej, zimą ledwo.
+- **Soki do kubka**: sok brzozowy (wiosną), klonowy (od połowy zimy do
+  końca wiosny), palmowy i woda z baobabu (cały rok) kapią - trzeba
+  powiesić pod nacięciem gliniany kubek. Widać kubek i spadające krople.
+- **Soki płyną głównie za dnia**, gruby pień daje więcej, a kilka
+  nacięć w jednym drzewie dzieli sok między siebie.
+- **Nacięcie się zabliźnia** po kilku dobach - nóż otwiera je na nowo.
+- **Napoje**: sok brzozowy i palmowy krzepią, woda z baobabu orzeźwia
+  (nowe działanie). **Syrop klonowy**: sok klonowy odparowany nad
+  ogniskiem - bardzo sycący.
+- Ścięte drzewo niczego już nie daje: kubek i żywica spadają na ziemię.
+- 7 osiągnięć (2 sekretne), rozdział w poradniku, komenda `/naciecie`.
+
 ## 1.40.0 - Kołysanie drzew
 
 PR #193. Druga wersja części C projektu drewna - część C jest w grze

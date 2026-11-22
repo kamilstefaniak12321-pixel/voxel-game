@@ -36,6 +36,11 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
   C cała. Pień z koroną wygina się z wiatrem, zależnie od gatunku
   i pogody; liczy to karta graficzna ([kolysanie.md](kolysanie.md)).
 
+- **1.41.0 - Dary pnia: żywica i soki** (PR #194): pierwsza wersja
+  części D. Nacięcie nożem w pniu żywego drzewa: żywica z iglastych,
+  soki (brzoza, klon, palma) i woda z baobabu do glinianego kubka,
+  zależnie od pory roku i doby; syrop klonowy ([dary-pnia.md](dary-pnia.md)).
+
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony

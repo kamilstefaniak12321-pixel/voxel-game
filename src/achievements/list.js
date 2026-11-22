@@ -1078,6 +1078,78 @@ export const ACHIEVEMENTS = [
         icon: 'kapok_firewood',
         on: 'fireDoused'
     },
+    // Dary pnia (1.41.0): nacięcia nożem, żywica i soki.
+    {
+        id: 'first_tap',
+        tier: 'common',
+        title: 'Pod korą',
+        task: 'Natnij nożem pień żywego drzewa, które coś daje.',
+        comment: 'Drzewo nie protestuje. Ale zapamięta.',
+        icon: 'knife',
+        on: 'treeTapped'
+    },
+    {
+        id: 'dry_tap',
+        tier: 'common',
+        title: 'Nie ta pora',
+        task: 'Natnij drzewo wtedy, gdy nic z niego nie płynie.',
+        comment: 'Brzoza ma swój kalendarz. Ty masz nóż. Kalendarz wygrywa.',
+        icon: 'birch_log',
+        secret: true,
+        on: 'treeTapped',
+        when: (data) => data.flowing === false
+    },
+    {
+        id: 'sap_cup',
+        tier: 'common',
+        title: 'Kap, kap, kap',
+        task: 'Zdejmij z drzewa pełny kubek soku.',
+        comment: 'Najwolniejszy napój świata. I tak warto.',
+        icon: 'birch_sap',
+        on: 'giftCollected',
+        when: (data) => data.item !== 'resin'
+    },
+    {
+        id: 'tapped_resin',
+        tier: 'common',
+        title: 'Żywiczarz',
+        task: 'Zbierz 10 kropli żywicy z własnych nacięć.',
+        comment: 'Ręce będą się kleić do wiosny.',
+        icon: 'resin',
+        on: 'giftCollected',
+        when: (data, book) => data.item === 'resin' && book.count('tapped_resin', data.count) >= 10
+    },
+    {
+        id: 'maple_syrup',
+        tier: 'rare',
+        title: 'Czterdzieści do jednego',
+        task: 'Odparuj sok klonowy na syrop nad ogniskiem.',
+        comment: 'Tyle soku na jeden syrop liczą prawdziwi klonowi bartnicy. Tu masz taryfę ulgową.',
+        icon: 'maple_syrup',
+        on: 'roasted',
+        when: (data) => data.into === 'maple_syrup'
+    },
+    {
+        id: 'forest_cellar',
+        tier: 'rare',
+        title: 'Piwniczka lasu',
+        task: 'Wypij sok brzozowy, klonowy, palmowy i wodę z baobabu.',
+        comment: 'Cztery drzewa, cztery smaki, jeden kubek.',
+        icon: 'palm_sap',
+        on: 'ate',
+        when: (data, book) => ['birch_sap', 'maple_sap', 'palm_sap', 'baobab_water'].includes(data.type) && book.collect('tree_drinks', data.type) >= 4
+    },
+    {
+        id: 'greedy_tap',
+        tier: 'common',
+        title: 'Więcej nie znaczy szybciej',
+        task: 'Natnij jedno drzewo tyle razy, ile się da.',
+        comment: 'Drzewo ma tyle soku, ile ma. Reszta to twoja niecierpliwość.',
+        icon: 'clay_cup',
+        secret: true,
+        on: 'treeTapped',
+        when: (data) => data.full === true
+    },
     // Twardość i zużycie siekier (1.39.0).
     {
         id: 'axe_broke',

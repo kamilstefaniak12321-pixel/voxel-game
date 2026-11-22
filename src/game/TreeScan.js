@@ -63,6 +63,9 @@ function kindOf(id) {
     return kind;
 }
 
+// Rodzaj bloku drzewa ({ tree, log }) albo null - dla innych modułów (pożar).
+export const treeKind = (id) => (id ? kindOf(id) : null);
+
 // Gatunek kłody żywego drzewa pod numerem bloku albo null.
 export function logSpecies(id) {
     const kind = kindOf(id);
@@ -213,7 +216,9 @@ export function scanTree(world, x, y, z) {
 // bliżej im do spadającej kłody niż do innej kłody gatunku. ignore -
 // kłody, które się nie liczą (pniak ściętego drzewa: nic na nim nie
 // zostaje). Zwraca [{x, y, z, id}].
-export function fallingLeaves(world, species, falling, ignore = []) {
+// ties (pożar, 1.43.0) - liście w równej odległości od obu drzew też
+// się liczą (przy ścinaniu zostają na sąsiedzie).
+export function fallingLeaves(world, species, falling, ignore = [], ties = false) {
 
     if (falling.length === 0) return [];
     const fallKeys = new Set(falling.map((cell) => keyOf(cell.x, cell.y, cell.z)));
@@ -259,7 +264,7 @@ export function fallingLeaves(world, species, falling, ignore = []) {
     const result = [];
     for (const [key, leaf] of mine) {
         const other = theirs.get(key);
-        if (!other || leaf.d < other.d) result.push({ x: leaf.x, y: leaf.y, z: leaf.z, id: leaf.id });
+        if (!other || leaf.d < other.d || (ties && leaf.d === other.d)) result.push({ x: leaf.x, y: leaf.y, z: leaf.z, id: leaf.id });
     }
     return result;
 

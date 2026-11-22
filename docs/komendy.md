@@ -104,6 +104,11 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/kolysanie` | kołysanie drzew na wietrze (1.40.0, `docs/kolysanie.md`): z jaką siłą teraz się kołyszą |
 | `/kolysanie <0-100>` | ustawia siłę kołysania na stałe (100 - wichura, 0 - drzewa stoją) |
 | `/kolysanie pogoda` | wraca do wiatru z pogody |
+| `/pozar` | pożar (1.43.0, `docs/pozar.md`): ustawienie świata, ile drzew płonie, co sprzyja ogniowi, co stałoby się z drzewem pod celownikiem |
+| `/pozar podpal` | zapala drzewo pod celownikiem - od razu i bez względu na pogodę |
+| `/pozar zgas` | gasi wszystkie płonące drzewa |
+| `/pozar ustaw <wylaczone\|gracz\|pelne>` | pożary w tym świecie: wyłączone, tylko od gracza albo pełne |
+| `/pozar daj` | starter ognia |
 | `/naciecie` | dary pnia (1.41.0, `docs/dary-pnia.md`): które drzewa co dają, co płynie o tej porze roku, stan nacięcia pod celownikiem |
 | `/naciecie daj` | nóż i 4 gliniane kubki |
 | `/naciecie czas <godziny>` | przesuwa nacięcia o tyle godzin gry: sok kapie, nacięcia się zabliźniają (pora roku bez zmian) |

@@ -69,6 +69,8 @@ import { TORCH_BURN_SECONDS, TORCH_DIM_PART, LUCZYWO, LUCZYWO_PART, TORCH_STUB, 
 import { stageFor, RAIN_OUT_SECONDS } from '../game/TorchBurn.js';
 import { GIFTS, TREE_GIFTS, DAY_SECONDS as GIFT_DAY_SECONDS, giftOf, seasonFlow, flowSeasonsText, tapsAllowed } from '../blocks/treeGifts.js';
 import { treeOf } from '../game/TreeTaps.js';
+import { FIRE_MODES, MAX_BURNING, fireTraits, ignitionProblem, seasonFire, dampness } from '../blocks/fireTraits.js';
+import { treeKind } from '../game/TreeScan.js';
 import { LOW_PLANTS, LOW_PLANT_NAMES, SPHAGNUM, lowPlantType, lowPlantInfo, LOW_STAGE_SECONDS, LOW_PLANT_FIRST_ID, LOW_PLANT_END_ID } from '../blocks/lowPlants.js';
 import { VINES, VINE_NAMES, VINE_FIRST_ID, VINE_END_ID, VINE_STAGE_SECONDS, vineType, vineInfoById } from '../blocks/vines.js';
 import { MOUNT_OFFSET } from '../game/VineGrowth.js';
@@ -1926,6 +1928,59 @@ export const WORLD_COMMANDS = [
             const off = game.settings.get('plantWind') ? '' : ' Kołysanie roślin jest wyłączone w ustawieniach - drzewa stoją.';
             return `Drzewa kołyszą się z siłą ${Math.round(strength * 100)}%${game.treeWindOverride != null ? ' (ustawioną komendą)' : ` (wiatr ${speed.toFixed(1)})`}. ` +
                 `Mocno: palma, brzoza, osika, eukaliptus, świerk, jodła, modrzew; ledwo: dąb, buk, oliwka, akacja, cedr; baobab, sekwoja, puchowiec i banian stoją.${off}`;
+
+        }
+    },
+
+    {
+        name: 'pozar',
+        aliases: ['ogien', 'plomien'],
+        usage: '/pozar | /pozar podpal | /pozar zgas | /pozar ustaw <wylaczone|gracz|pelne> | /pozar daj',
+        description: 'Pożar (1.43.0): bez słowa - ustawienie świata, ile drzew płonie, co sprzyja ogniowi (pora roku, deszcz, mokra ziemia, wiatr) i co stałoby się z drzewem pod celownikiem; "podpal" - zapala drzewo pod celownikiem bez czekania i bez względu na pogodę; "zgas" - gasi wszystko; "ustaw" - pożary w tym świecie: wylaczone, gracz (tylko to, co podpali gracz) albo pelne; "daj" - starter ognia.',
+
+        run(args, { game }) {
+
+            const fire = game.wildfire, word = simplify(args[0] ?? '');
+            const hit = game.currentHit?.hit ? game.currentHit.block : null;
+
+            if (['daj', 'give'].includes(word)) {
+                game.inventory.add('fire_starter', 1);
+                return 'Dano starter ognia. Trzymaj PPM przez 5 sekund na pniu albo liściach żywego drzewa.';
+            }
+            if (['zgas', 'stop'].includes(word)) {
+                const count = fire.trees.size;
+                fire.putOutAll();
+                return count ? `Zgaszono drzew: ${count} (zostają takie, jakie były w tej chwili).` : 'Nic się nie pali.';
+            }
+            if (['ustaw', 'set', 'tryb'].includes(word)) {
+                const modes = { wylaczone: 'off', off: 'off', nie: 'off', gracz: 'player', player: 'player', pelne: 'full', full: 'full' };
+                const mode = modes[simplify(args[1] ?? '')];
+                if (!mode) throw new CommandError('Użycie: /pozar ustaw wylaczone | gracz | pelne');
+                fire.setMode(mode);
+                return `Pożary w tym świecie: ${FIRE_MODES[mode]}.${mode === 'full' ? ' (Pożarów z natury - pioruna, iskier - jeszcze nie ma; na razie działa jak „tylko od gracza".)' : ''}`;
+            }
+            if (['podpal', 'zapal', 'ignite'].includes(word)) {
+                if (!hit) throw new CommandError('Wyceluj w pień albo liście drzewa.');
+                const result = fire.ignite(hit.x, hit.y, hit.z, 'command', true);
+                if (!result.ok) throw new CommandError(result.reason ?? 'To nie drzewo.');
+                const fates = { ash: 'zostanie popiół', char: 'zostanie zwęglony kikut', survive: 'przeżyje (straci dolne liście)' };
+                return `Płonie pień ${treeOf(result.tree.species)}: ${Math.round(result.tree.duration)} s, ${fates[result.tree.fate]}. Liści: ${result.tree.leaves.length}, kłód: ${result.tree.logs.length}.`;
+            }
+            if (word) throw new CommandError('Użycie: /pozar | /pozar podpal | /pozar zgas | /pozar ustaw <wylaczone|gracz|pelne> | /pozar daj');
+
+            const weather = fire.weather();
+            const wind = weather.wind?.speed ?? 0;
+            let target = '';
+            if (hit) {
+                const kind = treeKind(game.world.getBlockId(hit.x, hit.y, hit.z));
+                if (kind) {
+                    const traits = fireTraits(kind.tree), problem = ignitionProblem(kind.tree, weather.days, weather.rain, weather.wetness);
+                    target = ` Pod celownikiem: ${treeOf(kind.tree)} - łatwość zapłonu ×${traits.ease}, cienki pień: ${{ ash: 'popiół', char: 'zwęglony kikut', survive: 'przeżywa' }[traits.fate]}; ` +
+                        `${problem ? `teraz się nie zajmie (${problem.toLowerCase()})` : 'teraz da się podpalić'}.`;
+                }
+            }
+            return `Pożary: ${FIRE_MODES[fire.mode]}. Płonie drzew: ${fire.trees.size} z ${MAX_BURNING}. Pora roku ×${seasonFire(weather.days)}, deszcz ${weather.rain.toFixed(2)}, ` +
+                `mokra ziemia ${weather.wetness.toFixed(2)} (sprzyja ogniowi ×${dampness(weather.rain, weather.wetness).toFixed(2)}), wiatr ${wind.toFixed(1)} bl./s.${target}`;
 
         }
     },

@@ -31,7 +31,9 @@ export const FERTILIZER_ITEMS = {
     compost: { fertilizer: 'compost' },
     compost_bowl: { fertilizer: 'compost', returns: 'clay_bowl' },
     // Próchno z powalonego pnia (1.37.0, items/prochno.js) nawozi jak kompost.
-    prochno: { fertilizer: 'compost' }
+    prochno: { fertilizer: 'compost' },
+    // Popiół po spalonym drzewie (1.43.0, blocks/burnt.js).
+    ash: { fertilizer: 'compost' }
 };
 
 export function fertilizerOf(item) {

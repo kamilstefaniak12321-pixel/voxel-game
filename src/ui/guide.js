@@ -155,6 +155,22 @@ export const GUIDE = [
         ]
     },
     {
+        id: 'wildfire',
+        title: 'Pożar',
+        lines: [
+            { text: 'Starter ognia trzymany przez 5 sekund ([use]) na pniu albo liściach żywego drzewa podpala je. Ogień chodzi po drzewach, nie po pojedynczych blokach.',
+                touch: 'Starter ognia przytrzymany przez 5 sekund na pniu albo liściach żywego drzewa podpala je. Ogień chodzi po drzewach, nie po pojedynczych blokach.' },
+            'Korona płonie od 20 do 60 sekund - liście znikają od dołu. Przy płonącym drzewie jest gorąco.',
+            'Co zostaje, zależy od drzewa. Cienkie i młode (brzoza, osika, wierzba, kosodrzewina) idą na popiół.',
+            'Średnie (świerk, jodła, buk, lipa, klon) zostawiają zwęglony kikut.',
+            'Grube i te z grubą korą (sosna, dąb, modrzew, sekwoja, akacja, palma) przeżywają - tracą tylko dolne liście.',
+            'Ogień przeskakuje na sąsiednie drzewa: łatwo na iglaste i eukaliptus, trudno na drzewa mokradeł. Idzie z wiatrem. Latem szerzy się najłatwiej, zimą prawie wcale.',
+            'Deszcz gasi płonące drzewa, a na mokrej ziemi po deszczu ogień ledwo się trzyma. Pas bez drzew go zatrzymuje. Baobab nie zapali się nigdy.',
+            'Budowle nie płoną - ogień bierze tylko żywe drzewa.',
+            'Zwęglony pień jest kruchy: wyłamany daje węgiel drzewny (czarny barwnik). Popiół z ziemi nawozi jak kompost.'
+        ]
+    },
+    {
         id: 'fire',
         title: 'Ognisko',
         lines: [

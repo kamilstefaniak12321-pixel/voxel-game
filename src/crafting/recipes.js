@@ -390,6 +390,9 @@ export const RECIPES = [
         note: 'Czerwona żywica z nacięcia w pniu eukaliptusa (latem) - po roztarciu brązowy barwnik.' },
     { id: 'dye_black_tannin', result: ['dye_black', 1], ingredients: ['tannin'],
         note: 'Garbnik: korę dębu, namorzynu albo sekwoi wrzuć do wody i poczekaj. Ciemny barwnik bez mieszania trzech innych.' },
+    // Po pożarze (1.43.0): węgiel ze zwęglonego pnia.
+    { id: 'dye_black_charcoal', result: ['dye_black', 2], ingredients: ['charcoal'],
+        note: 'Węgiel drzewny wyłamuje się ze zwęglonego pnia po pożarze. Roztarty daje czarny barwnik.' },
     // Wianek z kwiatów: ozdoba na ścianę (blocks/decorations.js).
     { id: 'flower_wreath', result: ['flower_wreath', 1], pattern: ['FF', 'FF'], key: { F: '#flowers' },
         note: 'Cztery dowolne kwiaty. Wiesza się na ścianie jak wieniec świerkowy.' },

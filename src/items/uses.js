@@ -31,6 +31,8 @@ const OWN_USES = {
     // Wypalające się pochodnie (1.35.0, items/torchFuel.js).
     luczywo: 'postawione świeci jak pochodnia przez kilka minut',
     torch_stub: 'z żywicą albo oliwkami znów jest pochodnią',
+    // Po pożarze (1.43.0, blocks/burnt.js).
+    ash: 'nawóz jak kompost: PPM na rozgrzebanej ziemi albo na ziemi i trawie',
     // Powalone drzewa (1.37.0, items/prochno.js).
     prochno_zar: 'położone na ułożonym stosie rozpala ognisko bez startera',
     // Gotowanie (1.20.0, items/cooking.js).

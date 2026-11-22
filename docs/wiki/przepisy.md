@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.42.0** - 271 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
+Wersja gry **1.43.0** - 272 przepisów. Wytwarza się w ekwipunku (**E**): siatka 2 x 2 obok miejsc ekwipunku, wynik po prawej (klik - weź, Shift + klik - ile się da). Przycisk 📖 *Przepisy* otwiera księgę - klik na przepisie sam układa składniki. Przepisy *z kształtem* można przesuwać po siatce i odbijać w poziomie; przepisy *bez kształtu* - obojętne, gdzie leżą składniki. Z czatu: `/przepisy`, `/wytworz <przepis>`.
 
 
 ## Ziemia
@@ -1386,6 +1386,12 @@ Wersja gry **1.42.0** - 271 przepisów. Wytwarza się w ekwipunku (**E**): siatk
 <img src="przepisy/dye_black_tannin.png" alt="Barwnik czarny: 1 x Garbnik (obojętne gdzie)">
 
 1 x Garbnik (bez kształtu). Nazwa przepisu: `dye_black_tannin`. Garbnik: korę dębu, namorzynu albo sekwoi wrzuć do wody i poczekaj. Ciemny barwnik bez mieszania trzech innych.
+
+### Barwnik czarny x2
+
+<img src="przepisy/dye_black_charcoal.png" alt="Barwnik czarny x2: 1 x Węgiel drzewny (obojętne gdzie)">
+
+1 x Węgiel drzewny (bez kształtu). Nazwa przepisu: `dye_black_charcoal`. Węgiel drzewny wyłamuje się ze zwęglonego pnia po pożarze. Roztarty daje czarny barwnik.
 
 ### Starter ognia
 

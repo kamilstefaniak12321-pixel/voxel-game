@@ -78,12 +78,16 @@ for (const [key, gift] of Object.entries(G.GIFTS)) {
     check(gift.seasons.length === 4 && gift.seasons.every((flow) => flow >= 0), `${key}: cztery pory roku`);
     check(gift.max >= 1 && gift.perDay > 0 && gift.openDays > 0, `${key}: liczby`);
     check(gift.vessel === (gift.max === 1), `${key}: sok to jeden kubek, żywica - krople`);
+    check(!gift.solid || gift.vessel, `${key}: bryłka ścina się w kubku`);
     check(G.flowSeasonsText(gift).length > 3, `${key}: opis pory`);
 }
 const conifers = ['pine', 'spruce', 'fir', 'larch', 'mugo', 'bristlecone', 'cedar', 'araucaria'];
 equal(conifers.map(G.giftKey), conifers.map(() => 'resin'), 'Osiem iglastych daje żywicę');
 equal(['birch', 'maple', 'coconut_palm', 'baobab'].map(G.giftKey), ['birch_sap', 'maple_sap', 'palm_sap', 'baobab_water'], 'Soki');
-for (const species of ['beech', 'olcha', 'aspen', 'jablon', 'olive', 'oak', 'linden']) equal(G.giftOf(species), null, `${species}: bez daru w tej wersji`);
+equal(['cherry', 'acacia', 'banyan', 'dragon_tree', 'rainbow_eucalyptus'].map(G.giftKey), ['tree_gum', 'tree_gum', 'latex', 'dragon_blood', 'kino'], 'Guma, lateks, smocza krew, kino (1.42.0)');
+equal(Object.keys(G.GIFTS).length, 9, 'Dziewięć darów');
+equal(Object.keys(G.TREE_GIFTS).length, 17, 'Siedemnaście drzew z darem');
+for (const species of ['beech', 'olcha', 'aspen', 'jablon', 'olive', 'oak', 'linden', 'wierzba', 'sequoia', 'kapok']) equal(G.giftOf(species), null, `${species}: bez daru w tej wersji`);
 
 const { resin, birch_sap: birch, maple_sap: maple, palm_sap: palm, baobab_water: water } = G.GIFTS;
 equal([SPRING, SUMMER, AUTUMN, EARLY_WINTER].map((days) => G.seasonFlow(birch, days) > 0), [true, false, false, false], 'Brzoza: tylko wiosna');
@@ -162,12 +166,13 @@ for (const species of Object.keys(G.TREE_GIFTS)) {
     const game = makeGame();
     plant(game.world, species, 0, 0);
     // Pierwsza kłoda pnia nad ziemią (olbrzym: narożnik).
+    // Kłoda pnia nisko nad ziemią (olbrzym: narożnik; banian: nie korzeń podporowy).
     let spot = null;
-    for (let x = -3; x <= 3 && !spot; x++) for (let z = -3; z <= 3 && !spot; z++) {
-        if (scanTree(game.world, x, BASE, z)?.living) spot = { x, z };
+    for (let y = BASE; y <= BASE + 3 && !spot; y++) for (let x = -4; x <= 4 && !spot; x++) for (let z = -4; z <= 4 && !spot; z++) {
+        if (game.taps.check(x, y, z).ok) spot = { x, y, z };
     }
     check(spot, `${species}: pień przy ziemi`);
-    const result = game.taps.check(spot.x, BASE, spot.z);
+    const result = game.taps.check(spot.x, spot.y, spot.z);
     check(result.ok && result.species === species && result.width >= 1, `${species}: można naciąć (${result.reason ?? ''})`);
 }
 
@@ -314,6 +319,52 @@ for (const species of Object.keys(G.TREE_GIFTS)) {
     equal(savanna.inventory.items.get('baobab_water'), 1, 'Woda z baobabu');
 }
 
+// Druga połowa (1.42.0): guma latem, lateks z kubkiem wraca jako bryłka + kubek.
+{
+    const { tree_gum: gum, latex, dragon_blood: blood, kino } = G.GIFTS;
+    equal([SPRING, SUMMER, AUTUMN, LATE_WINTER].map((days) => G.seasonFlow(gum, days) > 0), [false, true, false, false], 'Guma: tylko lato');
+    equal([SPRING, SUMMER, AUTUMN, LATE_WINTER].map((days) => G.seasonFlow(kino, days) > 0), [false, true, false, false], 'Kino: tylko lato');
+    check([SPRING, SUMMER, AUTUMN, LATE_WINTER].every((days) => G.seasonFlow(latex, days) === 1 && G.seasonFlow(blood, days) === 1), 'Lateks i smocza krew: cały rok');
+    check(blood.perDay < gum.perDay, 'Smocza krew płynie powoli');
+    check(latex.solid && !latex.byDay, 'Lateks ścina się w kubku');
+
+    const game = makeGame(SUMMER), { taps, world } = game;
+    plant(world, 'cherry', 0, 0);
+    taps.interact(hitAt(0, BASE, 0), 'knife');
+    check(last(game).includes('guma drzewna'), 'Wiśnia: guma');
+    taps.step(G.DAY_SECONDS);
+    taps.interact(hitAt(0, BASE, 0), null);
+    equal(game.inventory.items.get('tree_gum'), 2, 'Dwie łzy gumy na dobę');
+
+    const jungle = makeGame(AUTUMN);
+    jungle.inventory.canAddAll = (items) => !jungle.inventory.full && items.length === 2;
+    plant(jungle.world, 'banyan', 0, 0);
+    let spot = null;
+    for (let x = -4; x <= 4 && !spot; x++) for (let z = -4; z <= 4 && !spot; z++) for (let y = BASE; y <= BASE + 3 && !spot; y++) if (jungle.taps.check(x, y, z).ok) spot = { x, y, z };
+    check(spot, 'Banian da się naciąć');
+    const hit = hitAt(spot.x, spot.y, spot.z);
+    jungle.taps.interact(hit, 'knife'); jungle.taps.interact(hit, 'white_clay_cup');
+    jungle.taps.step(G.DAY_SECONDS);
+    jungle.inventory.full = true;
+    check(jungle.taps.interact(hit, null) && jungle.taps.get(hit.block).cup === 'white_clay_cup', 'Pełny ekwipunek: lateks zostaje');
+    jungle.inventory.full = false;
+    check(jungle.taps.interact(hit, null) && last(jungle).includes('kubek wraca'), 'Zbiór lateksu');
+    equal([jungle.inventory.items.get('latex'), jungle.inventory.items.get('white_clay_cup')], [1, 1], 'Bryłka i ten sam kubek w ekwipunku');
+    equal(jungle.taps.get(hit.block).cup, null, 'Kubka pod nacięciem już nie ma');
+
+    for (const [species, item] of [['dragon_tree', 'dragon_blood'], ['rainbow_eucalyptus', 'kino'], ['acacia', 'tree_gum']]) {
+        const g = makeGame(SUMMER);
+        plant(g.world, species, 0, 0);
+        let at = null;
+        for (let x = -3; x <= 3 && !at; x++) for (let z = -3; z <= 3 && !at; z++) for (let y = BASE; y <= BASE + 3 && !at; y++) if (g.taps.check(x, y, z).ok) at = { x, y, z };
+        check(at, `${species}: da się naciąć`);
+        g.taps.interact(hitAt(at.x, at.y, at.z), 'knife');
+        g.taps.step(G.DAY_SECONDS * 2);
+        g.taps.interact(hitAt(at.x, at.y, at.z), null);
+        check(g.inventory.items.get(item) >= 2, `${species}: ${item}`);
+    }
+}
+
 // Nie da się: pień postawiony ręką, drzewo bez daru, okorowany pień.
 {
     const game = makeGame(), { taps, world } = game;
@@ -449,6 +500,114 @@ const campfires = read('src/game/Campfires.js');
 check(campfires.includes('roastSeconds(type)') && campfires.includes('roastWord(type)'), 'Ognisko liczy czas i słowo z foods.js');
 
 // ------------------------------------------------------------
+// 3b. Druga połowa: klej, naprawa siekiery, lateks na ubraniu, barwniki,
+//     garbnik, napar z kory wierzby (1.42.0).
+// ------------------------------------------------------------
+{
+    const { GROUPS, RECIPES } = await import('../src/crafting/recipes.js');
+    const { gridResult } = await import('../src/crafting/Crafting.js');
+    const W = await import('../src/items/toolWear.js');
+    const C = await import('../src/items/clothing.js');
+    const { feltTemperature, WET_CLOTHES } = await import('../src/game/Warmth.js');
+    const recipe = (id) => RECIPES.find((entry) => entry.id === id);
+    const grid = (...items) => [...items.map((item) => (typeof item === 'string' ? { type: item, count: 1 } : item)), null, null, null, null].slice(0, 4);
+
+    for (const type of ['tree_gum', 'latex', 'dragon_blood', 'kino', 'pitch_glue', 'tannin', 'brew_willow', 'tea_willow']) {
+        check(itemExists(type) && getItemLabel(type).length > 3, `${type}: przedmiot`);
+        check(itemUses(type).length > 0, `${type}: ma zastosowanie`);
+    }
+    // Klej jako spoiwo.
+    equal(GROUPS.glue.types, ['tree_gum', 'latex'], 'Grupa kleju');
+    check(['resin', 'tree_gum', 'latex'].every((type) => GROUPS.oil.types.includes(type)) && GROUPS.oil.label.includes('guma'), 'Guma i lateks zastępują żywicę');
+    equal(gridResult(grid('stick', 'tree_gum'))?.type, 'torch', 'Pochodnia na gumie');
+    equal(gridResult(grid('stick', 'latex'))?.type, 'torch', 'Pochodnia na lateksie');
+    // Smoła klejąca.
+    equal([gridResult(grid('tree_gum', 'resin'))?.type, gridResult(grid('latex', 'resin'))?.count], ['pitch_glue', 2], 'Smoła: klej + żywica');
+    equal(gridResult(grid('tree_gum', 'tree_gum')), null, 'Sama guma to nie smoła');
+    // Naprawa siekiery.
+    check(recipe('axe_repair').repair === true, 'Przepis naprawy');
+    equal(gridResult(grid('axe', 'pitch_glue')), null, 'Całej siekiery się nie klei');
+    const worn = gridResult(grid({ type: 'axe_granite', count: 1, fresh: 0.15 }, 'pitch_glue'));
+    check(worn.type === 'axe_granite' && worn.count === 1 && Math.abs(worn.fresh - 0.55) < 1e-9, 'Naprawa: ta sama siekiera, stan +0,4');
+    near(gridResult(grid('pitch_glue', { type: 'axe', count: 1, fresh: 0.6 })).fresh, W.REPAIR_MAX, 'Naprawa: najwyżej cztery piąte');
+    equal(gridResult(grid({ type: 'axe', count: 1, fresh: 0.8 }, 'pitch_glue')), null, 'Sklejonej do pełna już się nie poprawi');
+    equal(gridResult(grid({ type: 'axe', count: 1, fresh: 0.79 }, 'pitch_glue')).fresh, 0.8, 'Tuż pod progiem - do progu');
+    equal(gridResult(grid('knife', 'pitch_glue')), null, 'Nóż się nie zużywa - nie ma czego kleić');
+    equal([W.repairedCondition(null), W.repairedCondition({ type: 'stick' }), W.repairedCondition({ type: 'axe' }), W.repairedCondition({ type: 'axe', fresh: 0 })], [null, null, null, 0.4], 'repairedCondition');
+    check(W.REPAIR_MAX < 1 && W.REPAIR_GAIN > 0 && W.wearStage(W.REPAIR_MAX) === 'whole', 'Klejona nie jest jak nowa, ale jest cała');
+    // Naprawa na prawdziwym ekwipunku (księga przepisów, /wytworz): stan
+    // siekiery nie ginie w siatce - także przy zwykłych przepisach.
+    {
+        const { Inventory } = await import('../src/game/Inventory.js');
+        const { craftFromInventory } = await import('../src/crafting/Crafting.js');
+        const inventory = new Inventory({ slots: new Array(36).fill(null) });
+        inventory.add('axe_granite', 1, 0, 36, 0.15); inventory.add('pitch_glue', 3); inventory.add('oak_log', 1); inventory.add('shirt_linen', 1, 0, 36, undefined, { proof: true, main: 'red' });
+        const state = () => Object.fromEntries(inventory.slots.filter(Boolean).map((item) => [item.type, item.fresh ?? item.look ?? item.count]));
+        equal(craftFromInventory(inventory, recipe('axe_repair'), 1), 1, 'Naprawa z ekwipunku');
+        equal([state().axe_granite, state().pitch_glue], [0.55, 2], 'Siekiera 15% -> 55%, smoły ubyło');
+        craftFromInventory(inventory, recipe('axe_repair'), 1);
+        equal(craftFromInventory(inventory, recipe('axe_repair'), 1), 0, 'Trzeci raz się nie da');
+        equal([state().axe_granite, state().pitch_glue], [0.8, 1], 'Siekiera 80%, smoła została');
+        const firewood = RECIPES.find((entry) => entry.id === 'oak_firewood');
+        equal(craftFromInventory(inventory, firewood, 1), 1, 'Polana siekierą z księgi przepisów');
+        equal(state().axe_granite, 0.8, 'Siekiera wraca z siatki w tym samym stanie (nie jak nowa)');
+        const taken = inventory.removeStack('shirt_linen', 1);
+        check(taken.look.proof === true && taken.look.main === 'red' && inventory.removeStack('shirt_linen', 1) === null, 'removeStack oddaje wygląd ubrania');
+        inventory.add('strawberry', 2, 0, 36, 0.5); inventory.add('strawberry', 2, 0, 36, 1);
+        const berries = inventory.removeStack('strawberry', 4);
+        check(berries.count === 4 && Math.abs(berries.fresh - 0.75) < 1e-9, 'removeStack: średnia świeżość zabranych');
+        equal(inventory.remove('pitch_glue', 5), 1, 'remove dalej zwraca, ile zabrało');
+    }
+    // Barwniki.
+    equal([gridResult(grid('dragon_blood'))?.type, gridResult(grid('dragon_blood'))?.count], ['dye_red', 2], 'Smocza krew: czerwony');
+    equal([gridResult(grid('kino'))?.type, gridResult(grid('kino'))?.count], ['dye_brown', 2], 'Kino: brązowy');
+    equal(gridResult(grid('tannin'))?.type, 'dye_black', 'Garbnik: czarny');
+    // Garbnik z moczenia.
+    equal(['oak_bark', 'mangrove_bark', 'sequoia_bark', 'linden_bark', 'birch_bark'].map(C.retsInto), ['tannin', 'tannin', 'tannin', 'bast', null], 'Moczenie kory');
+    check(GROUPS.tannin_bark.types.every((type) => itemExists(type) && C.retsInto(type) === 'tannin'), 'Grupa kory z garbnikiem');
+    // Napar z kory wierzby.
+    equal(gridResult(grid('clay_cup', 'wierzba_bark', 'wierzba_bark'))?.type, 'brew_willow', 'Kubek kory wierzbowej');
+    equal(gridResult(grid('clay_cup', 'wierzba_bark')), null, 'Jedna kora to za mało');
+    equal(getRoast('brew_willow'), 'tea_willow', 'Nad ogniskiem - napar');
+    equal(roastWord('brew_willow'), 'parzenie', 'Parzenie');
+    const willow = getFood('tea_willow');
+    check(willow.kind === 'drink' && willow.returns === CUP && ['mend', 'calm', 'warmth'].every((effect) => willow.effects.includes(effect)), 'Napar: goi, uspokaja, grzeje');
+    equal(kindLabel('tea_willow'), 'napar', 'To napar');
+    check(getFood('tree_gum').kind === 'snack', 'Guma jest jadalna');
+    const { ingredientKind } = await import('../src/items/cooking.js'), { driesInto } = await import('../src/items/drying.js');
+    equal([ingredientKind('tree_gum'), driesInto('tree_gum'), spoilKind('tree_gum')], [null, null, null], 'Guma: nie do garnka, nie do suszenia, nie psuje się');
+    equal(ingredientKind('strawberry'), 'fruit', 'Owoce dalej idą do garnka');
+    // Lateks na ubraniu.
+    equal(C.cleanLook({ pattern: 'plain', proof: true }), { pattern: 'plain', main: null, accent: null, proof: true }, 'Wygląd pamięta lateks');
+    equal(C.cleanLook({ proof: 'yes' }), { pattern: 'plain', main: null, accent: null }, 'Tylko prawdziwe true');
+    equal(C.cleanLook({}), { pattern: 'plain', main: null, accent: null }, 'Zwykłe ubranie bez pola');
+    check(!C.sameLook({ proof: true }, {}) && C.sameLook({ proof: true }, { proof: true }), 'Natarte i zwykłe to różne stosy');
+    check(C.lookText('shirt_linen', { proof: true }).includes('lateksem') && !C.lookText('shirt_linen', {}).includes('lateksem'), 'Opis w ekwipunku');
+    const plain = { type: 'shirt_nettle', count: 1, look: C.cleanLook({}) }, proofed = { type: 'trousers_nettle', count: 1, look: C.cleanLook({ proof: true }) };
+    const total = C.wornWarmth([plain, proofed, null, null]), dry = C.proofWarmth([plain, proofed, null, null]);
+    check(dry > 0 && dry < total && C.proofWarmth([plain]) === 0 && C.isProof(proofed) && !C.isProof(plain) && !C.isProof({ type: 'stick', look: { proof: true } }), 'Ciepło natartych ubrań');
+    near(feltTemperature({ water: true, clothes: total, proof: dry }).clothes, dry + (total - dry) * WET_CLOTHES, 'W wodzie: natarte grzeją całe, reszta w części');
+    near(feltTemperature({ water: true, clothes: total }).clothes, total * WET_CLOTHES, 'W wodzie bez lateksu - jak dotąd');
+    equal(feltTemperature({ water: false, clothes: total, proof: dry }).clothes, total, 'Na sucho bez zmian');
+    near(feltTemperature({ water: true, clothes: 2, proof: 99 }).clothes, 2, 'Nie więcej niż grzeją ubrania');
+    // Stół krawiecki: prawdziwa metoda proof.
+    const { SewingTables } = await import('../src/game/SewingTables.js');
+    const notes = [], events = [];
+    const fake = { game: { mode: 'adventure', onNotice: (text) => notes.push(text), achieve: (name, data) => events.push([name, data]), playBlockSound() {},
+        inventory: { selected: 3, take(slot, count) { fake.taken = [slot, count]; } } }, version: 0 };
+    const table = { material: null };
+    check(SewingTables.prototype.proof.call(fake, {}, table) && notes.at(-1).includes('gotowe ubranie') && !fake.taken, 'Lateks bez ubrania na stole');
+    table.material = { type: 'linen_cloth', count: 1 };
+    check(SewingTables.prototype.proof.call(fake, {}, table) && !fake.taken, 'Lateks na płótno - nie');
+    table.material = { type: 'shirt_linen', count: 1, look: { pattern: 'stripes', main: 'red', accent: 'white' } };
+    check(SewingTables.prototype.proof.call(fake, {}, table), 'Lateks na ubranie');
+    equal(table.material.look, { pattern: 'stripes', main: 'red', accent: 'white', proof: true }, 'Kolory zostają, dochodzi lateks');
+    equal([fake.taken, fake.version, events.at(-1)[0]], [[3, 1], 1, 'garmentProofed'], 'Bryłka zużyta, wersja, zdarzenie');
+    check(SewingTables.prototype.proof.call(fake, {}, table) && fake.version === 1 && notes.at(-1).includes('już'), 'Drugi raz - nic');
+    check(read('src/game/SewingTables.js').includes('if (selected === PROOF_ITEM) return this.proof(a, table);'), 'Stół rozpoznaje lateks w ręce');
+}
+
+// ------------------------------------------------------------
 // 4. Obraz.
 // ------------------------------------------------------------
 {
@@ -529,7 +688,7 @@ check(campfires.includes('roastSeconds(type)') && campfires.includes('roastWord(
 // ------------------------------------------------------------
 {
     const byId = Object.fromEntries(ACHIEVEMENTS.map((entry) => [entry.id, entry]));
-    for (const id of ['first_tap', 'dry_tap', 'sap_cup', 'tapped_resin', 'maple_syrup', 'forest_cellar', 'greedy_tap']) {
+    for (const id of ['first_tap', 'dry_tap', 'sap_cup', 'tapped_resin', 'maple_syrup', 'forest_cellar', 'greedy_tap', 'axe_glued', 'garment_proofed', 'dragon_blood', 'willow_tea', 'all_tree_gifts']) {
         check(byId[id] && itemExists(byId[id].icon), `Osiągnięcie ${id} z ikoną`);
     }
     const book = () => { const sets = new Map(), counts = new Map(); return {
@@ -545,12 +704,22 @@ check(campfires.includes('roastSeconds(type)') && campfires.includes('roastWord(
     check(!byId.forest_cellar.when({ type: 'birch_sap' }, drinks) && !byId.forest_cellar.when({ type: 'tea_calm' }, drinks) && !byId.forest_cellar.when({ type: 'maple_sap' }, drinks) &&
         !byId.forest_cellar.when({ type: 'palm_sap' }, drinks) && !byId.forest_cellar.when({ type: 'palm_sap' }, drinks) && byId.forest_cellar.when({ type: 'baobab_water' }, drinks), 'Cztery napoje');
     check(byId.greedy_tap.when({ full: true }) && !byId.greedy_tap.when({ full: false }), 'Komplet nacięć');
+    check(byId.axe_glued.when({ recipe: 'axe_repair' }) && !byId.axe_glued.when({ recipe: 'pitch_glue' }), 'Naprawa siekiery');
+    check(byId.dragon_blood.when({ item: 'dragon_blood' }) && !byId.dragon_blood.when({ item: 'resin' }), 'Smocza krew');
+    check(byId.willow_tea.when({ type: 'tea_willow' }) && !byId.willow_tea.when({ type: 'tea_calm' }), 'Napar z wierzby');
+    const gifts = book(), keys = Object.keys(G.GIFTS);
+    check(keys.slice(0, -1).every((gift) => !byId.all_tree_gifts.when({ gift }, gifts)) && !byId.all_tree_gifts.when({ gift: keys[0] }, gifts) && byId.all_tree_gifts.when({ gift: keys.at(-1) }, gifts), 'Wszystkie dary');
+    // Zielarz liczy tylko napary z ziół (w 1.41.0 łapał też soki).
+    const herbalist = byId.herbalist ?? ACHIEVEMENTS.find((entry) => entry.title === 'Zielarz'), teas = book();
+    check(!herbalist.when({ kind: 'drink', type: 'birch_sap' }, teas) && !herbalist.when({ kind: 'drink', type: 'maple_sap' }, teas) && !herbalist.when({ kind: 'drink', type: 'palm_sap' }, teas) &&
+        !herbalist.when({ kind: 'drink', type: 'tea_willow' }, teas) && !herbalist.when({ kind: 'drink', type: 'tea_calm' }, teas) && !herbalist.when({ kind: 'drink', type: 'tea_heal' }, teas) &&
+        herbalist.when({ kind: 'drink', type: 'tea_vigor' }, teas), 'Zielarz: trzy napary z ziół, soki się nie liczą');
     equal(new Set(ACHIEVEMENTS.map((entry) => entry.title)).size, ACHIEVEMENTS.length, 'Tytuły osiągnięć bez powtórek');
 
     const chapter = GUIDE.find((entry) => entry.id === 'tree-gifts');
     check(chapter && chapter.lines.length >= 6, 'Rozdział poradnika');
     const text = chapter.lines.map((line) => (typeof line === 'string' ? line : `${line.text} ${line.touch}`)).join(' ');
-    for (const word of ['Nożem', 'żywic', 'kubek', 'wiosną', 'zabliźnia', 'syrop']) check(text.includes(word), `Poradnik: ${word}`);
+    for (const word of ['Nożem', 'żywic', 'kubek', 'wiosną', 'zabliźnia', 'syrop', 'gumę', 'lateks', 'smoła klejąca', 'garbnik', 'wierzby']) check(text.includes(word), `Poradnik: ${word}`);
 
     const commands = read('src/commands/worldCommands.js');
     check(commands.includes("name: 'naciecie'") && read('docs/komendy.md').includes('/naciecie napelnij'), 'Komenda i jej opis');

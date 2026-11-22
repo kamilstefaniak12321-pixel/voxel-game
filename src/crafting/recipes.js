@@ -117,9 +117,24 @@ export const GROUPS = {
 
     // Do pochodni i lamp: to, co się pali.
     oil: {
-        label: 'żywica albo oliwki',
+        label: 'żywica, oliwki, guma drzewna albo lateks',
         icon: 'resin',
-        types: ['resin', ...OLIVES]
+        // (Od 1.42.0 także guma i lateks - spoiwo jak żywica.)
+        types: ['resin', ...OLIVES, 'tree_gum', 'latex']
+    },
+
+    // Klej z drzewa (1.42.0, dary pnia): guma wiśni i akacji albo lateks banianu.
+    glue: {
+        label: 'klej z drzewa (guma drzewna albo lateks)',
+        icon: 'tree_gum',
+        types: ['tree_gum', 'latex']
+    },
+
+    // Kora z garbnikiem (moczona w wodzie daje garbnik).
+    tannin_bark: {
+        label: 'kora dębu, namorzynu albo sekwoi',
+        icon: 'oak_bark',
+        types: ['oak_bark', 'mangrove_bark', 'sequoia_bark']
     },
 
     needles: {
@@ -362,6 +377,19 @@ export const RECIPES = [
         id: brew, result: [brew, 1], ingredients: ['#cup', `#${herbs}`, `#${herbs}`],
         note: `Przytrzymaj PPM na płonącym ognisku - powstanie napar. ${EFFECTS[effect].text}.`
     })),
+    // Dary pnia, druga połowa (1.42.0, docs/dary-pnia.md).
+    { id: 'brew_willow', result: ['brew_willow', 1], ingredients: ['#cup', 'wierzba_bark', 'wierzba_bark'],
+        note: 'Korę zdejmij z wierzby siekierą (PPM). Przytrzymaj PPM na płonącym ognisku - powstanie napar: lekko goi i uspokaja przed snem.' },
+    { id: 'pitch_glue', result: ['pitch_glue', 2], ingredients: ['#glue', 'resin'],
+        note: 'Guma z wiśni albo akacji (lato) lub lateks z banianu, do tego żywica. Smołą klejącą naprawia się siekierę.' },
+    { id: 'axe_repair', result: ['axe', 1], ingredients: ['#axes', 'pitch_glue'], repair: true,
+        note: 'Naprawa: zużyta siekiera odzyskuje część stanu (najwyżej do czterech piątych - klejona nie jest jak nowa). Wynik to ta sama siekiera.' },
+    { id: 'dye_red_dragon', result: ['dye_red', 2], ingredients: ['dragon_blood'],
+        note: 'Smocza krew z nacięcia w pniu draceny - mocny czerwony barwnik.' },
+    { id: 'dye_brown_kino', result: ['dye_brown', 2], ingredients: ['kino'],
+        note: 'Czerwona żywica z nacięcia w pniu eukaliptusa (latem) - po roztarciu brązowy barwnik.' },
+    { id: 'dye_black_tannin', result: ['dye_black', 1], ingredients: ['tannin'],
+        note: 'Garbnik: korę dębu, namorzynu albo sekwoi wrzuć do wody i poczekaj. Ciemny barwnik bez mieszania trzech innych.' },
     // Wianek z kwiatów: ozdoba na ścianę (blocks/decorations.js).
     { id: 'flower_wreath', result: ['flower_wreath', 1], pattern: ['FF', 'FF'], key: { F: '#flowers' },
         note: 'Cztery dowolne kwiaty. Wiesza się na ścianie jak wieniec świerkowy.' },

@@ -97,4 +97,5 @@ w ręce, `daj [skała]`, `stan <procent>`.
   zużyciem) - ograniczenie dotyczy tylko ścinania żywych drzew.
 - Siekiery z ostrzem z **różnych skał** (mieszany przepis) liczą się jak
   kamienne.
-- Zużytej siekiery **nie da się naprawić**.
+- (Od 1.42.0 zużytą siekierę **da się podkleić** smołą klejącą: +40%
+  stanu, najwyżej do 80% - [dary-pnia.md](dary-pnia.md). Do pełna nie.)

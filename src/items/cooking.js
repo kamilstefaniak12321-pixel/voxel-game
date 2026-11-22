@@ -35,7 +35,8 @@ const KIND_OF = new Map(Object.entries(KINDS).flatMap(([kind, types]) => types.m
 // gdy tego się nie gotuje (potrawy, pieczone, napary).
 export function ingredientKind(type) {
     const food = Object.hasOwn(FOODS, type ?? '') ? FOODS[type] : null;
-    if (!food || food.kind !== 'snack' || food.returns) return null;
+    // (ingredient: false - do żucia, nie do garnka: guma drzewna, 1.42.0.)
+    if (!food || food.kind !== 'snack' || food.returns || food.ingredient === false) return null;
     return KIND_OF.get(type) ?? 'fruit';
 }
 

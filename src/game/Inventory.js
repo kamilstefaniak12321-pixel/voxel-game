@@ -385,7 +385,19 @@ export class Inventory {
 
     remove(type, count) {
 
-        let left = count;
+        return this.removeStack(type, count)?.count ?? 0;
+
+    }
+
+    // Jak remove, ale oddaje zabrany stos razem z jego stanem: świeżością
+    // jedzenia, suchością polan, paliwem pochodni, zużyciem siekiery
+    // (średnia zabranych sztuk) i wyglądem ubrania. null - nic nie zabrało.
+    // (1.42.0: siatka wytwarzania wypełniana z księgi przepisów gubiła
+    // stan - siekiera wracała z niej jak nowa.)
+
+    removeStack(type, count) {
+
+        let left = count, freshSum = 0, stated = false, look;
 
         const order = [];
 
@@ -405,6 +417,10 @@ export class Inventory {
 
                 const taken = Math.min(left, item.count);
 
+                freshSum += (Number.isFinite(item.fresh) ? item.fresh : 1) * taken;
+                stated ||= Number.isFinite(item.fresh);
+                look ??= item.look;
+
                 item.count -= taken;
                 left -= taken;
 
@@ -416,7 +432,9 @@ export class Inventory {
 
         }
 
-        return count - left;
+        const removed = count - left;
+
+        return removed > 0 ? makeItem(type, removed, stated ? freshSum / removed : undefined, look) : null;
 
     }
 

@@ -145,7 +145,13 @@ export const GUIDE = [
             'Gruby pień daje więcej. Kilka nacięć w jednym drzewie niczego nie przyspiesza - drzewo dzieli sok między nie.',
             'Po kilku dobach nacięcie się zabliźnia. Wtedy natnij je nożem jeszcze raz.',
             'Sok brzozowy i palmowy krzepią, woda z baobabu orzeźwia. Sok klonowy trzymany nad ogniskiem odparowuje na syrop klonowy - słodki i bardzo sycący.',
-            'Ścięte drzewo niczego już nie da: kubek i zastygła żywica spadną na ziemię.'
+            'Ścięte drzewo niczego już nie da: kubek i zastygła żywica spadną na ziemię.',
+            'Wiśnia i akacja latem puszczają gumę drzewną (jadalna), eukaliptus - czerwoną żywicę na brązowy barwnik, dracena cały rok - smoczą krew na czerwony barwnik.',
+            'Banian daje lateks - do kubka. Ścina się w nim w bryłkę: zbierasz ją, a kubek wraca do ręki.',
+            'Guma albo lateks z żywicą to smoła klejąca. Siekiera i smoła w siatce wytwarzania - i zużyta siekiera odzyskuje część stanu (klejona nie będzie jak nowa).',
+            'Bryłka lateksu wtarta w gotowe ubranie na stole krawieckim sprawia, że mokre grzeje jak suche.',
+            'Guma i lateks zastępują też żywicę w przepisach (pochodnia, lampa).',
+            'Kora dębu, namorzynu i sekwoi wymoczona w wodzie daje garbnik - czarny barwnik. Dwie kory wierzby w kubku, nad ognisko - i jest napar, który lekko goi i uspokaja.'
         ]
     },
     {

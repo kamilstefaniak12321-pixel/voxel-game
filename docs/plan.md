@@ -41,6 +41,11 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
   soki (brzoza, klon, palma) i woda z baobabu do glinianego kubka,
   zależnie od pory roku i doby; syrop klonowy ([dary-pnia.md](dary-pnia.md)).
 
+- **1.42.0 - Dary pnia: klej, lateks i barwniki** (PR #195): druga
+  wersja części D. Guma z wiśni i akacji, lateks z banianu, smocza krew
+  i czerwona żywica na barwniki, garbnik z kory, napar z kory wierzby;
+  smoła klejąca naprawia siekierę, lateks chroni ubranie przed wodą.
+
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony

@@ -11,6 +11,30 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.42.0 - Dary pnia: klej, lateks i barwniki
+
+PR #195. Druga wersja części D projektu drewna (`docs/dary-pnia.md`).
+
+- **Guma drzewna** z nacięcia wiśni i akacji (latem) - jadalna.
+- **Lateks** z banianu (cały rok): kapie do kubka i ścina się w bryłkę;
+  przy zbiorze kubek wraca do ręki.
+- **Smocza krew** z draceny daje czerwony barwnik, **czerwona żywica**
+  eukaliptusa (latem) - brązowy.
+- **Smoła klejąca** (guma albo lateks + żywica) **naprawia siekierę**:
+  +40% stanu, najwyżej do 80%.
+- **Lateks na ubranie** (stół krawiecki): natarte ubranie mokre grzeje
+  jak suche.
+- Guma i lateks **zastępują żywicę** w przepisach (pochodnia, lampa).
+- **Garbnik**: kora dębu, namorzynu albo sekwoi wymoczona w wodzie;
+  daje czarny barwnik.
+- **Napar z kory wierzbowej**: lekko goi, uspokaja i grzeje.
+- 5 nowych osiągnięć, poradnik uzupełniony.
+- Poprawka: osiągnięcie „Zielarz" liczy tylko napary z ziół (w 1.41.0
+  liczyły się też soki z pnia).
+- Poprawka: przepis wybrany z księgi przepisów (i komenda `/wytworz`)
+  gubił stan składników - zużyta siekiera wracała z siatki jak nowa,
+  a jedzenie jak świeże. Teraz stan zostaje.
+
 ## 1.41.0 - Dary pnia: żywica i soki
 
 PR #194. Pierwsza wersja części D projektu drewna (`docs/drewno.md`,

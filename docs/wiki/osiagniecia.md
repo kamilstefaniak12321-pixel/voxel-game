@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.41.0** - 154 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.42.0** - 159 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -86,6 +86,8 @@ Wersja gry **1.41.0** - 154 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/birch_sap.png" width="32" height="32" alt=""> | **Kap, kap, kap** | Zdejmij z drzewa pełny kubek soku. | „Najwolniejszy napój świata. I tak warto.” |
 | <img src="ikony/resin.png" width="32" height="32" alt=""> | **Żywiczarz** | Zbierz 10 kropli żywicy z własnych nacięć. | „Ręce będą się kleić do wiosny.” |
 | <img src="ikony/clay_cup.png" width="32" height="32" alt=""> | **Więcej nie znaczy szybciej** *(sekret)* | Natnij jedno drzewo tyle razy, ile się da. | „Drzewo ma tyle soku, ile ma. Reszta to twoja niecierpliwość.” |
+| <img src="ikony/pitch_glue.png" width="32" height="32" alt=""> | **Na słowo honoru** | Napraw zużytą siekierę smołą klejącą. | „Trzyma. Nie pytaj jak długo.” |
+| <img src="ikony/tea_willow.png" width="32" height="32" alt=""> | **Apteka nad rzeką** | Wypij napar z kory wierzbowej. | „Gorzkie jak lekarstwo. Bo to jest lekarstwo.” |
 | <img src="ikony/stick.png" width="32" height="32" alt=""> | **Do ostatniego ciosu** | Zużyj siekierę tak, żeby pękła w ręce. | „Został patyk. Połowa nowej siekiery.” |
 | <img src="ikony/sawhorse.png" width="32" height="32" alt=""> | **Na kozłach** | Postaw kozły na obu końcach leżącego pnia (kozioł to 3 konary). | „Siekiera nareszcie bije w drewno, a nie w ziemię.” |
 | <img src="ikony/oak_firewood.png" width="32" height="32" alt=""> | **Od razu na opał** | Kucając, połup siekierą pień leżący na kozłach. | „Cztery polana z metra. Zima może przychodzić.” |
@@ -126,6 +128,8 @@ Wersja gry **1.41.0** - 154 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/birch_firewood.png" width="32" height="32" alt=""> | **Syczy, ale płonie** | Rozpal ognisko, w którym na wierzchu leży mokre polano. | „Więcej dymu niż ognia. Ale ogień też jest - gdzieś tam, w środku.” |
 | <img src="ikony/maple_syrup.png" width="32" height="32" alt=""> | **Czterdzieści do jednego** | Odparuj sok klonowy na syrop nad ogniskiem. | „Tyle soku na jeden syrop liczą prawdziwi klonowi bartnicy. Tu masz taryfę ulgową.” |
 | <img src="ikony/palm_sap.png" width="32" height="32" alt=""> | **Piwniczka lasu** | Wypij sok brzozowy, klonowy, palmowy i wodę z baobabu. | „Cztery drzewa, cztery smaki, jeden kubek.” |
+| <img src="ikony/latex.png" width="32" height="32" alt=""> | **Jak z gęsi woda** | Wetrzyj lateks w ubranie na stole krawieckim. | „Pachnie dziwnie. Za to rzeka przestała być problemem.” |
+| <img src="ikony/dragon_blood.png" width="32" height="32" alt=""> | **Krew smoka** | Zbierz smoczą krew z nacięcia w pniu draceny. | „Smok nie ucierpiał. To tylko drzewo z dobrym marketingiem.” |
 | <img src="ikony/axe_granite.png" width="32" height="32" alt=""> | **Twarda sztuka** | Zetnij drzewo o najtwardszym drewnie: akację, namorzyn albo oliwkę. Bierze je tylko siekiera z bazaltu albo granitu. | „Kamienna tylko by się wyszczerbiła.” |
 | <img src="ikony/prochno_zar.png" width="32" height="32" alt=""> | **Niosący ogień** | Rozpal ognisko tlącym się próchnem: zajmij próchno od ognia (PPM), zanieś i połóż na ułożonym stosie. | „Starter ognia? Po co, skoro ogień już jest.” |
 | <img src="ikony/konar.png" width="32" height="32" alt=""> | **Zna las od pnia** | Zetnij drzewa ośmiu różnych gatunków. | „Każde pada inaczej. Każde tak samo głośno.” |
@@ -165,6 +169,7 @@ Wersja gry **1.41.0** - 154 osiągnięć. Księga osiągnięć: klawisz **L**. U
 
 | | Tytuł | Jak zdobyć | Komentarz |
 |---|---|---|---|
+| <img src="ikony/kino.png" width="32" height="32" alt=""> | **Każde drzewo coś daje** | Zbierz z nacięć wszystkie dary: żywicę, cztery napoje, gumę, lateks, smoczą krew i czerwoną żywicę. | „Dziewięć darów. Wystarczyło ładnie poprosić. Nożem.” |
 | <img src="ikony/baobab_log.png" width="32" height="32" alt=""> | **Drzewa świata** | Zetnij pień każdego z trzynastu drzew z dalekich stron: jodły, baobabu, palmy kokosowej, modrzewia, namorzynu, puchowca, jukki, osiki, araukarii, figowca, draceny, cedru i sosny ościstej (/biom znajdz sawanna, pustynia, deszczowy, namorzyny). | „Od namorzynów po granicę śniegu. Paszport pełen słojów.” |
 | <img src="ikony/nagietek_etap3.png" width="32" height="32" alt=""> | **Cztery pory roku** | Bądź w świecie wiosną, latem, jesienią i zimą. | „Pełny obrót. Vivaldi napisał o tym koncert, ty po prostu przetrwałeś.” |
 | <img src="ikony/lamp_purple.png" width="32" height="32" alt=""> | **Dzień jak noc** | Zobacz pełne zaćmienie słońca. | „Słońce na chwilę zrobiło sobie przerwę. Ty jak zwykle nie.” |

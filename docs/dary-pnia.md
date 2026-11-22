@@ -1,8 +1,9 @@
-# Dary pnia: żywica i soki (1.41.0)
+# Dary pnia (1.41.0 i 1.42.0)
 
-Pierwsza wersja części D projektu drewna ([drewno.md](drewno.md),
-rozdział 6). Druga (guma, lateks, barwniki z żywic, łyko, kora
-wierzbowa, garbnik) - w następnej wersji.
+Część D projektu drewna ([drewno.md](drewno.md), rozdział 6), w dwóch
+wersjach: **1.41.0** - nacinanie, żywica i soki; **1.42.0** - guma,
+lateks, żywice-barwniki, garbnik, napar z kory wierzby i to, do czego
+służy klej (rozdział „Druga połowa" niżej).
 
 ![Nacięcia: brzoza z kubkiem i sosna z żywicą](dary-pnia-1410.jpg)
 
@@ -33,6 +34,10 @@ Nacinać można każdą kłodę pnia, na każdej wysokości - byle z boku.
 | klon | sok klonowy | od połowy zimy do końca wiosny | 2,5 kubka | 3 dobach |
 | palma kokosowa | sok palmowy | cały rok | 1,5 kubka | 3 dobach |
 | baobab | woda | cały rok | 2 kubki | 3 dobach |
+| wiśnia, akacja (1.42.0) | guma drzewna | tylko lato | 2 łzy | 5 dobach |
+| banian (1.42.0) | lateks (do kubka) | cały rok | 2 bryłki | 3 dobach |
+| dracena (1.42.0) | smocza krew | cały rok | 1 kropla | 5 dobach |
+| eukaliptus (1.42.0) | czerwona żywica | tylko lato | 2 odłamki | 5 dobach |
 
 Liczby: `src/blocks/treeGifts.js`.
 
@@ -74,6 +79,49 @@ Jak napary: pije się je także z pełnym żołądkiem, kubek wraca do ręki.
 ogniskiem **odparowuje** - trwa to 12 sekund, trzy razy dłużej niż
 pieczenie. Syci jak mały posiłek.
 
+## Druga połowa (1.42.0)
+
+![Guma, lateks, smocza krew, czerwona żywica, smoła klejąca, garbnik, kubek kory i napar](dary-pnia-1420.png)
+
+**Guma drzewna** (wiśnia, akacja - latem) zbiera się jak żywicę: łzy
+na korze. Jest jadalna (mała przekąska).
+
+**Lateks** (banian) kapie do kubka i **ścina się w nim w bryłkę**:
+zbierasz bryłkę, a kubek - ten sam, który powiesiłeś - wraca do ręki.
+
+Do czego służą (decyzja Kamila, 22.11.2026 - wszystkie trzy):
+
+1. **Naprawa siekiery.** Guma albo lateks + żywica = 2 × **smoła
+   klejąca**. Zużyta siekiera i smoła w siatce wytwarzania dają tę samą
+   siekierę w lepszym stanie: **+40% stanu, najwyżej do 80%** - klejona
+   nie jest jak nowa. Siekiery w stanie 80% i lepszym się nie klei.
+2. **Lateks na ubranie.** Bryłka lateksu w ręce, PPM na gotowe ubranie
+   leżące na stole krawieckim: ubranie jest „natarte lateksem" i **mokre
+   grzeje jak suche** (zwykłe w wodzie grzeje w 30%). Kolor i wzór
+   zostają; widać to w opisie ubrania.
+3. **Spoiwo w przepisach.** Guma i lateks zastępują żywicę wszędzie,
+   gdzie przepis chce „żywicy albo oliwek" (pochodnia, pochodnia
+   z ogarka, lampa).
+
+**Barwniki z żywic**: smocza krew → 2 × czerwony barwnik; czerwona
+żywica eukaliptusa → 2 × brązowy.
+
+**Garbnik**: kora dębu, namorzynu albo sekwoi wrzucona do wody (jak len
+do moczenia, 1,5 minuty) zamienia się w garbnik. Garbnik → czarny
+barwnik (dotąd tylko z mieszania trzech innych).
+
+**Napar z kory wierzbowej**: kubek + 2 kory wierzby (z okorowania
+siekierą) = kubek kory; nad ogniskiem - napar. Lekko goi stłuczoną
+nogę, uspokaja przed snem i grzeje.
+
+**Łyko z lipy** było w grze od 1.27.0 (kora lipowa moczona w wodzie) -
+bez zmian.
+
+**Poprawka przy okazji**: przepis kliknięty w księdze przepisów (i
+komenda `/wytworz`) wkładał składniki do siatki „jak nowe" - zużyta
+siekiera po zrobieniu polan z księgi wracała cała (błąd od 1.39.0),
+a jedzenie świeże. Teraz stan zostaje (`Inventory.removeStack`).
+
 ## Obraz i wydajność
 
 - Nacięcie to jedna mała siatka (kilka-kilkanaście czworokątów) z tym
@@ -94,6 +142,14 @@ pieczenie. Syci jak mały posiłek.
 Pod korą (pierwsze nacięcie), Kap, kap, kap (pełny kubek soku),
 Żywiczarz (10 kropli z własnych nacięć), Czterdzieści do jednego (syrop
 klonowy), Piwniczka lasu (wszystkie cztery napoje) i dwa sekretne.
+
+Od 1.42.0: Na słowo honoru (naprawa siekiery), Jak z gęsi woda (lateks
+na ubraniu), Krew smoka, Apteka nad rzeką (napar z wierzby), Każde
+drzewo coś daje (wszystkie dziewięć darów).
+
+Poprawka w 1.42.0: **Zielarz** liczy tylko trzy napary z ziół. W 1.41.0
+przez pomyłkę liczyły się do niego także soki z pnia. Zdobyte
+osiągnięcie zostaje; niedokończony postęp liczy się od nowa.
 
 ## Komenda
 
@@ -139,5 +195,23 @@ i napełnia wszystko.
 - Nie sprawdzone na prawdziwym sprzęcie ani w prawdziwej grze dwóch
   osób - tylko testy, gra w przeglądarce w kontenerze i gotowy test
   gry wieloosobowej (który nacięć nie dotyka).
-- Reszta darów z planu (guma, lateks, smocza krew, czerwona żywica
-  eukaliptusa, łyko lipy, kora wierzbowa, garbnik) - w następnej wersji.
+
+Z 1.42.0:
+
+- **Naprawiać można bez końca** (każda naprawa do 80%) - ceną jest
+  guma (tylko latem) albo lateks i żywica. Nie ma licznika napraw.
+- **Lateksu na ubraniu nie widać** na postaci ani na ikonce - tylko
+  w opisie. Nie ściera się z czasem.
+- **Deszcz nie moczy ubrań** (gra zna tylko „w wodzie" i „poza wodą"),
+  więc natarte ubranie pomaga przy pływaniu i brodzeniu, nie w ulewie.
+- **Pochodnia na gumie albo lateksie pali się tak samo** jak na żywicy;
+  dolać paliwa do pochodni da się dalej tylko żywicą albo oliwkami.
+- **Garbnik służy tylko do barwnika** - skór w grze nie ma (zwierząt się
+  nie krzywdzi), więc niczego się nim nie garbuje.
+- **Guma, kino i smocza krew nie mają własnego wyglądu na korze** poza
+  kolorem zacieku.
+- **Sekwoi i namorzynu** kora daje garbnik, ale sama sekwoja wymaga
+  siekiery z metalu (część F) - na razie jej kora jest tylko z komend
+  i trybu twórczego.
+- Naprawa, lateks na ubraniu i barwniki sprawdzone testami na
+  prawdziwych funkcjach gry, nie klikaniem w oknie ekwipunku.

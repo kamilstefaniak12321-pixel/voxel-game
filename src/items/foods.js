@@ -108,7 +108,12 @@ export const FOODS = {
     maple_sap: { energy: 6, fullness: 30, kind: 'drink', word: 'sok', effects: [], returns: CUP },
     palm_sap: { energy: 8, fullness: 40, kind: 'drink', word: 'sok', effects: ['tonic'], returns: CUP },
     baobab_water: { energy: 2, fullness: 20, kind: 'drink', word: 'woda', effects: ['refresh'], returns: CUP },
-    maple_syrup: { energy: 24, fullness: 150, kind: 'drink', word: 'syrop', effects: ['warmth'], returns: CUP }
+    maple_syrup: { energy: 24, fullness: 150, kind: 'drink', word: 'syrop', effects: ['warmth'], returns: CUP },
+    // 1.42.0: guma z wiśni i akacji do żucia; napar z kory wierzby
+    // (kubek + dwie kory, potem nad ognisko - jak napary z ziół).
+    // (ingredient: false - nie idzie do garnka, nie suszy się i nie psuje.)
+    tree_gum: { energy: 3, fullness: 25, kind: 'snack', effects: [], ingredient: false },
+    tea_willow: { energy: 3, fullness: 30, kind: 'drink', effects: ['mend', 'calm', 'warmth'], returns: CUP }
 };
 
 // Pieczenie nad ogniskiem: surowe -> pieczone. Trzeba trzymać PPM przez
@@ -123,7 +128,9 @@ export const ROASTS = {
     // Kubek ziół -> napar.
     ...Object.fromEntries(Object.values(TEAS).map(({ brew, tea }) => [brew, tea])),
     // Sok klonowy -> syrop (1.41.0): odparowuje się go długo.
-    maple_sap: 'maple_syrup'
+    maple_sap: 'maple_syrup',
+    // Kubek kory wierzbowej -> napar (1.42.0).
+    brew_willow: 'tea_willow'
 };
 
 export const ROAST_SECONDS = 4;

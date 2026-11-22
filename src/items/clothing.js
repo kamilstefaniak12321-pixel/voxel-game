@@ -39,7 +39,11 @@ export const RET_SECONDS = 90;
 export const RETTING = {
     len_wiazka: 'flax_retted',
     nettle: 'nettle_retted',
-    linden_bark: 'bast'
+    linden_bark: 'bast',
+    // Garbnik (1.42.0, dary pnia): kora z garbnikiem wymoczona w wodzie.
+    oak_bark: 'tannin',
+    mangrove_bark: 'tannin',
+    sequoia_bark: 'tannin'
 };
 
 export function retsInto(type) {
@@ -139,12 +143,13 @@ export function dyeOfItem(type) {
 export function cleanLook(look) {
     const pattern = Object.hasOwn(PATTERNS, look?.pattern ?? '') ? look.pattern : 'plain';
     const color = (key) => (typeof key === 'string' && Object.hasOwn(DYE_COLORS, key) ? key : null);
-    return { pattern, main: color(look?.main), accent: color(look?.accent) };
+    // proof (1.42.0) - ubranie natarte lateksem: mokre grzeje jak suche.
+    return { pattern, main: color(look?.main), accent: color(look?.accent), ...(look?.proof === true ? { proof: true } : {}) };
 }
 
 export const sameLook = (a, b) => {
     const x = cleanLook(a), y = cleanLook(b);
-    return x.pattern === y.pattern && x.main === y.main && x.accent === y.accent;
+    return x.pattern === y.pattern && x.main === y.main && x.accent === y.accent && Boolean(x.proof) === Boolean(y.proof);
 };
 
 // Kolory ubrania (hex): główny i wzoru - z barwników albo naturalne.
@@ -167,7 +172,7 @@ export function lookText(type, look) {
     const clean = cleanLook(look);
     const main = clean.main ? DYE_ADJECTIVES[clean.main] : 'niebarwiony';
     const pattern = clean.pattern === 'plain' ? 'gładki' : `${PATTERNS[clean.pattern].label}${clean.accent ? ` (${DYE_ADJECTIVES[clean.accent]})` : ''}`;
-    return `kolor: ${main}, wzór: ${pattern}`;
+    return `kolor: ${main}, wzór: ${pattern}${clean.proof ? ', natarte lateksem (nie boi się wody)' : ''}`;
 }
 
 // --- Stół krawiecki: tkanie, szycie, barwienie ------------------------------------
@@ -203,6 +208,19 @@ export function isTableMaterial(type) {
 export function wornWarmth(equip = []) {
     let sum = 0;
     for (const item of equip) sum += garmentInfo(item?.type)?.warmth ?? 0;
+    return Math.round(sum * 10) / 10;
+}
+
+// Impregnacja lateksem (1.42.0, dary pnia): bryłka lateksu wtarta
+// w gotowe ubranie na stole krawieckim. Takie ubranie w wodzie grzeje
+// jak suche (zwykłe - tylko w części, game/Warmth.js: WET_CLOTHES).
+export const PROOF_ITEM = 'latex';
+export const isProof = (item) => isGarment(item?.type) && item?.look?.proof === true;
+
+// Ile z ciepła noszonych ubrań dają te natarte lateksem.
+export function proofWarmth(equip = []) {
+    let sum = 0;
+    for (const item of equip) if (isProof(item)) sum += garmentInfo(item.type)?.warmth ?? 0;
     return Math.round(sum * 10) / 10;
 }
 

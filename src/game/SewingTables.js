@@ -36,7 +36,7 @@ import { getItemLabel } from '../items/ItemRegistry.js';
 import {
     GARMENTS, CLOTHS, PRODUCT_SLOTS, PATTERNS, PATTERN_ORDER, FIBERS_PER_CLOTH,
     clothOf, clothFromFiber, garmentType, isGarment, isTableMaterial,
-    kindsForSlot, nextOf, cleanLook, dyeOfItem, DYE_COLORS
+    kindsForSlot, nextOf, cleanLook, dyeOfItem, DYE_COLORS, PROOF_ITEM
 } from '../items/clothing.js';
 import { cleanItem } from './Inventory.js';
 import { productAt } from './CarpenterTables.js';
@@ -202,6 +202,7 @@ export class SewingTables {
     useMaterial(a, table, selected, sneaking) {
         const game = this.game;
         if (dyeOfItem(selected)) return this.dye(a, table, selected, sneaking);
+        if (selected === PROOF_ITEM) return this.proof(a, table);
         if (isTableMaterial(selected)) return this.putMaterial(a, table, sneaking);
         if (sneaking && table.material) return this.nextPattern(a, table);
         if (table.material) return this.takeMaterial(a, table);
@@ -266,6 +267,26 @@ export class SewingTables {
         table.material = null;
         table.main = null;
         table.accent = null;
+    }
+
+    // Lateks (1.42.0, dary pnia): wtarty w gotowe ubranie - nie boi się wody.
+    proof(a, table) {
+        const game = this.game, material = table.material;
+        if (!material || !isGarment(material.type)) {
+            game.onNotice?.('Lateks wciera się w gotowe ubranie - połóż je najpierw na stole');
+            return true;
+        }
+        if (cleanLook(material.look).proof) {
+            game.onNotice?.('To ubranie jest już natarte lateksem');
+            return true;
+        }
+        material.look = cleanLook({ ...cleanLook(material.look), proof: true });
+        if (game.mode === 'adventure') game.inventory.take(game.inventory.selected, 1);
+        this.version++;
+        game.playBlockSound?.('place', CLOTH_SOUND, a);
+        game.onNotice?.('Ubranie natarte lateksem: mokre grzeje jak suche');
+        game.achieve?.('garmentProofed', { type: material.type });
+        return true;
     }
 
     // Barwnik: kolor płótna na stole albo gotowego ubrania (kucanie - wzoru).

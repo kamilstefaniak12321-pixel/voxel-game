@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 752
+      "height": 768
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9878,6 +9878,62 @@
       "y": 736,
       "width": 16,
       "height": 16
+    },
+    "tree_gum": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 752,
+      "width": 16,
+      "height": 16
+    },
+    "latex": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 752,
+      "width": 16,
+      "height": 16
+    },
+    "dragon_blood": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 752,
+      "width": 16,
+      "height": 16
+    },
+    "kino": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 752,
+      "width": 16,
+      "height": 16
+    },
+    "pitch_glue": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 752,
+      "width": 16,
+      "height": 16
+    },
+    "tannin": {
+      "sheet": "rosliny",
+      "x": 80,
+      "y": 752,
+      "width": 16,
+      "height": 16
+    },
+    "brew_willow": {
+      "sheet": "rosliny",
+      "x": 96,
+      "y": 752,
+      "width": 16,
+      "height": 16
+    },
+    "tea_willow": {
+      "sheet": "rosliny",
+      "x": 112,
+      "y": 752,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -17953,6 +18009,46 @@
       "x": 10,
       "y": 97,
       "region": "maple_syrup"
+    },
+    "tree_gum": {
+      "x": 11,
+      "y": 97,
+      "region": "tree_gum"
+    },
+    "latex": {
+      "x": 12,
+      "y": 97,
+      "region": "latex"
+    },
+    "dragon_blood": {
+      "x": 13,
+      "y": 97,
+      "region": "dragon_blood"
+    },
+    "kino": {
+      "x": 14,
+      "y": 97,
+      "region": "kino"
+    },
+    "pitch_glue": {
+      "x": 15,
+      "y": 97,
+      "region": "pitch_glue"
+    },
+    "tannin": {
+      "x": 16,
+      "y": 97,
+      "region": "tannin"
+    },
+    "brew_willow": {
+      "x": 17,
+      "y": 97,
+      "region": "brew_willow"
+    },
+    "tea_willow": {
+      "x": 18,
+      "y": 97,
+      "region": "tea_willow"
     }
   }
 }

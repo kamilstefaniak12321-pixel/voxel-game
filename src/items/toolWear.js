@@ -70,6 +70,21 @@ export function chopsUntilBroken(tool, wood) {
     return wear > 0 ? Math.ceil(1 / wear - 1e-9) : Infinity;
 }
 
+// Naprawa smołą klejącą (1.42.0, docs/dary-pnia.md): siekiera i smoła
+// w siatce wytwarzania. Odzyskuje REPAIR_GAIN stanu, ale klejona nigdy
+// nie jest jak nowa - najwyżej REPAIR_MAX.
+export const REPAIR_GAIN = 0.4, REPAIR_MAX = 0.8;
+export const REPAIR_ITEM = 'pitch_glue';
+
+// Stan po naprawie albo null, gdy nie ma czego naprawiać (to nie
+// siekiera albo jest w lepszym stanie, niż da klejenie).
+export function repairedCondition(item) {
+    if (!item || !isWearing(item.type)) return null;
+    const now = Number.isFinite(item.fresh) ? Math.max(0, Math.min(1, item.fresh)) : 1;
+    if (now >= REPAIR_MAX - 1e-9) return null;
+    return Math.round(Math.min(REPAIR_MAX, now + REPAIR_GAIN) * 1000) / 1000;
+}
+
 // Stan siekiery w stosie, 0-1 (1 - cała).
 export function conditionOf(item) {
     if (!item || !isWearing(item.type)) return 1;

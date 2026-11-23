@@ -18,6 +18,7 @@ import { isSeasonable, wetOf } from '../items/moisture.js';
 import { restoreWoodpile, pileSign } from '../game/WoodpileState.js';
 import { restoreTorch, torchSign } from '../game/TorchBurn.js';
 import { restoreTap, tapSign } from '../game/TreeTaps.js';
+import { restoreFlames, flamesSign } from '../game/Wildfire.js';
 import { restoreTable } from '../game/CarpenterTables.js';
 import { restoreSewingTable, sewingTableState } from '../game/SewingTables.js';
 import { restoreDrop, dropState } from '../game/Drops.js';
@@ -83,6 +84,14 @@ export function stateSystems(game) {
             restore: restoreTap,
             sign: tapSign,
             changed: () => game.treeTaps?.changed()
+        },
+        // Pożar (1.43.0): gdzie widać płomienie (bloki zmienia gospodarz).
+        wildfire: {
+            map: () => game.wildfire?.flames ?? NONE,
+            save: (flame) => ({ ...flame }),
+            restore: restoreFlames,
+            sign: flamesSign,
+            changed: () => game.wildfire?.changed()
         },
         // Wyrzucone przedmioty (0.100.0): wpis po nazwie (id), nie po
         // pozycji. Lot liczy każdy u siebie - podpis to tylko "co i ile".

@@ -109,6 +109,8 @@ import { ToolWear } from './ToolWear.js';
 import { TorchBurn } from './TorchBurn.js';
 import { TreeTaps } from './TreeTaps.js';
 import { TapRenderer } from '../rendering/TapRenderer.js';
+import { Wildfire } from './Wildfire.js';
+import { WildfireRenderer } from '../rendering/WildfireRenderer.js';
 import { Warmth } from './Warmth.js';
 import { Freeze } from './Freeze.js';
 import { clothesCode } from '../items/clothing.js';
@@ -890,6 +892,9 @@ export class Game extends GameInteraction {
         // Nacięcia w pniach (1.41.0, dary pnia): żywica i soki.
         this.treeTaps = new TreeTaps(this, worldInfo.treeTaps);
         this.tapRenderer = new TapRenderer(this, this.treeTaps);
+        // Pożar (1.43.0): płonące drzewa.
+        this.wildfire = new Wildfire(this, worldInfo.wildfire);
+        this.wildfireRenderer = new WildfireRenderer(this, this.wildfire);
         // Drzwi (0.91.0) - modele z animacją otwierania.
         this.doors = new DoorRenderer(this);
 
@@ -918,6 +923,7 @@ export class Game extends GameInteraction {
         this.saver.woodpiles = this.woodpiles;
         this.saver.torchBurn = this.torchBurn;
         this.saver.treeTaps = this.treeTaps;
+        this.saver.wildfire = this.wildfire;
 
         // Drzewo w locie ląduje, zanim świat zapisze się przy wyjściu.
         this.saver.beforeExitSave = () => this.felling.finishAll();
@@ -1095,6 +1101,8 @@ export class Game extends GameInteraction {
         this.torchBurn.update(dt);
         this.treeTaps.update(dt);
         this.tapRenderer.update(dt);
+        this.wildfire.update(dt, input.isMouseDown(2) && !breakHeld && !breakPressed);
+        this.wildfireRenderer.update(dt);
         this.torches.update(dt);
         this.world.updateLightHolds(dt);
         this.doors.update(dt);
@@ -3094,6 +3102,8 @@ export class Game extends GameInteraction {
         this.felling.dispose();
         this.torchBurn.dispose();
         this.tapRenderer.dispose();
+        this.wildfireRenderer.dispose();
+        this.wildfire.dispose();
         this.treeTaps.dispose();
         this.torches.dispose();
         this.doors.dispose();

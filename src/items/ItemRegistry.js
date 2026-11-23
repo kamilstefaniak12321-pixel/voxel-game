@@ -231,6 +231,9 @@ export const ITEM_TYPES = {
     maple_syrup: { name: 'Maple Syrup', label: 'Syrop klonowy', icon: 'maple_syrup' },
     // Druga połowa darów (1.42.0): guma, lateks, żywice-barwniki, to, co
     // z nich powstaje, i napar z kory wierzby.
+    // Po pożarze (1.43.0, blocks/burnt.js): węgiel ze zwęglonego pnia, popiół - nawóz.
+    charcoal: { name: 'Charcoal', label: 'Węgiel drzewny', icon: 'charcoal', category: 'narzedzia' },
+    ash: { name: 'Ash', label: 'Popiół', icon: 'ash', category: 'narzedzia' },
     tree_gum: { name: 'Tree Gum', label: 'Guma drzewna', icon: 'tree_gum' },
     latex: { name: 'Latex', label: 'Bryłka lateksu', icon: 'latex', category: 'narzedzia' },
     dragon_blood: { name: "Dragon's Blood", label: 'Smocza krew', icon: 'dragon_blood', category: 'narzedzia' },

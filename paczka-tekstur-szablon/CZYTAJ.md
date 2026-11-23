@@ -1,4 +1,4 @@
-# Paczka tekstur - szablon (Various Roots 1.41.0)
+# Paczka tekstur - szablon (Various Roots 1.42.0)
 
 Oryginalne tekstury gry, każda w osobnym pliku. Zrób z nich własną paczkę:
 
@@ -58,6 +58,8 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/araucaria/stripped_side.png` | Okorowany pień araukarii, Leżący pień araukarii (okorowany) |
 | `bloki/araucaria/stripped_top.png` | Okorowany pień araukarii, Leżący pień araukarii (okorowany) |
 | `bloki/araucaria_bark.png` | Kora araukarii |
+| `bloki/ash.png` | Popiół |
+| `bloki/ash_layer.png` | Popiół |
 | `bloki/aspen/leaf_litter.png` | Opadłe liście osiki |
 | `bloki/aspen/leaves.png` | Liście osiki |
 | `bloki/aspen/leaves_variant.png` | Złote liście osiki |
@@ -174,6 +176,9 @@ w grze (`/tekstury lista` - czego brakuje w paczce).
 | `bloki/cedar/stripped_top.png` | Okorowany pień cedru, Leżący pień cedru (okorowany) |
 | `bloki/cedar_bark.png` | Kora cedru |
 | `bloki/chamomile.png` | Rumianek |
+| `bloki/charcoal.png` | Węgiel drzewny |
+| `bloki/charred_log_side.png` | Zwęglony pień |
+| `bloki/charred_log_top.png` | Zwęglony pień |
 | `bloki/cherry/leaves.png` | Liście wiśni |
 | `bloki/cherry/leaves_variant.png` | Liście wiśni — rzadsze kwiaty |
 | `bloki/cherry/log_side.png` | Pień wiśni, Leżący pień wiśni |

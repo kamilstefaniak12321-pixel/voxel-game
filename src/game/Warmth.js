@@ -172,7 +172,8 @@ export class Warmth {
         const game = this.game, player = game.player, world = game.world;
         const x = player.pos.x, y = player.pos.y + 0.9, z = player.pos.z;
         const head = world.getLight?.(Math.floor(x), Math.floor(player.pos.y + 1.6), Math.floor(z));
-        this.heat = fireHeat(game.campfires?.fires, x, y, z) + blocksHeat(world, x, y, z);
+        // (Od 1.43.0 grzeją też płonące drzewa - game/Wildfire.js.)
+        this.heat = fireHeat(game.campfires?.fires, x, y, z) + blocksHeat(world, x, y, z) + (game.wildfire?.heatAt?.(x, y, z) ?? 0);
         const weather = game.weather;
         return feltTemperature({
             air: Number.isFinite(weather?.temperature) ? weather.temperature : 10,

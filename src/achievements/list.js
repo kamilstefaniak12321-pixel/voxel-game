@@ -1153,6 +1153,58 @@ export const ACHIEVEMENTS = [
         on: 'treeTapped',
         when: (data) => data.full === true
     },
+    // Pożar (1.43.0).
+    {
+        id: 'tree_ignited',
+        tier: 'common',
+        title: 'Nie baw się zapałkami',
+        task: 'Podpal drzewo starterem ognia.',
+        comment: 'Mama mówiła. Las też by powiedział, gdyby umiał.',
+        icon: 'fire_starter',
+        secret: true,
+        on: 'treeIgnited',
+        when: (data) => data.source === 'player'
+    },
+    {
+        id: 'fire_spread',
+        tier: 'rare',
+        title: 'To się wymknęło spod kontroli',
+        task: 'Niech ogień sam przeskoczy z drzewa na drzewo, aż zapłonie pięć naraz.',
+        comment: 'Jedno drzewo to eksperyment. Pięć to już pożar.',
+        icon: 'charcoal',
+        secret: true,
+        on: 'fireSpread',
+        when: (data) => data.burning >= 5
+    },
+    {
+        id: 'fire_rained_out',
+        tier: 'rare',
+        title: 'Niebo posprzątało',
+        task: 'Bądź przy tym, jak deszcz gasi płonące drzewo.',
+        comment: 'Najtańsza straż pożarna na świecie.',
+        icon: 'ash',
+        on: 'fireRainedOut'
+    },
+    {
+        id: 'charcoal_found',
+        tier: 'common',
+        title: 'Czarne złoto',
+        task: 'Wyłam węgiel drzewny ze zwęglonego pnia.',
+        comment: 'Brudzi ręce, ale przyda się nie raz.',
+        icon: 'charcoal',
+        on: 'blockBroken',
+        when: (data) => data.type === 'charred_log'
+    },
+    {
+        id: 'ash_field',
+        tier: 'common',
+        title: 'Z popiołów',
+        task: 'Użyźnij ziemię popiołem po spalonym drzewie.',
+        comment: 'Las oddaje, co wziął ogień. Trochę to trwa.',
+        icon: 'ash',
+        on: 'composted',
+        when: (data) => data.from === 'ash'
+    },
     // Dary pnia, druga połowa (1.42.0).
     {
         id: 'axe_glued',

@@ -17,7 +17,7 @@
     "rosliny": {
       "file": "rosliny.png",
       "width": 256,
-      "height": 768
+      "height": 784
     },
     "przedmioty": {
       "file": "przedmioty.png",
@@ -9934,6 +9934,41 @@
       "y": 752,
       "width": 16,
       "height": 16
+    },
+    "charred_log_side": {
+      "sheet": "rosliny",
+      "x": 0,
+      "y": 768,
+      "width": 16,
+      "height": 16
+    },
+    "charred_log_top": {
+      "sheet": "rosliny",
+      "x": 16,
+      "y": 768,
+      "width": 16,
+      "height": 16
+    },
+    "ash_layer": {
+      "sheet": "rosliny",
+      "x": 32,
+      "y": 768,
+      "width": 16,
+      "height": 16
+    },
+    "charcoal": {
+      "sheet": "rosliny",
+      "x": 48,
+      "y": 768,
+      "width": 16,
+      "height": 16
+    },
+    "ash": {
+      "sheet": "rosliny",
+      "x": 64,
+      "y": 768,
+      "width": 16,
+      "height": 16
     }
   },
   "aliases": {
@@ -18049,6 +18084,31 @@
       "x": 18,
       "y": 97,
       "region": "tea_willow"
+    },
+    "charred_log_side": {
+      "x": 19,
+      "y": 97,
+      "region": "charred_log_side"
+    },
+    "charred_log_top": {
+      "x": 20,
+      "y": 97,
+      "region": "charred_log_top"
+    },
+    "ash_layer": {
+      "x": 21,
+      "y": 97,
+      "region": "ash_layer"
+    },
+    "charcoal": {
+      "x": 22,
+      "y": 97,
+      "region": "charcoal"
+    },
+    "ash": {
+      "x": 23,
+      "y": 97,
+      "region": "ash"
     }
   }
 }

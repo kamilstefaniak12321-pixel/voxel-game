@@ -19,7 +19,8 @@
 > **część C jest w grze cała**; od **1.41.0** dary pnia - nacinanie
 > nożem, żywica i soki, a od **1.42.0** guma, lateks, barwniki z żywic,
 > garbnik i napar z kory wierzby ([dary-pnia.md](dary-pnia.md)) -
-> **część D jest w grze cała**.
+> **część D jest w grze cała**; od **1.43.0** płonące drzewa
+> ([pozar.md](pozar.md)).
 > Opis tego, co działa: [ogniska.md](ogniska.md),
 > [scinanie.md](scinanie.md), [powalone-drzewa.md](powalone-drzewa.md),
 > [kozly.md](kozly.md). Reszta czeka - kolejność w rozdziale 11.
@@ -527,7 +528,8 @@ Każda część to osobna wersja, grywalna sama.
 | C | **Narzędzia i kołysanie** | twardość skał, widoczne zużycie, kołysanie drzew |
 | D1 | **Dary pnia: żywica i soki** - **1.41.0, w grze** | nacinanie nożem, żywica z iglastych, sok brzozowy, klonowy i palmowy, woda z baobabu do kubka, syrop klonowy ([dary-pnia.md](dary-pnia.md)) |
 | D2 | **Dary pnia: reszta** - **1.42.0, w grze** | guma, lateks, smocza krew, czerwona żywica, garbnik, napar z kory wierzby; smoła klejąca (naprawa siekiery), lateks na ubraniu ([dary-pnia.md](dary-pnia.md)) |
-| E | **Pożar** | płonące drzewa i trawa, piorun, popiół, zwęglone pnie |
+| E1 | **Pożar: płonące drzewa** - **1.43.0, w grze** | ogień chodzi po drzewach, popiół, zwęglony kikut albo przeżycie, wiatr, deszcz, pora roku, węgiel drzewny ([pozar.md](pozar.md)) |
+| E2 | **Pożar: natura** | sucha trawa, piorun, iskry z ogniska, meteoryt, odrastanie po pożarze |
 | F | **Metal meteorytowy** | węgiel drzewny, dymarka, narzędzia z meteorytu, olbrzymy |
 
 A jest najbezpieczniejsza (nie zmienia sposobu gry, od razu daje

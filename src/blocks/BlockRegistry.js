@@ -9,6 +9,7 @@ import {
 
 import { treeBlocks } from './trees.js';
 import { lyingLogBlocks } from './lyingLogs.js';
+import { burntBlocks } from './burnt.js';
 import { shrubBlocks } from './shrubs.js';
 import { lowPlantBlocks } from './lowPlants.js';
 import { vineBlocks } from './vines.js';
@@ -69,7 +70,8 @@ export const AIR_ID = 0;
 //   16100-16299             leżące pnie (1.36.0, po 2 na gatunek: wzdłuż X i Z - lyingLogs.js),
 //   16300-16302             spróchniały pień (X, Z) i sucha gałąź (1.37.0 - lyingLogs.js),
 //   16400-16599             okorowane leżące pnie (1.37.0, po 2 na gatunek - lyingLogs.js),
-//   16090-16099, 16303-16399, 16600-65279 wolne na przyszłość.
+//   16303-16304             po pożarze: zwęglony pień, popiół (1.43.0 - burnt.js),
+//   16090-16099, 16305-16399, 16600-65279 wolne na przyszłość.
 
 export const MAX_BLOCK_ID = 65279;
 
@@ -1379,6 +1381,8 @@ export const BLOCK_TYPES = {
     // Leżące pnie ściętych drzew (src/blocks/lyingLogs.js, 1.36.0).
 
     ...lyingLogBlocks(),
+    // Po pożarze (1.43.0): zwęglony pień i popiół.
+    ...burntBlocks(),
 
     // Krzewy jagodowe (src/blocks/shrubs.js, 1.17.0) - po 16 numerów na gatunek.
 

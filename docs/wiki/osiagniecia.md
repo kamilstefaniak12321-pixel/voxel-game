@@ -2,7 +2,7 @@
 
 > Ta strona jest generowana z kodu gry (`python tools/wiki.py`) - nie zmieniaj jej ręcznie, zmiany przepadną przy następnym generowaniu.
 
-Wersja gry **1.42.0** - 159 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
+Wersja gry **1.43.0** - 164 osiągnięć. Księga osiągnięć: klawisz **L**. Uwaga, spoilery: sekretne osiągnięcia są tu opisane (w grze widać tylko „???”).
 
 
 ## Zwykłe (10 pkt)
@@ -86,6 +86,9 @@ Wersja gry **1.42.0** - 159 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/birch_sap.png" width="32" height="32" alt=""> | **Kap, kap, kap** | Zdejmij z drzewa pełny kubek soku. | „Najwolniejszy napój świata. I tak warto.” |
 | <img src="ikony/resin.png" width="32" height="32" alt=""> | **Żywiczarz** | Zbierz 10 kropli żywicy z własnych nacięć. | „Ręce będą się kleić do wiosny.” |
 | <img src="ikony/clay_cup.png" width="32" height="32" alt=""> | **Więcej nie znaczy szybciej** *(sekret)* | Natnij jedno drzewo tyle razy, ile się da. | „Drzewo ma tyle soku, ile ma. Reszta to twoja niecierpliwość.” |
+| <img src="ikony/fire_starter.png" width="32" height="32" alt=""> | **Nie baw się zapałkami** *(sekret)* | Podpal drzewo starterem ognia. | „Mama mówiła. Las też by powiedział, gdyby umiał.” |
+| <img src="ikony/charcoal.png" width="32" height="32" alt=""> | **Czarne złoto** | Wyłam węgiel drzewny ze zwęglonego pnia. | „Brudzi ręce, ale przyda się nie raz.” |
+| <img src="ikony/ash.png" width="32" height="32" alt=""> | **Z popiołów** | Użyźnij ziemię popiołem po spalonym drzewie. | „Las oddaje, co wziął ogień. Trochę to trwa.” |
 | <img src="ikony/pitch_glue.png" width="32" height="32" alt=""> | **Na słowo honoru** | Napraw zużytą siekierę smołą klejącą. | „Trzyma. Nie pytaj jak długo.” |
 | <img src="ikony/tea_willow.png" width="32" height="32" alt=""> | **Apteka nad rzeką** | Wypij napar z kory wierzbowej. | „Gorzkie jak lekarstwo. Bo to jest lekarstwo.” |
 | <img src="ikony/stick.png" width="32" height="32" alt=""> | **Do ostatniego ciosu** | Zużyj siekierę tak, żeby pękła w ręce. | „Został patyk. Połowa nowej siekiery.” |
@@ -128,6 +131,8 @@ Wersja gry **1.42.0** - 159 osiągnięć. Księga osiągnięć: klawisz **L**. U
 | <img src="ikony/birch_firewood.png" width="32" height="32" alt=""> | **Syczy, ale płonie** | Rozpal ognisko, w którym na wierzchu leży mokre polano. | „Więcej dymu niż ognia. Ale ogień też jest - gdzieś tam, w środku.” |
 | <img src="ikony/maple_syrup.png" width="32" height="32" alt=""> | **Czterdzieści do jednego** | Odparuj sok klonowy na syrop nad ogniskiem. | „Tyle soku na jeden syrop liczą prawdziwi klonowi bartnicy. Tu masz taryfę ulgową.” |
 | <img src="ikony/palm_sap.png" width="32" height="32" alt=""> | **Piwniczka lasu** | Wypij sok brzozowy, klonowy, palmowy i wodę z baobabu. | „Cztery drzewa, cztery smaki, jeden kubek.” |
+| <img src="ikony/charcoal.png" width="32" height="32" alt=""> | **To się wymknęło spod kontroli** *(sekret)* | Niech ogień sam przeskoczy z drzewa na drzewo, aż zapłonie pięć naraz. | „Jedno drzewo to eksperyment. Pięć to już pożar.” |
+| <img src="ikony/ash.png" width="32" height="32" alt=""> | **Niebo posprzątało** | Bądź przy tym, jak deszcz gasi płonące drzewo. | „Najtańsza straż pożarna na świecie.” |
 | <img src="ikony/latex.png" width="32" height="32" alt=""> | **Jak z gęsi woda** | Wetrzyj lateks w ubranie na stole krawieckim. | „Pachnie dziwnie. Za to rzeka przestała być problemem.” |
 | <img src="ikony/dragon_blood.png" width="32" height="32" alt=""> | **Krew smoka** | Zbierz smoczą krew z nacięcia w pniu draceny. | „Smok nie ucierpiał. To tylko drzewo z dobrym marketingiem.” |
 | <img src="ikony/axe_granite.png" width="32" height="32" alt=""> | **Twarda sztuka** | Zetnij drzewo o najtwardszym drewnie: akację, namorzyn albo oliwkę. Bierze je tylko siekiera z bazaltu albo granitu. | „Kamienna tylko by się wyszczerbiła.” |

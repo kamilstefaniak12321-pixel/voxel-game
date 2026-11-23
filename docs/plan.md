@@ -46,6 +46,11 @@ pamięć, nie umowa. Po każdej wydanej wersji wpis przechodzi do
   i czerwona żywica na barwniki, garbnik z kory, napar z kory wierzby;
   smoła klejąca naprawia siekierę, lateks chroni ubranie przed wodą.
 
+- **1.43.0 - Pożar: płonące drzewa** (PR #196): pierwsza wersja części
+  E. Starter ognia podpala żywe drzewo; ogień chodzi po drzewach (wiatr,
+  deszcz, pora roku, gatunek), zostawia popiół, zwęglony kikut albo
+  nic; węgiel drzewny, popiół jako nawóz ([pozar.md](pozar.md)).
+
 ## Dalej
 
 **Drewno, ogień i ścinanie drzew** - duży projekt Kamila, uzgodniony

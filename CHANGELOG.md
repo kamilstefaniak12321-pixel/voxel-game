@@ -11,6 +11,27 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.43.0 - Pożar: płonące drzewa
+
+PR #196. Pierwsza wersja części E projektu drewna (`docs/pozar.md`).
+
+- **Drzewa płoną**: starter ognia trzymany 5 sekund na pniu albo
+  liściach żywego drzewa podpala je. Korona płonie 20-60 sekund -
+  płomienie, iskry, dym; liście znikają od dołu.
+- **Co zostaje, zależy od drzewa**: cienkie i młode idą na popiół,
+  średnie zostawiają zwęglony kikut, grube i te z grubą korą
+  przeżywają (tracą dolne liście). Baobab nie zapali się nigdy.
+- **Ogień przeskakuje z drzewa na drzewo**: łatwo na iglaste
+  i eukaliptus, trudno na drzewa mokradeł; z wiatrem, latem najłatwiej.
+  Deszcz gasi płonące drzewa, mokra ziemia hamuje ogień, pas bez drzew
+  go zatrzymuje.
+- **Budowle nie płoną** - ogień bierze tylko żywe drzewa.
+- **Węgiel drzewny** ze zwęglonego pnia (czarny barwnik), **popiół**
+  z ziemi - nawóz jak kompost.
+- Przy płonącym drzewie jest gorąco (grzeje jak ognisko).
+- Ustawienie świata: `/pozar ustaw wylaczone | gracz | pelne`.
+- 5 osiągnięć (2 sekretne), rozdział w poradniku, komenda `/pozar`.
+
 ## 1.42.0 - Dary pnia: klej, lateks i barwniki
 
 PR #195. Druga wersja części D projektu drewna (`docs/dary-pnia.md`).

@@ -31,6 +31,7 @@ import { CHUNK_HEIGHT, WORLD_BORDER } from '../config.js';
 import { getTorchInfo, torchStageType, TORCH_VARIANTS } from '../blocks/torches.js';
 import { TORCH_BURN_SECONDS, TORCH_DIM_PART, TORCH_STUB, TORCH_REFILLS, LUCZYWO, LUCZYWO_PART, fuelOf, fuelMinutes } from '../items/torchFuel.js';
 import { makeItem } from '../items/freshness.js';
+import { rainAt, rainReaches } from '../world/rain.js';
 
 // Co ile sekund przegląd pochodni.
 export const TORCH_STEP_SECONDS = 1;
@@ -38,8 +39,6 @@ export const TORCH_STEP_SECONDS = 1;
 export const RAIN_OUT_SECONDS = 20;
 // Słabszy deszcz niż ten pochodni nie gasi.
 export const RAIN_MIN = 0.15;
-// Od takiej jasności nieba pochodnia stoi pod gołym niebem (0-15).
-const OPEN_SKY = 12;
 // Najwięcej zmian bloków w jednym kroku (żeby deszcz nie gasił stu
 // pochodni w jednej klatce).
 const CHANGES_PER_STEP = 4;
@@ -196,17 +195,17 @@ export class TorchBurn {
         if (seconds > 0) this.step(seconds, false);
     }
 
-    // Deszcz tam, gdzie stoi gracz (0-1).
-    rain() {
-        const rain = this.game.rainNow;
-        return Number.isFinite(rain) && rain >= RAIN_MIN ? Math.min(1, rain) : 0;
+    // Deszcz przy pochodni (0-1); od 1.43.1 tam, gdzie stoi pochodnia,
+    // nie gracz. Pod dachem - 0 (ta sama reguła co krople, world/rain.js).
+    rainOn(torch) {
+        const rain = rainAt(this.game, torch.x + 0.5, torch.z + 0.5);
+        return rain >= RAIN_MIN && rainReaches(this.game.world, torch.x, torch.y, torch.z) ? rain : 0;
     }
 
     step(seconds, weather = true) {
         const game = this.game, world = game.world, host = !game.net?.isClient;
-        const rain = weather ? this.rain() : 0;
         const player = game.player?.pos;
-        let changes = 0, rained = false;
+        let changes = 0, rained = false, rain = 0;
         for (const [key, torch] of this.torches) {
             if (!world.getChunk(world.toChunkCoord(torch.x), world.toChunkCoord(torch.z))) {
                 // Daleka pochodnia: paliwa ubywa, blok zmieni się po wczytaniu.
@@ -223,7 +222,7 @@ export class TorchBurn {
                 torch.left = Math.max(0, torch.left - seconds);
                 // (Zgaszona, której blok jeszcze czeka na zmianę, nie moknie dalej.)
                 if (torch.out) { /* czeka na zmianę bloku */ }
-                else if (rain > 0 && (world.getLight?.(torch.x, torch.y, torch.z)?.sky ?? 0) >= OPEN_SKY) {
+                else if (weather && (rain = this.rainOn(torch)) > 0) {
                     torch.rain += seconds * rain;
                     if (torch.rain >= RAIN_OUT_SECONDS && torch.left > 0) { torch.out = true; torch.rain = 0; }
                 }

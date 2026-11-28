@@ -38,6 +38,7 @@ Współrzędne można podawać względem gracza: `~` (tu, gdzie stoję),
 | `/pogoda ustaw <rodzaj> [nadciaga]` | ustawia pogodę nad tobą (stoi w miejscu) albo - z `nadciaga` - każe jej nadciągnąć z daleka; tylko u ciebie, do `/pogoda auto` |
 | `/pogoda auto` | powrót do pogody liczonej z czasu gry i ziarna świata |
 | `/pogoda deszcz [0-100]`, `/pogoda sucho` | sam deszcz do odwołania (dach zatrzymuje krople, trafienia w wodę tworzą kręgi) |
+| `/pogoda dach` | czy deszcz pada na blok, na który patrzysz (albo tam, gdzie stoisz), i jaki blok jest dachem - ta sama reguła dla kropel, ognisk, pochodni i drewna (od 1.43.1) |
 | `/pogoda mgla [0-100]` | mgła nad tobą do odwołania (od 1.12.0) |
 | `/pogoda tecza [wl \| wyl]` | włącza albo wyłącza tęczę do odwołania - widać ją tyłem do niskiego słońca (od 1.12.0) |
 | `/pogoda piorun [odległość] [chmura]` | wyładowanie przed tobą: domyślnie piorun w ziemię 150 bloków dalej, `chmura` - błysk w chmurze; podaje, po ilu sekundach dojdzie grzmot (od 1.13.0) |

@@ -1,7 +1,8 @@
 import * as THREE from 'three';
 
 import { CHUNK_SIZE, CHUNK_HEIGHT } from '../config.js';
-import { getWaterLevel, isSolidId, isOpaqueId } from '../blocks/BlockRegistry.js';
+import { getWaterLevel } from '../blocks/BlockRegistry.js';
+import { stopsRain } from '../world/rain.js';
 import { viewUniforms } from './viewUniforms.js';
 
 // ------------------------------------------------------------
@@ -19,7 +20,8 @@ import { viewUniforms } from './viewUniforms.js';
 // (pełny blok, liście, woda). Kropla poniżej tej wysokości znika, więc
 // pod dachem, w jaskini i pod koroną drzewa nie pada, a przez okno widać
 // deszcz na zewnątrz. Z tej samej mapy biorą się rozpryski na ziemi
-// i to, jak bardzo gracz jest osłonięty (dźwięk deszczu).
+// i to, jak bardzo gracz jest osłonięty (dźwięk deszczu). Regułę "co
+// zatrzymuje deszcz" ma world/rain.js - ta sama dla ognisk i pochodni.
 // ------------------------------------------------------------
 
 export const RAIN_STREAKS = Object.freeze({
@@ -84,13 +86,10 @@ export class RainShelter {
 
                 const id = blocks[y * layer + column];
 
-                if (id === 0) continue;
-
-                const level = getWaterLevel(id);
-
-                if (level >= 0 || isSolidId(id) || isOpaqueId(id)) {
+                // (Ta sama reguła dachu co dla ognisk, pochodni i drewna.)
+                if (stopsRain(id)) {
                     top = y + 1;
-                    water = level >= 0 ? 255 : 0;
+                    water = getWaterLevel(id) >= 0 ? 255 : 0;
                     break;
                 }
 

@@ -294,7 +294,10 @@ const hold = (fire, seconds = 20) => {
 
     // Świat do prób: plecak, skrzynie, leżące polana, ogniska.
     const water = getBlockId('water');
-    const make = ({ hour = 12, temperature = 15, rain = 0, sky = () => 15, liquid = () => false, client = false } = {}) => {
+    // (1.43.1) Deszcz zatrzymuje dach - blok nad polanem (roof); słońce
+    // dalej liczy się z jasności nieba (sky).
+    const planks = getBlockId('oak_planks');
+    const make = ({ hour = 12, temperature = 15, rain = 0, sky = () => 15, roof = () => false, liquid = () => false, client = false } = {}) => {
         const notices = [], achieved = [];
         const inventory = Inventory.load({}, 'adventure');
         for (let i = 0; i < inventory.slots.length; i++) inventory.set(i, null);
@@ -302,7 +305,7 @@ const hold = (fire, seconds = 20) => {
             onNotice: (text) => notices.push(text), achieve: (name, data) => achieved.push([name, data]),
             net: client ? { isClient: true } : null,
             world: { getChunk: (cx, cz) => (Math.abs(cx) < 4 && Math.abs(cz) < 4 ? {} : null), toChunkCoord: (v) => Math.floor(v / 16),
-                getLight: (x, y, z) => ({ sky: sky(x, y, z) }), getBlockId: (x, y, z) => (liquid(x, y, z) ? water : 0) },
+                getLight: (x, y, z) => ({ sky: sky(x, y, z) }), getBlockId: (x, y, z) => (liquid(x, y, z) ? water : roof(x, z) && y === 64 ? planks : 0) },
             campfires: { fires: new Map(), version: 0 }, chests: { chests: new Map(), version: 0 }, drops: { drops: new Map(), version: 0 } };
         return { game, drying: new WoodDrying(game), inventory, notices, achieved };
     };
@@ -357,7 +360,7 @@ const hold = (fire, seconds = 20) => {
     const dark = drop(night, 5, 5, 0.6);
     night.drying.step(0.5);
     near(wetOf(dark), 0.6 - 0.35 * 0.5, 'Nocą słońce nie pomaga', 1e-9);
-    const rainy = make({ rain: 0.8, sky: (x) => (x >= 20 ? 0 : 15) });
+    const rainy = make({ rain: 0.8, sky: (x) => (x >= 20 ? 0 : 15), roof: (x) => x >= 20 });
     const open = drop(rainy, 5, 5, 0), roofed = drop(rainy, 20, 5, 0.6), wetter = drop(rainy, 6, 9, 0.8);
     rainy.inventory.add('oak_firewood', 4);
     rainy.drying.step(0.1);

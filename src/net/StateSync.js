@@ -28,6 +28,21 @@ const LEASE = 1.2;
 // Pusta lista (gra bez stołów krawieckich - np. w testach).
 const NONE = new Map();
 
+// Stan, który nowy gość dostaje od gospodarza zaraz po powitaniu - wpis po
+// wpisie, zwykłymi wiadomościami STATE (może tego być kilkaset, a powitanie
+// i tak jest duże; game/NetHost.js). Do 1.43.0 gość widział te rzeczy dopiero
+// po pierwszej zmianie: pochodnie z pełnym paliwem, puste nacięcia, drewutnie
+// bez stanu, bez płomieni trwającego pożaru.
+export const JOIN_STATE = ['woodpiles', 'torches', 'taps', 'wildfire'];
+
+// Garnek na ognisku: co w nim jest, bez postępu gotowania (ten liczy
+// każdy u siebie). Do 1.43.0 garnka nie było w podpisie ogniska: składnik
+// wrzucony przez gościa nie wychodził, a co 10 s znikał pod stanem
+// gospodarza (tak samo postawiony garnek i nabrana porcja).
+export function potSign(pot) {
+    return pot ? [pot.items.join('+'), pot.dish ?? '', pot.portions ?? 0, pot.empty === true] : null;
+}
+
 export function stateSystems(game) {
     return {
         chests: {
@@ -58,7 +73,7 @@ export function stateSystems(game) {
             restore: restoreCampfire,
             // Spalanie polan liczy każdy u siebie - podpis bez postępu.
             sign: (fire) => JSON.stringify([fire.logs.map((log) => log.wood + Math.round((log.wet ?? 0) * 4)), fire.tinder, fire.kindling ?? 0, fire.phase, fire.ash,
-                Math.round(fire.ignition * 8), fire.embers > 0]),
+                Math.round(fire.ignition * 8), fire.embers > 0, potSign(fire.pot)]),
             changed: () => game.campfires.version++
         },
         // Drewutnie (1.34.0): polana i ich wilgotność co ćwierć.

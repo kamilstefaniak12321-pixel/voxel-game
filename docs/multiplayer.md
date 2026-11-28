@@ -42,7 +42,8 @@ W jednym świecie może grać do 8 osób: gospodarz i 7 gości.
 | Inni gracze | Każdy widzi model drugiego gracza z jego skórką i imieniem nad głową. Widać też ruch: chodzenie, bieg, kucanie, pływanie i latanie, machanie ręką i przedmiot w ręce. |
 | Skrzynie | Wspólna zawartość. Co jeden włoży, drugi może wyjąć. |
 | Stoły stolarskie | Deski na blacie są wspólne. |
-| Ogniska | Wspólne są opał, podpałka, rozpalanie i palenie się. |
+| Ogniska | Wspólne są opał, podpałka, rozpalanie i palenie się, a od 1.43.1 także garnek: postawienie, składniki, ugotowana potrawa i nabrane porcje (postęp gotowania każdy liczy u siebie). |
+| Drewutnie, pochodnie, nacięcia, pożar | Wspólne polana i ich wilgotność, paliwo pochodni, nacięcia w pniach i płomienie pożaru (pożarem rządzi gospodarz). Od 1.43.1 nowy gość dostaje ich stan zaraz po wejściu - wcześniej dopiero przy pierwszej zmianie. |
 | Tratwy | Tratwą płynie ten, kto na niej siedzi, a inni widzą, jak płynie. |
 | Pora dnia | Od gospodarza. Świat żyje dalej także wtedy, gdy gospodarz ma pauzę. |
 | Meteoryty | Gospodarz losuje meteoryt i wybija krater. Goście widzą przelot i wybuch. |
@@ -119,7 +120,7 @@ Gra łączy komputery bezpośrednio (WebRTC) przez bibliotekę
 | `src/net/NetHost.js` | gospodarz: powitanie gościa, chunki na prośbę, przekazywanie zmian innym, zapis gości, tratwy, meteoryty, pora dnia |
 | `src/net/NetClient.js` | gość: dołączenie, chunki od gospodarza, zmiany od innych, tratwy, zapis u gospodarza |
 | `src/net/RemoteChunkStore.js` | chunki zmienione u gospodarza (zamiast zapisu świata u gościa); chunk czeka na bloki (`World.chunkGate`) |
-| `src/net/StateSync.js` | skrzynie, stoły i ogniska: wysyłane tylko zmiany, odebrane podmieniane w miejscu |
+| `src/net/StateSync.js` | skrzynie, stoły, ogniska (z garnkiem), drewutnie, pochodnie, nacięcia, płomienie pożaru i rzucone przedmioty: wysyłane tylko zmiany, odebrane podmieniane w miejscu; `JOIN_STATE` - co nowy gość dostaje zaraz po powitaniu |
 | `src/net/RemotePlayers.js` | inni gracze: model ze skórką, animacje, przedmiot w ręce, imię |
 
 ## Sprawdzanie

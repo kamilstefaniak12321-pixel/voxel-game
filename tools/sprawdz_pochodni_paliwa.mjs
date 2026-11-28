@@ -262,8 +262,11 @@ const make = (options = {}) => {
 
 // Deszcz gasi pochodnie pod gołym niebem.
 {
-    const t = make({ rain: 1, sky: (x) => (x === 2 ? 0 : 15) });
+    // (1.43.1) Dach to blok nad pochodnią, nie jasność nieba: nad drugą
+    // pochodnią są deski, a światło nieba i tak wpada z boku (15).
+    const t = make({ rain: 1 });
     t.place(1, 'torch_green'); t.place(2, 'torch');
+    t.game.world.setBlock(2, 63, 0, 'oak_planks');
     t.burn.step(RAIN_OUT_SECONDS - 1);
     check(t.at(1) === 'torch_green' && t.notices.length === 0, 'Chwilę wytrzyma');
     t.burn.step(2);
@@ -392,13 +395,16 @@ const make = (options = {}) => {
 // Prawdziwe Campfires: deszcz tylko pod gołym niebem, napis, zdarzenie, przespany czas.
 {
     const campfire = R.getBlockId('campfire');
-    const setup = ({ rain = 1, sky = 15 } = {}) => {
+    // (1.43.1) Dach to blok nad ogniskiem (roof), nie jasność nieba (sky).
+    const planks = R.getBlockId('oak_planks');
+    const setup = ({ rain = 1, sky = 15, roof = false } = {}) => {
         const notices = [], sounds = [], achieved = [];
         const inventory = Inventory.load({}, 'adventure');
         const game = { mode: 'adventure', inventory, rainNow: rain, sounds: { play: (name) => sounds.push(name) }, swingArm() {},
             onNotice: (text) => notices.push(text), achieve: (name, data) => achieved.push([name, data]), playBlockSound() {},
             player: { pos: { x: 2, y: 60, z: 2 } }, currentHit: null,
-            world: { getChunk: () => ({}), toChunkCoord: (v) => Math.floor(v / 16), getBlockId: () => campfire, getLight: () => ({ sky }) },
+            world: { getChunk: () => ({}), toChunkCoord: (v) => Math.floor(v / 16), getLight: () => ({ sky }),
+                getBlockId: (x, y) => (y === 60 ? campfire : roof && y === 63 ? planks : 0) },
             get selectedBlock() { return null; } };
         const fires = new Campfires(game, []);
         const fire = newCampfire(0, 60, 0); for (let i = 0; i < 6; i++) addFirewood(fire, 'linden');
@@ -413,9 +419,17 @@ const make = (options = {}) => {
     open.run(12);
     check(open.fire.phase === 'unlit' && open.notices.includes('Deszcz zgasił ognisko') && open.sounds.includes('sizzle') && open.fire.doused === undefined, 'Deszcz zgasił ognisko: napis i syk');
     equal(open.achieved.filter(([name]) => name === 'fireDoused'), [['fireDoused', { wood: 'linden' }]], 'Zdarzenie dla osiągnięć');
-    const roofed = setup({ sky: 4 });
+    const roofed = setup({ roof: true });
     roofed.run(30);
     check(roofed.fire.phase === 'burning' && roofed.fire.rain === 0 && roofed.notices.length === 0, 'Pod dachem deszcz ognisku nie szkodzi');
+    // Do 1.43.0 decydowała jasność nieba: pod wąskim daszkiem (światło
+    // z boku) ognisko gasło, a w ciemnym kącie bez dachu - nie.
+    const eaves = setup({ roof: true, sky: 14 });
+    eaves.run(30);
+    check(eaves.fire.phase === 'burning' && eaves.fire.rain === 0, 'Pod wąskim daszkiem (jasne niebo z boku) ognisko płonie');
+    const dark = setup({ sky: 4 });
+    dark.run(5);
+    check(dark.fire.rain === 1, 'Bez dachu pada, choćby niebo było ciemne');
     const fair = setup({ rain: 0 });
     fair.run(30);
     check(fair.fire.phase === 'burning' && fair.fire.rain === 0, 'Bez deszczu bez zmian');

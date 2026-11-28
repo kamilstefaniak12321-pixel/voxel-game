@@ -6,7 +6,9 @@
 // prognozę, szuka frontów i - do sprawdzania - ustawia wybraną pogodę
 // nad graczem albo każe jej nadciągnąć. Od 1.13.0 także piorun na
 // zawołanie i grad, od 1.14.0 temperatura, śnieg, pokrywa śnieżna i szron,
-// od 1.15.0 pył, ściana pyłu (haboob), wir pyłowy i sztorm.
+// od 1.15.0 pył, ściana pyłu (haboob), wir pyłowy i sztorm, od 1.43.1
+// "dach" - czy deszcz pada na blok (ta sama reguła co dla ognisk,
+// pochodni i drewna - world/rain.js).
 // ------------------------------------------------------------
 
 import { CommandError, simplify } from './CommandRegistry.js';
@@ -14,6 +16,9 @@ import { parseNumber, usageError } from './commandHelpers.js';
 import { FLOW_SPEED, SYSTEM_NAMES } from '../weather/WeatherField.js';
 import { THUNDER } from '../weather/Thunderstorm.js';
 import { forecastLines, seaName, sideName, tempText, weatherStatus } from '../weather/weatherText.js';
+import { rainAt, rainReaches, roofAbove } from '../world/rain.js';
+import { getBlockTypeById } from '../blocks/BlockRegistry.js';
+import { getItemLabel } from '../items/ItemRegistry.js';
 
 // Słowo z komendy -> rodzaj układu pogodowego.
 const KINDS = {
@@ -44,7 +49,7 @@ export const WEATHER_COMMANDS = [
     {
         name: 'pogoda',
         aliases: ['weather'],
-        usage: '/pogoda | prognoza | ustaw <rodzaj> [nadciaga] | znajdz <rodzaj> [tp] | auto | deszcz [0-100] | sucho | mgla [0-100] | tecza [wl|wyl] | piorun [odległość] [chmura] | grad [0-100] | temperatura <stopnie> | snieg [0-100] | pokrywa [0-100] | szron [0-100] | pyl [0-100] | haboob [teraz] | wir [0-100] | sztorm [0-100]',
+        usage: '/pogoda | prognoza | ustaw <rodzaj> [nadciaga] | znajdz <rodzaj> [tp] | auto | deszcz [0-100] | sucho | dach | mgla [0-100] | tecza [wl|wyl] | piorun [odległość] [chmura] | grad [0-100] | temperatura <stopnie> | snieg [0-100] | pokrywa [0-100] | szron [0-100] | pyl [0-100] | haboob [teraz] | wir [0-100] | sztorm [0-100]',
         description: 'Pogoda nad tobą, prognoza, szukanie frontów i burz; do sprawdzania - ustawienie pogody ' +
             `(rodzaje: ${KIND_WORDS.join(', ')}). Mapa pogody: /mapa pogoda.`,
 
@@ -161,6 +166,28 @@ export const WEATHER_COMMANDS = [
                 game.rainOverride = 0;
 
                 return 'Deszcz wyłączony do odwołania (/pogoda auto).';
+
+            }
+
+            // Czy deszcz pada na blok, na który patrzysz (albo ten, w którym stoisz).
+            if (word === 'dach' && args.length === 1) {
+
+                const hit = game.currentHit?.hit ? game.currentHit.block : null;
+                const feet = player.pos;
+                const at = hit ?? { x: Math.floor(feet.x), y: Math.floor(feet.y), z: Math.floor(feet.z) };
+                const place = `${hit ? 'Blok' : 'Tu, gdzie stoisz'} (${at.x}, ${at.y}, ${at.z})`;
+                const now = Math.round(rainAt(game, at.x + 0.5, at.z + 0.5) * 100);
+                const falling = now > 0 ? `pada tu teraz ${now}%` : 'teraz tu nie pada';
+
+                if (rainReaches(world, at.x, at.y, at.z)) {
+                    return `${place}: pod gołym niebem - deszcz pada na ognisko, pochodnię i drewno (${falling}).`;
+                }
+
+                const roof = roofAbove(world, at.x, at.y, at.z);
+                if (!roof) return `${place}: teren nie jest wczytany.`;
+
+                const outside = now > 0 ? `obok pada teraz ${now}%` : 'teraz i tak nie pada';
+                return `${place}: pod dachem (${getItemLabel(getBlockTypeById(roof.id)).toLowerCase()} na wysokości ${roof.y}) - deszcz tu nie dociera (${outside}).`;
 
             }
 
@@ -421,7 +448,7 @@ export const WEATHER_COMMANDS = [
 
         complete(args) {
 
-            if (args.length === 1) return ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'mgla', 'tecza', 'piorun', 'grad', 'temperatura', 'snieg', 'pokrywa', 'szron', 'pyl', 'haboob', 'wir', 'sztorm'];
+            if (args.length === 1) return ['prognoza', 'ustaw', 'znajdz', 'auto', 'deszcz', 'sucho', 'dach', 'mgla', 'tecza', 'piorun', 'grad', 'temperatura', 'snieg', 'pokrywa', 'szron', 'pyl', 'haboob', 'wir', 'sztorm'];
 
             const word = simplify(args[0]);
 

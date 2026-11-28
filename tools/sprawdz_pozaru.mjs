@@ -330,6 +330,59 @@ const events = (game, name) => game.events.filter(([event]) => event === name).m
     check(!fire.ignite(0, BASE + 1, 0).ok, 'W deszczu się nie zapali');
 }
 
+// 1.43.1: deszcz liczy się przy drzewie, nie przy graczu.
+{
+    const game = makeGame(), { fire, world } = game;
+    plant(world, 'spruce', 0, 0);
+    plant(world, 'spruce', 200, 0, 9);
+    // Pada tylko daleko na wschodzie (x > 100) - tam, gdzie gracz nie stoi.
+    game.rainAt = (x) => (x > 100 ? 0.8 : 0);
+    check(fire.ignite(0, BASE + 1, 0).ok, 'Tu nie pada - drzewo się zajmuje');
+    check(!fire.ignite(200, BASE + 1, 0).ok, 'Tam pada - tamto drzewo się nie zajmie');
+    run(fire, 2);
+    equal(fire.trees.size, 1, 'Deszcz daleko nie gasi drzewa, przy którym nie pada');
+    game.rainAt = () => 0;
+    check(fire.ignite(200, BASE + 1, 0).ok, 'Przestało padać - zajmuje się i tamto');
+    game.rainAt = (x) => (x > 100 ? 0.8 : 0);
+    run(fire, 1);
+    check(fire.trees.size === 1 && [...fire.trees.values()][0].x < 100, 'Gaśnie tylko drzewo w deszczu');
+}
+
+// 1.43.1: drzewo poza wczytanym terenem czeka, nie płonie "na niby".
+{
+    const game = makeGame(), { fire, world } = game;
+    plant(world, 'birch', 0, 0);
+    const before = census(world, 'birch');
+    const result = fire.ignite(0, BASE + 1, 0);
+    check(result.ok, 'Brzoza się zajęła');
+    run(fire, 4);
+    const early = census(world, 'birch');
+    // Gracz odchodzi daleko - chunki z drzewem znikają z pamięci.
+    world.getChunk = () => null;
+    run(fire, result.tree.duration + 20);
+    equal([fire.trees.size, result.tree.time], [1, 4], 'Poza wczytanym terenem drzewo czeka');
+    equal(census(world, 'birch'), early, 'Bloki nietknięte');
+    equal(events(game, 'treeBurnt').length, 0, 'Nie trafia na listę spalonych');
+    // Gracz wraca.
+    world.getChunk = () => ({});
+    run(fire, result.tree.duration + 20);
+    const after = census(world, 'birch');
+    equal([fire.trees.size, after.logs, after.leaves], [0, 0, 0], 'Po powrocie dopala się naprawdę');
+    check(after.ash > 0 && before.logs > 0, 'Zostaje popiół');
+    // Sąsiad przy granicy wczytanego terenu jeszcze się nie zajmuje
+    // (los zawsze sprzyja ogniowi - bez tej granicy zająłby się od razu).
+    plant(world, 'spruce', 40, 0, 3);
+    plant(world, 'spruce', 46, 0, 4);
+    fire.random = () => 0;
+    fire.ignite(40, BASE + 1, 0, 'command', true);
+    world.getChunk = (cx) => (cx >= 3 ? null : {});
+    run(fire, 3);
+    check(fire.trees.size === 1 && !events(game, 'treeIgnited').some((data) => data.source === 'spread'), 'Sąsiad za granicą wczytanego terenu czeka');
+    world.getChunk = () => ({});
+    run(fire, 3);
+    check(events(game, 'treeIgnited').some((data) => data.source === 'spread'), 'Teren wczytany - ogień przeskakuje');
+}
+
 // Limit płonących drzew, ustawienie świata, gość.
 {
     const game = makeGame(), { fire, world } = game;

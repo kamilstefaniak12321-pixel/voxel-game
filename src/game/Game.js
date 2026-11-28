@@ -92,6 +92,7 @@ import { seaWave, seaSwell, SEA_WAVE } from '../rendering/WaterWave.js';
 import { cloudUniforms } from '../weather/cloudShader.js';
 import { seaName } from '../weather/weatherText.js';
 import { DAY_SECONDS } from '../weather/WeatherField.js';
+import { LocalRain } from '../world/rain.js';
 import { ThunderAudio } from '../audio/ThunderAudio.js';
 import { meteorLightUniforms } from '../rendering/meteorLight.js';
 import { BlockCracks } from '../interaction/BlockCracks.js';
@@ -118,6 +119,7 @@ import { DropRenderer } from '../rendering/DropRenderer.js';
 import { formatKeys } from '../input/bindings.js';
 
 import {
+
     PLAYER_REACH,
     CHUNK_SIZE,
     START_LOAD_RADIUS,
@@ -1390,6 +1392,19 @@ export class Game extends GameInteraction {
     waterSurfaceMaterials() {
         return [...(this.waterfalls?.materials ?? (this.waterfalls ? [this.waterfalls.ripples.material] : [])),
             this.wetRocks?.material, this.waterImpacts?.material].filter(Boolean);
+    }
+
+    // Deszcz (0-1) w miejscu (x, z) świata (1.43.1) - dla ognisk, pochodni,
+    // drewna i pożaru. Liczy world/rain.js (LocalRain).
+    rainAt(x, z) {
+        return (this.localRain ??= new LocalRain(this)).at(x, z);
+    }
+
+    // Mokra ziemia (0-1) w miejscu (x, z) - z mapy pogody (1.43.1).
+    wetnessAt(x, z) {
+        const map = this.weather?.map;
+        const value = map ? map.read(x, z, 2) : this.weather?.wetness;
+        return Number.isFinite(value) ? value : 0;
     }
 
     updateWaterSurfaceEffects(dt) {

@@ -223,6 +223,26 @@ function stateGame() {
     fire.ignition = 0.2;
     sync.update(0.3);
     check(sent.length === before, 'Cudze rozpalanie - nasze gaśnięcie nie wraca');
+    // Garnek (1.43.1): postawienie, składnik i porcja wychodzą od razu,
+    // postęp gotowania - nie. Do 1.43.0 garnka nie było w podpisie.
+    sync.update(2);
+    const potBefore = sent.length;
+    fire.pot = { items: [], progress: 0, dish: null, portions: 0, empty: false };
+    sync.update(0.3);
+    check(sent.length === potBefore + 1 && sent.at(-1)[2].pot?.items.length === 0, 'Garnek postawiony na ognisku wysłany');
+    fire.pot.items.push('raspberry');
+    sync.update(0.3);
+    check(sent.length === potBefore + 2 && sent.at(-1)[2].pot.items[0] === 'raspberry', 'Składnik w garnku wysłany');
+    fire.pot.items.push('blueberry'); sync.update(0.3);
+    const cooking = sent.length;
+    fire.pot.progress = 0.5;
+    sync.update(0.3);
+    check(sent.length === cooking, 'Postęp gotowania liczy każdy u siebie');
+    Object.assign(fire.pot, { items: [], dish: 'compote', portions: 3, progress: 1 });
+    sync.update(0.3);
+    fire.pot.portions = 2;
+    sync.update(0.3);
+    check(sent.length === cooking + 2 && sent.at(-1)[2].pot.portions === 2, 'Ugotowana potrawa i nabrana porcja wysłane');
     // Stół.
     game.carpenterTables.tables.set('7,8,9', { x: 7, y: 8, z: 9, planks: 'oak_planks', count: 12 });
     sync.update(0.3);
@@ -289,8 +309,16 @@ const hello = (id, extra = {}) => ({ t: P.MSG.HELLO, protocol: P.PROTOCOL_VERSIO
     stary.onMessage(hello('fedcba9876543210', { protocol: 0 }));
     check(/wersja/i.test(stary.take(P.MSG.REJECT)[0]?.reason ?? ''), 'Inna wersja - odrzucony');
     game.world.savedChunks.set('4,4', new Uint16Array(4));
+    // Pochodnie i nacięcia gospodarza (1.43.1): gość dostaje je zaraz po
+    // powitaniu, nie dopiero przy pierwszej zmianie.
+    game.torchBurn = { torches: new Map([['3,65,3', { x: 3, y: 65, z: 3, left: 900 }]]), changed() {} };
+    game.treeTaps = { taps: new Map([['8,66,8', { x: 8, y: 66, z: 8, face: 'north', amount: 2 }]]), changed() {} };
     ola.onMessage(hello('aaaaaaaaaaaaaaaa'));
     const welcome = ola.take(P.MSG.WELCOME)[0];
+    const joinState = ola.take(P.MSG.STATE);
+    check(ola.messages.findIndex((message) => message.t === P.MSG.WELCOME) < ola.messages.findIndex((message) => message.t === P.MSG.STATE) &&
+        joinState.some((message) => message.sys === 'torches' && message.key === '3,65,3' && message.v.left === 900) &&
+        joinState.some((message) => message.sys === 'taps' && message.key === '8,66,8'), 'Po powitaniu: stan pochodni i nacięć gospodarza');
     check(welcome && welcome.saveAck === true && welcome.world.seed === 7 && welcome.world.gameMode === 'adventure' && welcome.modified.includes('4,4'), 'Powitanie: ziarno, tryb, zmienione chunki i obsługa potwierdzenia zapisu');
     check(welcome.you.player.x === 1 && welcome.host.name === 'Kamil', 'Nowy gość obok gospodarza');
     ela.onMessage(hello('bbbbbbbbbbbbbbbb', { name: 'Ela' }));
@@ -320,7 +348,7 @@ const hello = (id, extra = {}) => ({ t: P.MSG.HELLO, protocol: P.PROTOCOL_VERSIO
     ola.onMessage({ t: P.MSG.CHAT, text: 'cześć' });
     check(ela.take(P.MSG.CHAT)[0]?.name === 'Ola', 'Czat do innych z imieniem');
     ola.onMessage({ t: P.MSG.STATE, sys: 'tables', key: '1,1,1', v: { x: 1, y: 1, z: 1, planks: 'oak_planks', count: 4 } });
-    check(game.carpenterTables.tables.get('1,1,1')?.count === 4 && ela.take(P.MSG.STATE).length === 1, 'Stół od gościa - u gospodarza i u innych');
+    check(game.carpenterTables.tables.get('1,1,1')?.count === 4 && ela.take(P.MSG.STATE).filter((message) => message.sys === 'tables').length === 1, 'Stół od gościa - u gospodarza i u innych');
     ola.onMessage({ t: P.MSG.SAVE, player: { x: 9, y: 70, z: 9 }, inventory: { slots: [{ type: 'stone', count: 3 }], selected: 0 } });
     check(game.worldInfo.guests.aaaaaaaaaaaaaaaa.inventory.slots[0].count === 3 && game.worldInfo.guests.aaaaaaaaaaaaaaaa.name === 'Ola', 'Ekwipunek gościa w zapisie gospodarza');
     for (const saved of [false, true]) {
@@ -364,6 +392,23 @@ const hello = (id, extra = {}) => ({ t: P.MSG.HELLO, protocol: P.PROTOCOL_VERSIO
     check(many.filter((connection) => connection.take(P.MSG.REJECT).length).length === 2, `Najwyżej ${P.MAX_GUESTS} gości`);
     host.close();
     check(ela.take(P.MSG.BYE).length === 1 && game.net === null, 'Zamknięcie świata - goście dostają pożegnanie');
+}
+
+{
+    // Gość (1.43.1): stan pochodni, który przyszedł zaraz po powitaniu,
+    // czeka na wejście do świata i wtedy zastępuje pełne paliwo.
+    const game = fakeGame();
+    game.torchBurn = { torches: new Map([['3,65,3', { x: 3, y: 65, z: 3, left: 3600 }]]), version: 0, changed() { this.version++; } };
+    const client = new NetClient({ name: 'Ola', id: 'aaaaaaaaaaaaaaaa' });
+    client.connection = new FakeConnection();
+    client.welcome = { world: { seed: 7, speed: 1 }, state: { chests: [], tables: [], fires: [] }, rafts: [], host: { id: 'h', name: 'Kamil' }, players: [], modified: [] };
+    client.store = new RemoteChunkStore([]);
+    client.hostId = 'h';
+    client.receive({ t: P.MSG.STATE, sys: 'torches', key: '3,65,3', v: { x: 3, y: 65, z: 3, left: 900 } });
+    client.attach(game);
+    check(game.torchBurn.torches.get('3,65,3')?.left === 900 && game.torchBurn.version > 0, 'Gość: pochodnia gospodarza z resztą paliwa');
+    client.state.update(0.3);
+    check(client.connection.take(P.MSG.STATE).length === 0, 'Gość nie odsyła stanu z powitania');
 }
 
 {

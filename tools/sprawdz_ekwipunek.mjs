@@ -246,10 +246,25 @@ test('stare zapisy i stare nazwy przedmiotów nadal się wczytują', () => {
     const old = Inventory.load({ hotbar: { slots: ['oak_log'], selected: 0 } }, 'adventure');
     assert.equal(old.count('oak_log'), 1);
     assert.equal(old.cursor, null);
-    const loaded = Inventory.load({ inventory: { slots: [], cursor: { type: 'raspberry', count: 3 } } }, 'adventure');
-    assert.equal(loaded.count('strawberry'), 3);
+    // Porzeczki z 0.4.0 to dziś papryczki chili.
+    const loaded = Inventory.load({ inventory: { slots: [], cursor: { type: 'currants', count: 3 } } }, 'adventure');
+    assert.equal(loaded.count('chili_pepper'), 3);
     assert.equal(loaded.cursor, null);
+    // Maliny z krzewów (od 1.17.0) zostają malinami - do 1.43.0 stara
+    // tabela nazw robiła z nich po wczytaniu truskawki.
+    const berries = Inventory.load({ inventory: { slots: [{ type: 'raspberry', count: 5 }], cursor: { type: 'raspberry', count: 2 } } }, 'adventure');
+    assert.equal(berries.count('raspberry'), 7);
+    assert.equal(berries.count('strawberry'), 0);
     assert.equal(Inventory.load({ inventory: { slots: [], cursor: { type: 'unknown', count: 5 } } }, 'adventure').cursor, null);
+});
+
+test('maliny zostają malinami w skrzyni i na ziemi', async () => {
+    const { restoreChest } = await import('../src/game/ChestState.js');
+    const { restoreDrop } = await import('../src/game/Drops.js');
+    const chest = restoreChest({ x: 0, y: 64, z: 0, layers: [[{ type: 'raspberry', count: 4 }], [{ type: 'currants', count: 1 }]] });
+    assert.equal(chest.layers[0][0].type, 'raspberry');
+    assert.equal(chest.layers[1][0].type, 'chili_pepper');
+    assert.equal(restoreDrop({ type: 'raspberry', count: 2, x: 0.5, y: 64, z: 0.5 })?.type, 'raspberry');
 });
 
 test('wyczyszczenie ekwipunku obejmuje kursor', () => {

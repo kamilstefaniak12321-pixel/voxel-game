@@ -125,7 +125,7 @@ Stos polan do suszenia ([drewno.md](drewno.md), A2b).
 - Stos mieści **16 polan** (cztery warstwy po cztery), różnych gatunków. Polana leżą wzdłuż spojrzenia: od przodu widać ich czoła.
 - **Zdejmowanie**: PPM pustą ręką zdejmuje jedno polano z wierzchu, z kucnięciem - wszystkie tego gatunku, które leżą na wierzchu. Rozbity stos oddaje wszystko (przy pełnym ekwipunku rozbiórka jest zablokowana, jak przy ognisku).
 - **Schnięcie**: polana na stosie schną jak na powietrzu - ponad trzy razy szybciej niż w plecaku (świeży dąb ok. 1,3 doby gry, w słońcu niecała doba, przy ognisku kilka minut) - i **nie zajmują ekwipunku**. Gdy cały stos obok gracza wyschnie, gra pisze „Drewno wyschło: stos (16 polan)".
-- **Dach**: stos pod gołym niebem moknie w deszczu (do 60% wody). Pod dachem - dowolnym blokiem nad nim - nie zmoknie i schnie dalej, tylko bez dopłaty za słońce. Drewutnia to po prostu stosy pod daszkiem.
+- **Dach**: stos pod gołym niebem moknie w deszczu (do 60% wody). Pod dachem - dowolnym blokiem nad nim, który zatrzymuje deszcz (pełny blok, liście, woda; od 1.43.1 naprawdę tak, wcześniej liczyła się jasność nieba) - nie zmoknie i schnie dalej, tylko bez dopłaty za słońce. Drewutnia to po prostu stosy pod daszkiem.
 - **Mokre polana widać**: są ciemniejsze. PPM czymkolwiek innym pokazuje opis: „Stos drewna 16/16: dąb 12, brzoza 4 - mokrych 4 z 16 - schnie".
 - Stos jest stały (nie da się przez niego przejść) i stoi na podłożu - usunięcie bloku pod nim rozbiera stos.
 
@@ -141,7 +141,8 @@ Obraz: każdy stos to jedna siatka (jedno rysowanie), budowana od nowa tylko po 
 
 ## Deszcz a ognisko (1.35.0)
 
-- Deszcz pada na ogniska **pod gołym niebem** (nad ogniskiem widać niebo); pod dachem nic się nie zmienia.
+- Deszcz pada na ogniska **pod gołym niebem**; pod dachem nic się nie zmienia. **Dach** (od 1.43.1) to dowolny blok nad ogniskiem, który zatrzymuje deszcz - pełny blok, liście albo woda - ta sama reguła co dla kropel na ekranie, pochodni i drewna (`src/world/rain.js`). Do 1.43.0 liczyła się jasność nieba nad ogniskiem, więc pod wąskim daszkiem albo przy krawędzi dachu (światło wpada z boku) ognisko gasło. Sprawdzenie: `/pogoda dach`.
+- Liczy się deszcz **przy ognisku**, nie przy graczu (od 1.43.1): blisko gracza to, co widać, dalej - pogoda w tamtym miejscu.
 - **Chłodzi ogień**: żar palącego się polana jest niższy nawet o 35% (ulewa). Dąb w ulewie ma ok. 600° zamiast 920° - mniej grzeje i wolniej gotuje.
 - **Słabe ognisko gaśnie**: gdy pada porządnie (natężenie od 0,3), a schłodzony żar spada poniżej 560°, ogień gaśnie po ok. 12 sekundach ulewy. Ulewę przetrwa dąb, buk, klon, jabłoń, akacja, oliwka, namorzyn i eukaliptus; świerk, sosna, brzoza, lipa czy wierzba zgasną. Zwykły deszcz gasi tylko najsłabsze drewno (lipa, wierzba, osika, puchowiec), mżawka żadnego. Mokre drewno gaśnie łatwiej.
 - Zgaszone ognisko zostaje ze stosem (wierzchnie polano nadpalone) i resztką żaru; gra pisze „Deszcz zgasił ognisko". Stos pod gołym niebem dalej moknie.

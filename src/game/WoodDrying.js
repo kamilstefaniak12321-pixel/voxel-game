@@ -36,6 +36,7 @@ import { sunDries } from '../items/clay.js';
 import { fireHeat, FIRE_HEAT } from './Warmth.js';
 import { setLogWet } from './CampfireState.js';
 import { SEASON_TEMPERATURE } from './Spoilage.js';
+import { rainAt, rainReaches } from '../world/rain.js';
 
 // Co ile dób gry przegląd (kwadrans gry - 12,5 sekundy).
 export const DRY_STEP_DAYS = 1 / 96;
@@ -52,7 +53,8 @@ export const FIRE_DRY_PER_DAY = 4;
 // Tyle wilgotności na dobę przybywa w ulewie pod gołym niebem.
 export const RAIN_PER_DAY = 3;
 
-// Od takiej jasności nieba miejsce jest pod gołym niebem (0-15).
+// Od takiej jasności nieba miejsce jest w słońcu (0-15). (Deszcz ma
+// własną regułę dachu - world/rain.js, od 1.43.1.)
 const OPEN_SKY = 12;
 // Od jakiej jasności nieba nad skrzynią to już nie piwniczka.
 const CELLAR_SKY = 4;
@@ -126,10 +128,12 @@ export class WoodDrying {
         return Number.isFinite(value) ? value : SEASON_TEMPERATURE[seasonAt(this.game.time?.days ?? 0).index];
     }
 
-    // Deszcz tam, gdzie stoi gracz (0-1); śnieg nie moczy.
-    rain() {
-        const rain = this.game.rainNow;
-        return Number.isFinite(rain) && rain > 0.05 ? rain : 0;
+    // Deszcz w miejscu (x, y, z), 0-1: tyle, ile tam pada (śnieg nie moczy),
+    // i tylko gdy nad tym miejscem nie ma dachu. Do 1.43.0 - deszcz przy
+    // graczu i jasność nieba zamiast dachu.
+    rainOn(x, y, z) {
+        const rain = rainAt(this.game, x, z);
+        return rain > 0.05 && rainReaches(this.game.world, x, y, z) ? rain : 0;
     }
 
     // Warunki w miejscu świata (x, y, z): { place, temperature, heat,
@@ -142,7 +146,7 @@ export class WoodDrying {
             return { place: 'air', temperature: SEASON_TEMPERATURE[seasonAt(game.time?.days ?? 0).index], heat: 0, rain: 0, water: false };
         }
         const open = (world.getLight?.(bx, by, bz)?.sky ?? 15) >= OPEN_SKY;
-        const rain = open ? this.rain() : 0;
+        const rain = this.rainOn(x, by, z);
         return {
             place: open && rain === 0 && sunDries(game.time?.days ?? 0.5) ? 'sun' : 'air',
             temperature: this.temperature(),

@@ -9,6 +9,8 @@
 // - bloki w obie strony, chunk zmieniony daleko (pobrany, gdy gość dojdzie),
 //   zmiana w chunku, którego gość jeszcze nie ma,
 // - skrzynia w obie strony, pora dnia, czat, model i imię drugiego gracza,
+// - (1.43.1) pochodnia z resztą paliwa zaraz po wejściu, garnek na ognisku
+//   w obie strony, deszcz pod daszkiem (prawdziwe światło nieba),
 // - wyjście gościa: ekwipunek zapisany u gospodarza.
 // Zrzuty: test-results/multiplayer/.
 //
@@ -130,6 +132,16 @@ try {
         const chest = g.chests.ensure({ x: x + 5, y: cy, z: z + 2 });
         chest.layers[0][0] = { type: 'stone', count: 7 }; g.chests.changed();
         window.chestPos = [x + 5, cy, z + 2];
+        // 1.43.1: nadpalona pochodnia i ognisko z garnkiem - gość ma je
+        // dostać zaraz po wejściu (pochodnię z resztą paliwa).
+        const ty = h.ground(x + 7, z) + 1;
+        h.set(x + 7, ty, z, 'torch'); g.torchBurn.placed({ x: x + 7, y: ty, z }, 0.25, 'plain');
+        window.torchPos = [x + 7, ty, z];
+        const fy = h.ground(x + 8, z + 3) + 1;
+        h.set(x + 8, fy, z + 3, 'campfire');
+        g.campfires.interact({ hit: true, block: { x: x + 8, y: fy, z: z + 3, type: 'campfire' } }, null);
+        g.campfires.get({ x: x + 8, y: fy, z: z + 3 }).pot = { items: [], progress: 0, dish: null, portions: 0, empty: false };
+        window.firePos = [x + 8, fy, z + 3];
         await h.run(1);
         return h.open();
     })()`);
@@ -179,6 +191,45 @@ try {
     const hostChat = await host.evaluate('h.net.chat'), guestChat = await guest.evaluate('g.net.chat');
     check(hostChat.includes('Ola dołącza do gry') && hostChat.includes('Ola: cześć!'), 'Czat u gospodarza');
     check(guestChat.includes('Kamil: hej Ola'), 'Czat u gościa');
+
+    // --- Pochodnia z powitania, garnek na ognisku (1.43.1) -----------------------
+    const torchPos = await host.evaluate('window.torchPos'), firePos = await host.evaluate('window.firePos');
+    const torchLeft = await guest.evaluate(`g.game.torchBurn.torches.get('${torchPos.join(',')}')?.left`);
+    check(torchLeft > 800 && torchLeft < 950, `Gość: pochodnia gospodarza z resztą paliwa (${Math.round(torchLeft)} s)`);
+    const fireExpr = (name) => `${name}.game.campfires.get({ x: ${firePos[0]}, y: ${firePos[1]}, z: ${firePos[2]} })`;
+    check(await guest.evaluate(`Boolean(${fireExpr('g')}?.pot)`), 'Gość widzi garnek na ognisku');
+    await guest.evaluate(`${fireExpr('g')}.pot.items.push('raspberry')`);
+    await Promise.all([hostLoop(1), guest.evaluate('g.run(1)')]);
+    check(await host.evaluate(`${fireExpr('h')}?.pot?.items.join()`) === 'raspberry', 'Składnik wrzucony przez gościa jest u gospodarza');
+    await Promise.all([hostLoop(11), guest.evaluate('g.run(11)')]);
+    check(await guest.evaluate(`${fireExpr('g')}?.pot?.items.join()`) === 'raspberry', 'Po odesłaniu ognisk przez gospodarza składnik zostaje');
+
+    // --- Deszcz pod daszkiem (1.43.1), u gospodarza ------------------------------
+    // Ognisko pod jedną deską dwa bloki wyżej: światło nieba wpada z boku
+    // (do 1.43.0 ognisko i tak gasło), ognisko obok bez dachu gaśnie.
+    const rain = await host.evaluate(`(async () => {
+        const S = await import('/src/game/CampfireState.js');
+        const g = h.game, [x, z] = window.spawn, fires = [];
+        for (const [dx, roofed] of [[-6, false], [-9, true]]) {
+            const X = x + dx, Z = z - 6, y = h.ground(X, Z) + 1;
+            h.set(X, y, Z, 'campfire');
+            if (roofed) h.set(X, y + 2, Z, 'oak_planks');
+            g.campfires.interact({ hit: true, block: { x: X, y, z: Z, type: 'campfire' } }, null);
+            const fire = g.campfires.get({ x: X, y, z: Z });
+            for (let i = 0; i < 6; i++) S.addFirewood(fire, 'linden');
+            fire.phase = 'burning'; fire.temp = 650;
+            fires.push({ X, y, Z });
+        }
+        await h.run(1);
+        const sky = g.world.getLight(fires[1].X, fires[1].y + 1, fires[1].Z)?.sky ?? null;
+        g.rainOverride = 1;
+        await h.run(20);
+        g.rainOverride = null;
+        const [open, eaves] = fires.map((f) => g.campfires.get({ x: f.X, y: f.y, z: f.Z }));
+        return { sky, rainNow: g.rainNow, open: open?.phase, eaves: eaves?.phase };
+    })()`);
+    check(rain.rainNow > 0.5 && rain.open === 'unlit', `Ulewa gasi ognisko bez dachu (${JSON.stringify(rain)})`);
+    check(rain.sky >= 12 && rain.eaves === 'burning', `Pod deską ognisko płonie, choć niebo wpada z boku (${JSON.stringify(rain)})`);
 
     // --- Zmiana tam, gdzie gościa nie ma; zmieniony chunk daleko ---------------
     const near = await host.evaluate(`(() => { const x = ${origin[0] + 120}, z = ${origin[1]}; h.set(x, 40, z, 'stone'); return [x, 40, z]; })()`);

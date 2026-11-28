@@ -10,6 +10,7 @@ import { getRoast, isDrink, ROAST_SECONDS, roastSeconds, roastWord } from '../it
 import { getItemLabel } from '../items/ItemRegistry.js';
 import { POT, POT_WATER, BOWL, DISHES, dishItem, isIngredient } from '../items/cooking.js';
 import { newPot, addIngredient, canAddIngredient, takePortion, potDrops, potDescription, isCooking } from './CookingState.js';
+import { rainAt, rainReaches } from '../world/rain.js';
 
 // Z jak daleka gracz słyszy i widzi napis, że potrawa gotowa.
 const COOK_NOTICE_RANGE = 12;
@@ -17,9 +18,6 @@ const COOK_NOTICE_RANGE = 12;
 // Ognisko, nad którym da się piec: płonie albo żarzy się (od 1.32.0
 // także na samym żarze po ognisku - wolniej).
 const canRoastOn = (fire) => fire.phase === 'burning' || fire.phase === 'collapsing' || fire.embers > 0;
-
-// Od takiej jasności nieba ognisko stoi pod gołym niebem (0-15).
-const OPEN_SKY = 12;
 
 // Z jak daleka gracz dostaje napis, że polano zajęło się od żaru.
 const EMBER_NOTICE_RANGE = 8;
@@ -232,7 +230,6 @@ export class Campfires {
     update(dt, holding) {
         this.clock += dt;
         const game = this.game, hit = game.currentHit;
-        const rain = Number.isFinite(game.rainNow) && game.rainNow > 0.05 ? Math.min(1, game.rainNow) : 0;
         for (const [key, fire] of this.fires) {
             const chunk = game.world.getChunk(game.world.toChunkCoord(fire.x), game.world.toChunkCoord(fire.z));
             if (chunk && game.world.getBlockId(fire.x, fire.y, fire.z) !== getBlockId('campfire')) {
@@ -240,9 +237,11 @@ export class Campfires {
             }
             const active = holding && hit?.hit && keyOf(hit.block) === key && game.selectedBlock === 'fire_starter';
             const phase = fire.phase, logs = fire.logs.length;
-            // Deszcz (1.35.0): pada na ogniska pod gołym niebem.
-            fire.rain = chunk && rain > 0 && (fire.phase !== 'unlit' || fire.embers > 0) &&
-                (game.world.getLight?.(fire.x, fire.y + 1, fire.z)?.sky ?? 0) >= OPEN_SKY ? rain : 0;
+            // Deszcz (1.35.0): pada na ogniska pod gołym niebem. Od 1.43.1 -
+            // tyle, ile pada przy ognisku, i ta sama reguła dachu co krople
+            // (world/rain.js), zamiast jasności nieba.
+            const rain = chunk && (fire.phase !== 'unlit' || fire.embers > 0) ? rainAt(game, fire.x + 0.5, fire.z + 0.5) : 0;
+            fire.rain = rain > 0.05 && rainReaches(game.world, fire.x, fire.y, fire.z) ? rain : 0;
             const selfLit = fire.tinder === SELF_LIGHTING;
             const cooked = updateCampfire(fire, dt, active);
             if (fire.doused) {

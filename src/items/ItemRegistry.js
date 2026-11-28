@@ -452,6 +452,10 @@ for (const definition of Object.values(BLOCK_TYPES)) {
 // Stare nazwy (z wersji 0.4.0, gdy truskawki były malinami,
 // a papryczki chili porzeczkami) -> nowe. Ekwipunek z zapisu
 // przechodzi przez currentType, więc nic nie ginie.
+//
+// Stara nazwa, która wróciła do gry jako coś nowego, zostaje sobą:
+// od 1.17.0 `raspberry` to prawdziwe maliny z krzewów, a do 1.43.0
+// zamieniały się po wczytaniu w truskawki (1.43.1).
 
 const RENAMED = {
     raspberry: 'strawberry',
@@ -466,7 +470,8 @@ for (const stage of ['sapling', 'bush', 'bush_few', 'bush_full']) {
 
 export function currentType(type) {
 
-    return Object.hasOwn(RENAMED, type ?? '') ? RENAMED[type] : type;
+    if (!Object.hasOwn(RENAMED, type ?? '') || itemExists(type)) return type;
+    return RENAMED[type];
 
 }
 

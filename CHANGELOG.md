@@ -11,6 +11,44 @@ w wiki: [`docs/wiki/`](docs/wiki/README.md).
 
 ---
 
+## 1.43.1 - Poprawki: maliny, gra ze znajomymi, pożar i deszcz pod dachem
+
+PR #197. Pięć błędów znalezionych przy spisywaniu, jak działają
+systemy gry.
+
+### Poprawki
+- **Maliny zostają malinami.** Po wczytaniu świata maliny z krzewów
+  (w ekwipunku, w skrzyniach i na ziemi) zamieniały się w truskawki -
+  winna była tabela starych nazw z wersji 0.4.0, gdy truskawki
+  nazywały się malinami. Stara nazwa, która wróciła do gry jako coś
+  nowego, nie jest już zamieniana.
+- **Garnek na ognisku w grze ze znajomymi.** Postawiony garnek,
+  wrzucony składnik i nabrana porcja nie były wysyłane innym graczom,
+  a co 10 sekund stan gospodarza je nadpisywał - składnik gościa
+  znikał, porcja mogła się podwoić. Teraz garnek jest częścią stanu
+  ogniska (postęp gotowania każdy dalej liczy u siebie).
+- **Nowy gość widzi od razu cały stan świata.** Zaraz po wejściu
+  dostaje drewutnie, paliwo pochodni, nacięcia w pniach i płomienie
+  trwającego pożaru - wcześniej dopiero przy pierwszej zmianie
+  (pochodnie z pełnym paliwem, puste nacięcia).
+- **Pożar daleko od gracza.** Drzewo poza wczytanym terenem czeka, aż
+  gracz wróci - wcześniej płonęło "na niby": bloki się nie zmieniały,
+  a po powrocie drzewo stało nietknięte. Ogień nie przeskakuje na
+  drzewo przy granicy wczytanego terenu.
+- **Deszcz pada tam, gdzie pada.** Ognisko, pochodnia, polana i drewutnia
+  mokną od deszczu w swoim miejscu, a nie tam, gdzie stoi gracz;
+  pożar gaśnie tylko tam, gdzie pada (wcześniej deszcz nad graczem
+  gasił wszystkie pożary naraz).
+- **Jedna reguła dachu.** Pod dachem nie pada: dach to pierwszy blok
+  nad głową, który zatrzymuje deszcz (pełny blok, liście, woda) - ta
+  sama reguła co dla kropel na ekranie. Wcześniej ognisko i pochodnia
+  liczyły jasność nieba, więc pod wąskim daszkiem albo przy krawędzi
+  dachu gasły w deszczu.
+
+### Komendy
+- `/pogoda dach` - czy deszcz pada na blok, na który patrzysz (albo
+  tam, gdzie stoisz), i jaki blok jest dachem.
+
 ## 1.43.0 - Pożar: płonące drzewa
 
 PR #196. Pierwsza wersja części E projektu drewna (`docs/pozar.md`).

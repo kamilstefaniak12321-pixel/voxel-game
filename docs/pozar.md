@@ -117,9 +117,16 @@ się z drzewem pod celownikiem; `/pozar podpal`, `/pozar zgas`,
   jest zgaszony. Zapisuje się samo ustawienie.
 - **Ustawienia świata nie ma w menu** tworzenia świata - tylko komenda.
 - **Biom się nie liczy wprost**: „las deszczowy", „sawanna latem" to na
-  razie tylko gatunki drzew, pora roku i mokra ziemia przy graczu.
-  Deszcz i mokra ziemia są brane z miejsca, gdzie stoi gracz, nie
-  z miejsca pożaru.
+  razie tylko gatunki drzew, pora roku i mokra ziemia. Od 1.43.1
+  deszcz i mokra ziemia są brane z miejsca drzewa (do 1.43.0 - z miejsca,
+  gdzie stał gracz: deszcz nad graczem gasił wszystkie pożary naraz).
+  Mokra ziemia pochodzi z mapy pogody o oczkach 128 bloków, więc jest
+  zgrubna. Udział śniegu w opadzie liczy się jak przy graczu.
+- **Daleko od gracza ogień czeka** (od 1.43.1): drzewo, którego teren nie
+  jest wczytany, nie płonie dalej, nie przeskakuje i nie gaśnie, aż
+  gracz wróci; sąsiad przy granicy wczytanego terenu (12 bloków) się
+  nie zajmuje. Do 1.43.0 ogień płonął tam „na niby" i drzewo zostawało
+  nietknięte. Płomienie takiego drzewa wiszą w miejscu bez zmian.
 - **Zwęglonego pnia nie ścina się jak drzewa** - wyłamuje się go kłoda
   po kłodzie. Wysoki kikut zostaje w powietrzu, jeśli wyłamać dół.
 - **Zwęglone gałęzie**: cały szkielet drzewa (także konary) zostaje

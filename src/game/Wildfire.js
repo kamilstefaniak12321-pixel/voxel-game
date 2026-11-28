@@ -25,9 +25,17 @@
 // rozpoznanie, co przy ścinaniu - game/TreeScan.js).
 // Zwierzętom nic się nie dzieje. Płonące drzewa nie są w zapisie: po
 // wczytaniu świata ogień jest zgaszony (zostaje tylko ustawienie).
+//
+// 1.43.1: deszcz, mokra ziemia i postęp liczą się przy każdym drzewie
+// osobno. Drzewo, którego teren nie jest wczytany (gracz odszedł daleko),
+// czeka - nie płonie dalej, nie przeskakuje i nie gaśnie, aż gracz
+// wróci. Do 1.43.0 ogień płonął dalej "na niby": bloki poza pamięcią się
+// nie zmieniały, a drzewo i tak trafiało na listę spalonych - po powrocie
+// stało nietknięte (albo z wiszącymi liśćmi). A deszcz tam, gdzie stał
+// gracz, gasił naraz wszystkie pożary w świecie.
 // ------------------------------------------------------------
 
-import { CHUNK_HEIGHT } from '../config.js';
+import { CHUNK_HEIGHT, CHUNK_SIZE } from '../config.js';
 import { getBlockId, isSoilId, isSolidId, isLeavesId, isLiquidId } from '../blocks/BlockRegistry.js';
 import {
     fireTraits, fateOf, burnSeconds, spreadChance, ignitionProblem, SURVIVOR_LOSS, SPREAD_RADIUS, WIND_REACH,
@@ -35,6 +43,7 @@ import {
 } from '../blocks/fireTraits.js';
 import { scanTree, fallingLeaves, treeKind } from './TreeScan.js';
 import { treeOf } from './TreeTaps.js';
+import { rainAt } from '../world/rain.js';
 
 export const FIRE_STEP_SECONDS = 0.25;
 // Ile bloków najwyżej zmienia się w jednym kroku (wszystkie drzewa razem).
@@ -45,6 +54,9 @@ export const LIGHT_SECONDS = 5;
 const SHRUB_LIMIT = 260;
 // Tylu sąsiadów pamięta płonące drzewo.
 const NEIGHBOUR_LIMIT = 16;
+// Sąsiad zajmuje się dopiero, gdy teren tyle bloków wokół niego jest
+// wczytany (całe drzewo - inaczej spłonęłaby tylko jego część).
+const SPREAD_AREA = 12;
 // Kępa liści bez drzewa większa niż tyle bloków zostaje (to czyjaś korona).
 const ORPHAN_LIMIT = 300;
 const CHARRED = 'charred_log', ASH = 'ash_layer';
@@ -131,14 +143,37 @@ export class Wildfire {
         return true;
     }
 
-    weather() {
+    // Pogoda przy drzewie w (x, z): deszcz i mokra ziemia tam, nie przy graczu.
+    weather(x, z) {
         const game = this.game;
+        const wetness = typeof game.wetnessAt === 'function' ? game.wetnessAt(x, z) : game.weather?.wetness;
         return {
             days: game.time?.days ?? 0,
-            rain: Number.isFinite(game.rainNow) ? Math.max(0, game.rainNow) : 0,
-            wetness: Number.isFinite(game.weather?.wetness) ? game.weather.wetness : 0,
+            rain: rainAt(game, x, z),
+            wetness: Number.isFinite(wetness) ? wetness : 0,
             wind: game.weather?.wind ?? null
         };
+    }
+
+    // Czy teren w prostokącie [x0, x1] x [z0, z1] jest wczytany.
+    loaded(x0, z0, x1, z1) {
+        const world = this.game.world;
+        if (typeof world.getChunk !== 'function') return true;
+        for (let cx = Math.floor(x0 / CHUNK_SIZE); cx <= Math.floor(x1 / CHUNK_SIZE); cx++) {
+            for (let cz = Math.floor(z0 / CHUNK_SIZE); cz <= Math.floor(z1 / CHUNK_SIZE); cz++) if (!world.getChunk(cx, cz)) return false;
+        }
+        return true;
+    }
+
+    // Czy całe płonące drzewo (pień i korona) jest w wczytanym terenie.
+    treeLoaded(burn) {
+        if (!burn.area) {
+            let x0 = burn.x, x1 = burn.x, z0 = burn.z, z1 = burn.z;
+            for (const cell of burn.logs) { x0 = Math.min(x0, cell.x); x1 = Math.max(x1, cell.x); z0 = Math.min(z0, cell.z); z1 = Math.max(z1, cell.z); }
+            for (const cell of burn.leaves) { x0 = Math.min(x0, cell.x); x1 = Math.max(x1, cell.x); z0 = Math.min(z0, cell.z); z1 = Math.max(z1, cell.z); }
+            burn.area = { x0, z0, x1, z1 };
+        }
+        return this.loaded(burn.area.x0, burn.area.z0, burn.area.x1, burn.area.z1);
     }
 
     // Podpala drzewo z kłodą albo liściem w (x, y, z).
@@ -152,7 +187,7 @@ export class Wildfire {
         if (!kind) return { ok: false, reason: null };
         const log = kind.log ? { x, y, z } : nearestLog(world, x, y, z, kind.tree);
         if (!log) return { ok: false, reason: 'Te liście nie należą do żadnego drzewa' };
-        const traits = fireTraits(kind.tree), weather = this.weather();
+        const traits = fireTraits(kind.tree), weather = this.weather(x + 0.5, z + 0.5);
         if (!force) {
             const problem = source === 'spread' ? (traits.ease <= 0 ? 'mokre' : null) : ignitionProblem(kind.tree, weather.days, weather.rain, weather.wetness);
             if (problem) return { ok: false, reason: problem };
@@ -242,7 +277,7 @@ export class Wildfire {
     step(seconds) {
         const game = this.game, world = game.world;
         if (game.net?.isClient || this.trees.size === 0) return;
-        const weather = this.weather();
+        const days = game.time?.days ?? 0;
         let budget = BLOCKS_PER_STEP;
         this.second += seconds;
         const spreadNow = this.second >= 1;
@@ -250,6 +285,9 @@ export class Wildfire {
         const ash = getBlockId(ASH), charred = getBlockId(CHARRED);
 
         for (const burn of [...this.trees.values()]) {
+            // Daleko, poza wczytanym terenem: drzewo czeka na gracza.
+            if (!this.treeLoaded(burn)) continue;
+            const weather = this.weather(burn.x + 0.5, burn.z + 0.5);
             // Deszcz gasi płonące drzewa.
             if (weather.rain >= RAIN_STOPS && !burn.ending) { this.putOut(burn, true); game.achieve?.('fireRainedOut', { species: burn.species }); continue; }
 
@@ -267,6 +305,8 @@ export class Wildfire {
                     if (!burn.neighbours) this.findNeighbours(burn);
                     for (const near of burn.neighbours) {
                         if (near.done) continue;
+                        // (Sąsiad przy granicy wczytanego terenu - jeszcze nie.)
+                        if (!this.loaded(near.x - SPREAD_AREA, near.z - SPREAD_AREA, near.x + SPREAD_AREA, near.z + SPREAD_AREA)) continue;
                         const chance = spreadChance({ species: near.species, dx: near.dx, dz: near.dz, distance: near.distance, crown: burn.radius, ...weather });
                         if (chance > 0 && this.random() < chance) {
                             near.done = true;
@@ -307,13 +347,13 @@ export class Wildfire {
                     if (burn.fate === 'ash') this.dropAsh(burn, ash, charred);
                 }
                 this.trees.delete(burn.key);
-                this.burnt.set(burn.key, weather.days + REBURN_DAYS);
+                this.burnt.set(burn.key, days + REBURN_DAYS);
                 this.version++;
                 game.achieve?.('treeBurnt', { species: burn.species, fate: burn.fate, source: burn.source });
             }
         }
         // Stare wpisy spalonych.
-        if (spreadNow && this.burnt.size > 400) for (const [key, until] of this.burnt) if (until <= weather.days) this.burnt.delete(key);
+        if (spreadNow && this.burnt.size > 400) for (const [key, until] of this.burnt) if (until <= days) this.burnt.delete(key);
     }
 
     // Liście gatunku tuż przy spalonej koronie, które nie trzymają się
@@ -378,7 +418,7 @@ export class Wildfire {
         if (hold.failed) return;
         // Od razu wiadomo, że się nie da (deszcz, mokro, wyłączone).
         if (hold.time === 0) {
-            const weather = this.weather();
+            const weather = this.weather(hit.block.x + 0.5, hit.block.z + 0.5);
             const problem = this.mode === 'off' ? 'Pożary są w tym świecie wyłączone' : game.net?.isClient ? 'Drzewo może podpalić tylko gospodarz gry'
                 : ignitionProblem(kind.tree, weather.days, weather.rain, weather.wetness);
             if (problem) { hold.failed = true; game.onNotice?.(problem); return; }

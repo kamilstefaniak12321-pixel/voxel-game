@@ -249,13 +249,17 @@ const setup = (items, { mode = 'adventure', yaw = 0 } = {}) => {
 // --- Schnięcie i deszcz -------------------------------------------------------------------------
 
 {
-    const make = ({ rain = 0, sky = () => 15, hour = 12, client = false } = {}) => {
+    // (1.43.1) Deszcz zatrzymuje dach - blok nad stosem (roof); słońce
+    // dalej liczy się z jasności nieba (sky).
+    const planks = getBlockId('oak_planks');
+    const make = ({ rain = 0, sky = () => 15, roof = () => false, hour = 12, client = false } = {}) => {
         const notices = [], achieved = [];
         const inventory = Inventory.load({}, 'adventure');
         for (let i = 0; i < inventory.slots.length; i++) inventory.set(i, null);
         const game = { inventory, time: { days: 100 + hour / 24 }, weather: { temperature: 15 }, rainNow: rain, player: { pos: { x: 0.5, y: 60, z: 0.5 } },
             onNotice: (text) => notices.push(text), achieve: (name, data) => achieved.push([name, data]), net: client ? { isClient: true } : null,
-            world: { getChunk: () => ({}), toChunkCoord: (v) => Math.floor(v / 16), getLight: (x, y, z) => ({ sky: sky(x, y, z) }), getBlockId: () => 0 },
+            world: { getChunk: () => ({}), toChunkCoord: (v) => Math.floor(v / 16), getLight: (x, y, z) => ({ sky: sky(x, y, z) }),
+                getBlockId: (x, y) => (roof(x) && y === 63 ? planks : 0) },
             campfires: { fires: new Map(), version: 0 }, chests: { chests: new Map(), version: 0 }, drops: { drops: new Map(), version: 0 },
             woodpiles: { piles: new Map(), version: 0 } };
         const add = (x, wet, count = 16, wood = 'oak') => { const pile = newWoodpile(x, 60, 0); addLogs(pile, wood, count, wet); game.woodpiles.piles.set(`${x},60,0`, pile); return pile; };
@@ -279,11 +283,12 @@ const setup = (items, { mode = 'adventure', yaw = 0 } = {}) => {
     check(roofed.logs.every((log) => log.wet === undefined) && t.notices.length === 2, 'Potem ten pod dachem');
 
     // Deszcz: pod gołym niebem moknie, pod dachem nie.
-    const rainy = make({ rain: 1, sky: (x) => (x === 2 ? 0 : 15) });
-    const open = rainy.add(1, 0), covered = rainy.add(2, 0), dampCovered = rainy.add(3, 0.6);
+    const rainy = make({ rain: 1, sky: (x) => (x === 2 ? 0 : 15), roof: (x) => x >= 2 });
+    const open = rainy.add(1, 0), covered = rainy.add(2, 0), dampCovered = rainy.add(3, 0.6), eaves = rainy.add(4, 0);
     rainy.game.world.getLight = (x) => ({ sky: x === 2 || x === 3 ? 0 : 15 });
     rainy.drying.step(0.1);
     check(open.logs.every((log) => Math.abs(log.wet - 0.3) < 1e-9) && covered.logs.every((log) => log.wet === undefined), 'Deszcz moczy stos pod gołym niebem, pod dachem nie');
+    check(eaves.logs.every((log) => log.wet === undefined), 'Pod wąskim daszkiem (jasne niebo z boku) stos nie moknie');
     check(dampCovered.logs.every((log) => log.wet < 0.6), 'Pod dachem stos schnie nawet w deszcz');
 
     // Mieszany stos: napis dopiero, gdy wyschnie ostatnie polano.

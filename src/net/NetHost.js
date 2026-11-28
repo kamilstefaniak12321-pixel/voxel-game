@@ -3,7 +3,8 @@
 //
 // Gospodarz gra dalej w swoim świecie i jest jego właścicielem: zapisuje
 // go (także ekwipunki i pozycje gości - worldInfo.guests), rozsyła zmiany
-// bloków, skrzyń, stołów i ognisk, porę dnia, meteoryty i tratwy. Goście
+// bloków, skrzyń, stołów, ognisk, drewutni, pochodni, nacięć i płomieni
+// pożaru, porę dnia, meteoryty i tratwy. Goście
 // wysyłają mu swoje zmiany, a on przekazuje je pozostałym.
 // ------------------------------------------------------------
 
@@ -16,6 +17,7 @@ import { openHost, describeError } from './PeerTransport.js';
 import { MSG, PROTOCOL_VERSION, MAX_GUESTS, newInviteCode, peerIdOf, cleanName, unpackPlayer,
     registryFingerprint, encodeBlocks } from './protocol.js';
 import { skinDataURL } from '../player/skin.js';
+import { entryKey, JOIN_STATE } from './StateSync.js';
 
 const CHUNKS_PER_FRAME = 6;
 const MAX_BUFFERED = 768 * 1024;
@@ -181,6 +183,10 @@ export class NetHost extends NetSession {
             players: this.guestList.filter((other) => other !== guest)
                 .map((other) => ({ id: other.id, name: other.name, skin: other.skin }))
         });
+        for (const sys of JOIN_STATE) {
+            const system = this.state.systems[sys];
+            for (const value of this.state.snapshot(sys)) guest.connection.send({ t: MSG.STATE, sys, key: entryKey(system, value), v: value });
+        }
         for (const other of this.guestList) {
             if (other === guest) continue;
             other.connection.send({ t: MSG.PLAYER_JOIN, id: guest.id, name: guest.name, skin: guest.skin });

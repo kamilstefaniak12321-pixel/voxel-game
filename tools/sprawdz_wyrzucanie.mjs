@@ -253,7 +253,9 @@ const only = (game) => [...game.drops.drops.values()];
     const fixed = restoreDrop({ type: 'stone', count: 99999, x: 1, y: 11, z: 1, id: '<zła nazwa>', vx: 'x' });
     check(fixed.count === STACK_SIZE * 4 && /^[a-z0-9]{4,32}$/.test(fixed.id) && fixed.vx === 0 && fixed.wait === DROP_WAIT, 'Za duży stos, zła nazwa i prędkość - naprawione');
     check(new Drops(makeGame(), 'śmieci').drops.size === 0 && new Drops(makeGame(), [null, { type: 'stone', count: 2, x: 0, y: 11, z: 0 }]).drops.size === 1, 'Uszkodzona lista w zapisie niczego nie psuje');
-    check(restoreDrop({ type: 'raspberry', count: 1, x: 0, y: 11, z: 0 })?.type === 'strawberry', 'Stara nazwa przedmiotu z dawnego zapisu');
+    check(restoreDrop({ type: 'currants', count: 1, x: 0, y: 11, z: 0 })?.type === 'chili_pepper', 'Stara nazwa przedmiotu z dawnego zapisu');
+    // (1.43.1) Maliny z krzewów to nie stara nazwa truskawek.
+    check(restoreDrop({ type: 'raspberry', count: 1, x: 0, y: 11, z: 0 })?.type === 'raspberry', 'Maliny na ziemi zostają malinami');
     let savedDrops;
     const saver = new WorldSaver({
         async saveWorldAndChunks(info) { savedDrops = structuredClone(info.drops); }
